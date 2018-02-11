@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Gifto.iml" filepath="$PROJECT_DIR$/Gifto.iml" />
+      <module fileurl="file://C:\Users\Ping-Jung Liu\Desktop\CS65-master\CS65\Gifto\Gifto.iml" filepath="C:\Users\Ping-Jung Liu\Desktop\CS65-master\CS65\Gifto\Gifto.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Ping-Jung Liu\Desktop\CS65-master\CS65\Gifto\app\app.iml" filepath="C:\Users\Ping-Jung Liu\Desktop\CS65-master\CS65\Gifto\app\app.iml" />
     </modules>
   </component>
 </project>

@@ -3,6 +3,7 @@ package cs65.edu.dartmouth.cs.gifto;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_garden) {
+            Log.d("test", "hi");
             // Handle the camera action
         } else if (id == R.id.nav_map) {
 
