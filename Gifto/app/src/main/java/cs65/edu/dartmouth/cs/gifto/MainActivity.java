@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_garden) {
-            Log.d("test", "hi");
+            Log.d("tt", "hi");
             // Handle the camera action
         } else if (id == R.id.nav_map) {
 
