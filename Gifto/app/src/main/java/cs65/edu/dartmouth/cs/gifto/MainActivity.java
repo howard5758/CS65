@@ -1,5 +1,8 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,6 +31,12 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        Fragment newFragment = new Garden();
+        transaction.replace(R.id.content, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -59,6 +68,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, Preferences.class));
             return true;
         }
 
@@ -69,16 +79,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        Fragment newFragment;
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         int id = item.getItemId();
 
         if (id == R.id.nav_garden) {
-            // Handle the camera action
+            newFragment = new Garden();
+            transaction.replace(R.id.content, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         } else if (id == R.id.nav_map) {
-
+            startActivity(new Intent(this, MapsActivity.class));
         } else if (id == R.id.nav_gifts) {
-
-        } else if (id == R.id.nav_preferences) {
-
+            newFragment = new GiftFrag();
+            transaction.replace(R.id.content, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
