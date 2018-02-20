@@ -90,11 +90,6 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
         } else if (id == R.id.nav_map) {
             startActivity(new Intent(this, MapsActivity.class));
-        } else if (id == R.id.nav_gifts) {
-            newFragment = new GiftFrag();
-            transaction.replace(R.id.content, newFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
