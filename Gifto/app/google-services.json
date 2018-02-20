@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "973179610011",
+    "firebase_url": "https://gifto-13107.firebaseio.com",
+    "project_id": "gifto-13107",
+    "storage_bucket": "gifto-13107.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973179610011:android:a9b18b9215bd16de",
+        "android_client_info": {
+          "package_name": "cs65.edu.dartmouth.cs.gifto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973179610011-e36cdga2rain0vdsk9qjv3qod7hc0gl7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChwNMQD8En0QIDFVcWHKQAdRxHp73tGQ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

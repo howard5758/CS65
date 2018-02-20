@@ -12,7 +12,7 @@
             android:title="@string/map" />
         <item
             android:id="@+id/nav_gifts"
-            android:title="@string/gifts" />
+            android:title="@string/preferences" />
     </group>
 
 </menu>
