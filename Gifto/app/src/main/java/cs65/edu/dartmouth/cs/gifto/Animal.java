@@ -19,10 +19,17 @@ package cs65.edu.dartmouth.cs.gifto;
 public class Animal {
     private String animalName;
     private boolean seen;
-    private String gift;
-    private boolean owned;
     private int numVisits;
     private int rarity;
+
+    Animal(){}
+
+    Animal(String animalName, boolean seen, int numVisits, int rarity) {
+        this.animalName = animalName;
+        this.seen = seen;
+        this.numVisits = numVisits;
+        this.rarity = rarity;
+    }
 
     public String getAnimalName() {
         return animalName;
@@ -38,22 +45,6 @@ public class Animal {
 
     public void setSeen(boolean seen) {
         this.seen = seen;
-    }
-
-    public String getGift() {
-        return gift;
-    }
-
-    public void setGift(String gift) {
-        this.gift = gift;
-    }
-
-    public boolean isOwned() {
-        return owned;
-    }
-
-    public void setOwned(boolean owned) {
-        this.owned = owned;
     }
 
     public int getNumVisits() {
