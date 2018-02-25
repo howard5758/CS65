@@ -9,6 +9,7 @@
         android:layout_height="40dp"
         android:text = "test"
         android:textSize="30sp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="165dp"
         />
 
