@@ -95,7 +95,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_INVENTORY_TABLE = "create table " + INVENTORY_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_TYPE + " TEXT, " +
-            COLUMN_SENT + " INTEGER NOT NULL, " +
+            COLUMN_AMOUNT + " INTEGER NOT NULL, " +
             COLUMN_FIREBASE_ID + " STRING );";
 
 
