@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ValueEventListener listener;
+    Animal animal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity
         Util.databaseReference = FirebaseDatabase.getInstance().getReference();
 
         // if there's no user then try to sign them in
+        final MySQLiteHelper datasource = new MySQLiteHelper(this);
+        datasource.deleteAll();
         if(Util.firebaseUser == null) {
             Util.showActivity(this, LoginActivity.class);
         }
@@ -75,16 +78,27 @@ public class MainActivity extends AppCompatActivity
             };
             Util.databaseReference.child("users").child(Util.userID).addValueEventListener(listener);
         }
-        Friend friend = new Friend("john", "johnny");
-        Animal animal = new Animal("cat", true, 6, 15);
-        Gift gift = new Gift("fish", false, friend.getName(), 1000, new LatLng(23, 21));
-        MySQLiteHelper helper = new MySQLiteHelper(this);
-        helper.insertFriend(friend);
-        helper.insertAnimal(animal);
-        try {
-            helper.insertGift(gift);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        // test code for inserting data
+        ArrayList<Animal> animals;
+        if (Util.userID != null) {
+            Friend friend = new Friend("john", "johnny");
+            animal = new Animal("cat", true, 6, 15);
+            Animal an = new Animal("dog", false, 1, 300);
+            Gift gift = new Gift("fish", false, friend.getName(), 1000, new LatLng(23, 21));
+            MySQLiteHelper helper = new MySQLiteHelper(this);
+            helper.insertFriend(friend);
+            helper.insertAnimal(animal);
+            helper.insertAnimal(an);
+            try {
+                helper.insertGift(gift);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            helper.incrementVisits(animal);
+            InventoryItem item = new InventoryItem("money", 200);
+            helper.insertInventory(item);
+            animals = helper.fetchAllAnimals();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
