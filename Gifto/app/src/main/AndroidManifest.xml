@@ -45,6 +45,9 @@
         </activity>
         <activity android:name=".Preferences" />
         <activity android:name=".Collection" />
+        <activity android:name=".SignUpActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".UserProfile" />
 
 
     </application>

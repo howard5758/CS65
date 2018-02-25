@@ -15,4 +15,55 @@
     <string name="pet_collection">Pet Collection</string>
     <string name="expand_left">←</string>
     <string name="expand_right">→</string>
+
+    <string name="title_activity_map">Map</string>
+    <string name="password">Password</string>
+    <string name="login">login</string>
+    <string name="sign_up">Sign Up!</string>
+    <string name="password_hint">Password</string>
+    <string name="sign_up_button_label">Sign Up</string>
+    <string name="signup_error_message">Please make sure you enter an email address and password!</string>
+    <string name="signup_error_title">Error!</string>
+    <string name="signup_success">Account successfully created! You can now Login.</string>
+    <string name="login_error_message">Please make sure you enter an email address and password!</string>
+    <string name="login_error_title">Error!</string>
+    <string name="login_button_label">Login</string>
+    <string name="sign_up_text">Sign Up!</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="add_item">Add New Item</string>
+    <string name="action_logout">Logout</string>
+    <string name="email_hint">Your Email</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="photo_descrip">Profile Picture</string>
+    <string name="clicked">Pick Profile Picutre</string>
+    <string name="profile_photo_file_name">profile_photo.png</string>
+    <string name="comment_hint">How did it go? Notes here.</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="input_type">Input Type</string>
+    <string name="activity_type">Activity Type</string>
+    <string name="start">Start</string>
+    <string name="sync">Sync</string>
+    <string name="edit_message">Your Name</string>
+    <string name="button_send">Send</string>
+    <string name="name_text">Name</string>
+    <string name="photo_text">Profile Photo:</string>
+    <string name="button_change">Change</string>
+    <string name="email_text">Email</string>
+    <string name="phone_text">Phone</string>
+    <string name="phone_hint">Your Phone Number</string>
+    <string name="gender_text">Gender</string>
+    <string name="female_text">Female</string>
+    <string name="male_text">Male</string>
+    <string name="class_text">Class</string>
+    <string name="class_hint">e.g. 2012</string>
+    <string name="major_text">Major</string>
+    <string name="major_hint">Your Major</string>
+    <string name="button_save">Save</string>
+
+    <string-array name="camera_options">
+        <item>Open Camera</item>
+        <item>Select from Gallery</item>
+    </string-array>
 </resources>
