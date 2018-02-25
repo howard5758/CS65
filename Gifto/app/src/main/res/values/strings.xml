@@ -13,4 +13,6 @@
     <string name="pet_food">Pet Food</string>
     <string name="gift_collections">Gift Collections</string>
     <string name="pet_collection">Pet Collection</string>
+    <string name="expand_left">←</string>
+    <string name="expand_right">→</string>
 </resources>
