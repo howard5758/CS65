@@ -10,7 +10,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/bg"/>
+        android:id="@+id/bg"
+        app:srcCompat="@drawable/plain_bg"/>
     <Button
         android:id="@+id/button_food"
         android:layout_width="wrap_content"
