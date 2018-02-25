@@ -6,8 +6,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +36,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_FRIEND_NAME = "name";
     private static final String COLUMN_FRIEND_NICKNAME = "nickname";
+    private static final String COLUMN_FIREBASE_ID = "firebaseId";
 
     private static final String GIFT_TITLE = "gifts";
     private static final String COLUMN_GIFT = "gift";
@@ -51,33 +55,32 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
 
-    private static final String COLUMN_FLAG = "flag";
 
     private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_NAME,
-            COLUMN_FRIEND_NICKNAME, COLUMN_FLAG };
+            COLUMN_FRIEND_NICKNAME, COLUMN_FIREBASE_ID };
 
     private String[] gifts_columns = { COLUMN_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
-            COLUMN_TIME, COLUMN_LOCATION, COLUMN_FLAG };
+            COLUMN_TIME, COLUMN_LOCATION, COLUMN_FIREBASE_ID };
 
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY, COLUMN_SEEN,
-            COLUMN_VISITS, COLUMN_FLAG };
+            COLUMN_VISITS, COLUMN_FIREBASE_ID };
 
-    private String[] inventory_columns = { COLUMN_ID, COLUMN_TYPE, COLUMN_AMOUNT, COLUMN_FLAG };
+    private String[] inventory_columns = { COLUMN_ID, COLUMN_TYPE, COLUMN_AMOUNT, COLUMN_FIREBASE_ID };
 
     private static final String CREATE_FRIENDS_TABLE = "create table " + FRIEND_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_FRIEND_NAME + " TEXT, " +
             COLUMN_FRIEND_NICKNAME + " TEXT, " +
-            COLUMN_FLAG + " INTEGER NOT NULL );";
+            COLUMN_FIREBASE_ID + " STRING );";
 
     private static final String CREATE_GIFTS_TABLE = "create table " + GIFT_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_GIFT + " TEXT, " +
             COLUMN_SENT + " INTEGER NOT NULL, " +
-            COLUMN_TOFROM + " INTEGER NOT NULL, " +
+            COLUMN_TOFROM + " TEXT, " +
             COLUMN_TIME + " DATETIME NOT NULL, " +
             COLUMN_LOCATION + " BLOB, " +
-            COLUMN_FLAG + " INTEGER NOT NULL );";
+            COLUMN_FIREBASE_ID + " STRING );";
 
     private static final String CREATE_ANIMAL_TABLE = "create table " + ANIMAL_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -85,13 +88,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_RARITY + " INTEGER NOT NULL, " +
             COLUMN_SEEN + " INTEGER NOT NULL, " +
             COLUMN_VISITS + " INTEGER NOT NULL, " +
-            COLUMN_FLAG + " INTEGER NOT NULL );";;
+            COLUMN_FIREBASE_ID + " STRING );";
 
     private static final String CREATE_INVENTORY_TABLE = "create table " + INVENTORY_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_TYPE + " TEXT, " +
             COLUMN_SENT + " INTEGER NOT NULL, " +
-            COLUMN_FLAG + " INTEGER NOT NULL );";;
+            COLUMN_FIREBASE_ID + " STRING );";
 
 
     // Constructor
@@ -109,11 +112,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     // Insert a friend
-    void insertFriend(String name, String nickname) {
+    /*** username must be unique! ***/
+    void insertFriend(Friend friend) {
+        // first try to insert into Firebase
+        // if user is offline, Firebase will automatically cache the data and upload it once
+        //   user is back online
+        DatabaseReference ref = Util.databaseReference.child("users").
+                child(Util.userID).child("friends").child(friend.getName());
+        String key = ref.getKey();
+        ref.setValue(friend);
+
+        // now insert into SQL
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_FRIEND_NAME, name);
-        values.put(COLUMN_FRIEND_NICKNAME, nickname);
+        values.put(COLUMN_FRIEND_NAME, friend.getName());
+        values.put(COLUMN_FRIEND_NICKNAME, friend.getNickname());
+        values.put(COLUMN_FIREBASE_ID, key);
 
         database.insert(FRIEND_TITLE, null, values);
         database.close();
@@ -121,13 +135,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Insert a gift
     void insertGift(Gift gift) throws IOException {
+        // first try to insert into Firebase
+        // if user is offline, Firebase will automatically cache the data and upload it once
+        //   user is back online
+        DatabaseReference ref = Util.databaseReference.child("users").
+                child(Util.userID).child("gifts").child(gift.getGiftName());
+        String key = ref.getKey();
+        ref.setValue(gift);
+
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_GIFT, gift.getGiftName());
         values.put(COLUMN_SENT, gift.isSent());
-        values.put(COLUMN_TOFROM, gift.getFriend_id());
+        values.put(COLUMN_TOFROM, gift.getFriendName());
         values.put(COLUMN_TIME, gift.getTime());
-        values.put(COLUMN_LOCATION, toByte(gift.getLocation()));
+        values.put(COLUMN_LOCATION, toByte(gift.getLocation()));        // converting to byte throws IOException
+        values.put(COLUMN_FIREBASE_ID, key);
 
         database.insert(GIFT_TITLE, null, values);
         database.close();
@@ -135,12 +158,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Insert an animal
     void insertAnimal(Animal animal) {
+        // first try to insert into Firebase
+        // if user is offline, Firebase will automatically cache the data and upload it once
+        //   user is back online
+        DatabaseReference ref = Util.databaseReference.child("users").
+                child(Util.userID).child("animals").child(animal.getAnimalName());
+        String key = ref.getKey();
+        ref.setValue(animal);
+
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_ANIMAL_NAME, animal.getAnimalName());
         values.put(COLUMN_RARITY, animal.getRarity());
         values.put(COLUMN_SEEN, animal.isSeen());
         values.put(COLUMN_VISITS, animal.getNumVisits());
+        values.put(COLUMN_FIREBASE_ID, key);
 
         database.insert(ANIMAL_TITLE, null, values);
         database.close();

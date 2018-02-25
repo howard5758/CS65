@@ -14,9 +14,19 @@ import com.google.android.gms.maps.model.LatLng;
 public class Gift {
     private String giftName;
     private boolean sent;
-    private int friend_id;
+    private String friendName;
     private long time;
     private LatLng location;
+
+    Gift(){}
+
+    Gift(String giftName, boolean sent, String friendName, long time, LatLng location) {
+        this.giftName = giftName;
+        this.sent = sent;
+        this.friendName = friendName;
+        this.time = time;
+        this.location = location;
+    }
 
     public String getGiftName() {
         return giftName;
@@ -34,12 +44,12 @@ public class Gift {
         this.sent = sent;
     }
 
-    public int getFriend_id() {
-        return friend_id;
+    public String getFriendName() {
+        return friendName;
     }
 
-    public void setFriend_id(int friend_id) {
-        this.friend_id = friend_id;
+    public void setFriendName(String friendName) {
+        this.friendName = friendName;
     }
 
     public long getTime() {

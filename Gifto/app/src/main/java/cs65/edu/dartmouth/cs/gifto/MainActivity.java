@@ -75,7 +75,17 @@ public class MainActivity extends AppCompatActivity
             };
             Util.databaseReference.child("users").child(Util.userID).addValueEventListener(listener);
         }
-
+        Friend friend = new Friend("john", "johnny");
+        Animal animal = new Animal("cat", true, 6, 15);
+        Gift gift = new Gift("fish", false, friend.getName(), 1000, new LatLng(23, 21));
+        MySQLiteHelper helper = new MySQLiteHelper(this);
+        helper.insertFriend(friend);
+        helper.insertAnimal(animal);
+        try {
+            helper.insertGift(gift);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
