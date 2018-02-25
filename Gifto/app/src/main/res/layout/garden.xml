@@ -100,7 +100,7 @@
         android:layout_above="@+id/button_gift_collections"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="@string/pet_food" />
+        android:text="GOODIES" />
 
     <Button
         android:id="@+id/button_gift_collections"

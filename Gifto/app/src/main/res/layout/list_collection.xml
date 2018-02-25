@@ -10,16 +10,9 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:padding="5dp"
-        android:textSize="15sp" >
+        android:textSize="20sp" >
     </TextView>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/second_line"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:textSize="15sp" >
-    </TextView>
 
     <ImageView
         android:id="@+id/small_image"

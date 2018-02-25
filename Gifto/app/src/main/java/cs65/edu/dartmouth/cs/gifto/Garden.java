@@ -51,7 +51,7 @@ public class Garden extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Collection.class);
-                intent.putExtra("food", true);
+                intent.putExtra("goodies", true);
                 startActivity(intent);
             }
         });

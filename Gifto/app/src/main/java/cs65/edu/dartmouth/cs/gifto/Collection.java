@@ -32,31 +32,48 @@ public class Collection extends ListActivity {
     ArrayList<String> pngList;
     collection_adapter collection_adapter;
 
+    Boolean goodies, gifts, pets;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collection);
 
+        goodies = getIntent().getBooleanExtra("goodies", false);
+        gifts = getIntent().getBooleanExtra("gifts", false);
+        pets = getIntent().getBooleanExtra("pets", false);
+
         pngList = new ArrayList<>();
         title = (TextView) findViewById(R.id.list_title);
 
-        if (getIntent().getBooleanExtra("food", false)) {
+        if (goodies) {
 
-            title.setText("FOOD");
+            title.setText("GOODIES");
+            pngList.add("banana");
+            pngList.add("tuna");
+            pngList.add("pool");
+            pngList.add("tree");
+            pngList.add("tennis ball");
 
-        } else if (getIntent().getBooleanExtra("gifts", false)) {
+        } else if (gifts) {
 
             title.setText("GIFTS");
+
 
         } else {
 
             title.setText("PETS");
+            pngList.add("alligator");
+            pngList.add("cat");
+            pngList.add("dog");
+            pngList.add("kangaroo");
+            pngList.add("monkey");
+            pngList.add("owl");
+            pngList.add("squirrel");
+
         }
 
-        pngList.add("test1");
-        pngList.add("test2");
-        pngList.add("test3");
         collection_adapter = new collection_adapter(this, R.layout.list_collection, pngList);
         setListAdapter(collection_adapter);
 
@@ -68,6 +85,7 @@ public class Collection extends ListActivity {
 
 
         Intent intent = new Intent(this, purchase_screen.class);
+        intent.putExtra("object", pngList.get(position));
         startActivity(intent);
     }
 
@@ -87,12 +105,49 @@ public class Collection extends ListActivity {
             }
 
             TextView namee = (TextView) view.findViewById(R.id.first_line);
-            TextView price = (TextView) view.findViewById(R.id.second_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
-            image.setImageResource(R.drawable.alligator);
+            switch (getItem(position)){
+                case "banana":
+                    image.setImageResource(R.drawable.banana);
+                    break;
+                case "tuna":
+                    image.setImageResource(R.drawable.tuna);
+                    break;
+                case "pool":
+                    image.setImageResource(R.drawable.pool);
+                    break;
+                case "tree":
+                    image.setImageResource(R.drawable.tree);
+                    break;
+                case "tennis ball":
+                    image.setImageResource(R.drawable.tennis_ball);
+                    break;
+                case "alligator":
+                    image.setImageResource(R.drawable.alligator);
+                    break;
+                case "cat":
+                    image.setImageResource(R.drawable.cat);
+                    break;
+                case "dog":
+                    image.setImageResource(R.drawable.dog_side);
+                    break;
+                case "kangaroo":
+                    image.setImageResource(R.drawable.kangaroo);
+                    break;
+                case "monkey":
+                    image.setImageResource(R.drawable.monkey);
+                    break;
+                case "owl":
+                    image.setImageResource(R.drawable.owl);
+                    break;
+                case "squirrel":
+                    image.setImageResource(R.drawable.squirrel);
+                    break;
+            }
+
+
             namee.setText(getItem(position));
-            price.setText("0");
 
             return view;
         }
