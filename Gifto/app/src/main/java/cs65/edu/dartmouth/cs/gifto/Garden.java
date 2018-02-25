@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -16,6 +18,18 @@ import android.widget.Toast;
  */
 
 public class Garden extends Fragment {
+    String background;
+    String place1, place2, place3, place4;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        background = Globals.DEFAULT_BACKGROUND;
+        place1 = Globals.EMPTY;
+        place2 = Globals.DEFAULT_PLACE2;
+        place3 = Globals.DEFAULT_PLACE3;
+        place4 = Globals.EMPTY;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +69,10 @@ public class Garden extends Fragment {
             }
         });
 
+        if (background == Globals.DEFAULT_BACKGROUND){
+            ImageView bg = (ImageView) view.findViewById(R.id.bg);
+            bg.setImageResource(R.drawable.plain_bg);
+        }
         return view;
 
     }
