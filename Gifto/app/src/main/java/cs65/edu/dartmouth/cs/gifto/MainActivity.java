@@ -46,14 +46,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // set globals for Firebase authentication
         Util.firebaseAuth = FirebaseAuth.getInstance();
         Util.firebaseUser = Util.firebaseAuth.getCurrentUser();
         Util.databaseReference = FirebaseDatabase.getInstance().getReference();
 
-
+        // if there's no user then try to sign them in
         if(Util.firebaseUser == null) {
             Util.showActivity(this, LoginActivity.class);
-        } else {
+        }
+        // if we know who it is then try to download all of their data and put it into SQLite
+        else {
             Util.userID = Util.firebaseUser.getUid();
             listener = new ValueEventListener() {
                 @Override
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity
                     for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                         //TODO get data
                     }
+                    // we only want to download once, so end listener after it executes once
                     endListener();
                 }
 
@@ -147,6 +151,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    // helper function, since a listener can't end itself directly
     private void endListener() {
         Util.databaseReference.child("users").child(Util.userID).removeEventListener(listener);
     }

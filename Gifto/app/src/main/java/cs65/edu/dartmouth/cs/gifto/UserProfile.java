@@ -41,6 +41,7 @@ import java.io.IOException;
 /**
  * Created by Oliver on 2/25/2018.
  *
+ * This is what I made for the first week! It's probably terrible! I will fix it later!
  */
 
 public class UserProfile extends AppCompatActivity {

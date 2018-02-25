@@ -51,20 +51,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
 
-    private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_NAME, COLUMN_FRIEND_NICKNAME };
+    private static final String COLUMN_FLAG = "flag";
+
+    private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_NAME,
+            COLUMN_FRIEND_NICKNAME, COLUMN_FLAG };
 
     private String[] gifts_columns = { COLUMN_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
-            COLUMN_TIME, COLUMN_LOCATION };
+            COLUMN_TIME, COLUMN_LOCATION, COLUMN_FLAG };
 
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY, COLUMN_SEEN,
-            COLUMN_VISITS };
+            COLUMN_VISITS, COLUMN_FLAG };
 
-    private String[] inventory_columns = { COLUMN_ID, COLUMN_TYPE, COLUMN_AMOUNT };
+    private String[] inventory_columns = { COLUMN_ID, COLUMN_TYPE, COLUMN_AMOUNT, COLUMN_FLAG };
 
     private static final String CREATE_FRIENDS_TABLE = "create table " + FRIEND_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_FRIEND_NAME + " TEXT, " +
-            COLUMN_FRIEND_NICKNAME + " TEXT );";
+            COLUMN_FRIEND_NICKNAME + " TEXT, " +
+            COLUMN_FLAG + " INTEGER NOT NULL );";
 
     private static final String CREATE_GIFTS_TABLE = "create table " + GIFT_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -72,19 +76,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_SENT + " INTEGER NOT NULL, " +
             COLUMN_TOFROM + " INTEGER NOT NULL, " +
             COLUMN_TIME + " DATETIME NOT NULL, " +
-            COLUMN_LOCATION + " BLOB );";
+            COLUMN_LOCATION + " BLOB, " +
+            COLUMN_FLAG + " INTEGER NOT NULL );";
 
     private static final String CREATE_ANIMAL_TABLE = "create table " + ANIMAL_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_ANIMAL_NAME + " TEXT, " +
             COLUMN_RARITY + " INTEGER NOT NULL, " +
             COLUMN_SEEN + " INTEGER NOT NULL, " +
-            COLUMN_VISITS + " INTEGER NOT NULL );";
+            COLUMN_VISITS + " INTEGER NOT NULL, " +
+            COLUMN_FLAG + " INTEGER NOT NULL );";;
 
     private static final String CREATE_INVENTORY_TABLE = "create table " + INVENTORY_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_TYPE + " TEXT, " +
-            COLUMN_SENT + " INTEGER NOT NULL );";
+            COLUMN_SENT + " INTEGER NOT NULL, " +
+            COLUMN_FLAG + " INTEGER NOT NULL );";;
 
 
     // Constructor

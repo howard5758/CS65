@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 /**
  * Created by Oliver on 2/24/2018.
  *
+ * Standard boilerplate for logging in and signing up
  */
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,11 +36,13 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
 
+        // get all the necessary views
         signUpTextView = findViewById(R.id.signUpText);
         emailEditText = findViewById(R.id.emailField);
         passwordEditText = findViewById(R.id.passwordField);
         logInButton = findViewById(R.id.loginButton);
 
+        // listener for sign in button
         signUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,15 +51,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // listener for log in button
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
+                // make sure email and password are usable
                 email = email.trim();
                 password = password.trim();
 
+                // if one is empty then tell them something went wrong
                 if (email.isEmpty() || password.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                     builder.setMessage(R.string.login_error_message)
@@ -64,17 +70,22 @@ public class LoginActivity extends AppCompatActivity {
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                } else {
+                }
+                // attempt to sign in with credentials
+                else {
                     mFirebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+                                    // take them to app if sign in successful
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
-                                    } else {
+                                    }
+                                    // reject if log in was invalid
+                                    else {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                                         builder.setMessage(task.getException().getMessage())
                                                 .setTitle(R.string.login_error_title)

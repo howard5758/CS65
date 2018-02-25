@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 /**
  * Created by Oliver on 2/24/2018.
  *
+ * Standard boilerplate for signing up
  */
 
 public class SignUpActivity extends AppCompatActivity implements Button.OnClickListener{
@@ -24,16 +25,20 @@ public class SignUpActivity extends AppCompatActivity implements Button.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        // get necessary views
         passwordEditText = findViewById(R.id.passwordField);
         emailEditText = findViewById(R.id.emailField);
         Button signUpButton = findViewById(R.id.signupButton);
         signUpButton.setOnClickListener(this);
-        firebaseAuth = FirebaseAuth.getInstance();
     }
 
+    // attempt to sign them up using AuthOnCompleteListener, Firebase handles the rest
     public void onClick(View view){
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
+
         if(email.isEmpty() || password.isEmpty())
             Util.showDialog(this,
                     "Please make sure you enter an email address and password");

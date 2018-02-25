@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.Task;
 /**
  * Created by Oliver on 2/24/2018.
  *
+ * Helper class to make sure authorization goes smoothly
  */
 
 public class AuthOnCompleteListener implements OnCompleteListener {

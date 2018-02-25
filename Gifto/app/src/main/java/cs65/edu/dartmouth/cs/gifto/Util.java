@@ -11,6 +11,9 @@ import com.google.firebase.database.DatabaseReference;
 /**
  * Created by Oliver on 2/24/2018.
  *
+ * This class is used for storing all the Firebase data as well as handling specific Firebase tasks
+ * The top four variables are assigned in onCreate of MainActivity and should always be used
+ *   in lieu of local variables
  */
 
 class Util {

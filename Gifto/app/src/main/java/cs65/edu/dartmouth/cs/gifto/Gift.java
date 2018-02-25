@@ -5,6 +5,10 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by Oliver on 2/25/2018.
  *
+ * Class to store gift information
+ * Preferably would be passed into MySQLiteHelper
+ *
+ * Could potentially assign another variable storing drawing information? Same with other classes
  */
 
 public class Gift {
