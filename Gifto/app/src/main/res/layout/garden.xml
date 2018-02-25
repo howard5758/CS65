@@ -7,6 +7,92 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@drawable/plain_bg" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="420dp"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/place1"
+        app:srcCompat="@drawable/tuna" />
+
+    <Button
+        android:id="@+id/button_place1"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="420dp"
+        android:layout_marginLeft="100dp"
+        android:background="@android:color/transparent"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/place2"
+        app:srcCompat="@drawable/tree"/>
+
+    <Button
+        android:id="@+id/button_place2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="240dp"
+        android:layout_marginLeft="100dp"
+        android:background="@android:color/transparent"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="220dp"
+        android:layout_marginLeft="240dp"
+        android:id="@+id/place3" />
+
+    <Button
+        android:id="@+id/button_place3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="320dp"
+        android:layout_marginLeft="240dp"
+        android:background="@android:color/transparent"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="200dp"
+        android:id="@+id/place4" />
+
+    <Button
+        android:id="@+id/button_place4"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="200dp"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/expand_left"
+        android:layout_width="55dp"
+        android:layout_height="match_parent"
+        android:text="@string/expand_left"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/expand_right"
+        android:layout_width="55dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="match_parent"
+        android:text="@string/expand_right"
+        android:background="@android:color/transparent"/>
+
     <Button
         android:id="@+id/button_food"
         android:layout_width="wrap_content"
