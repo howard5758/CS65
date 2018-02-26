@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity
         // if we know who it is then try to download all of their data and put it into SQLite
         else {
             Util.userID = Util.firebaseUser.getUid();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                Util.email = user.getEmail();
+            }
             listener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -145,10 +149,14 @@ public class MainActivity extends AppCompatActivity
             animal = new Animal("cat", 6, 15, 15000);
             Animal an = new Animal("dog", 1, 300, 10000);
             Gift gift = new Gift("fish", false, friend.getName(), 1000, new LatLng(23, 21));
+            MapGift mapGift = new MapGift(gift.getGiftName(), friend.getName(),
+                    friend.getNickname(), "Hello",
+                    animal.getAnimalName(), gift.getLocation(), gift.getTime());
             MySQLiteHelper helper = new MySQLiteHelper(this);
             helper.insertFriend(friend);
             helper.insertAnimal(animal);
             helper.insertAnimal(an);
+            helper.insertMapGift(mapGift);
             try {
                 helper.insertGift(gift);
             } catch (IOException e) {

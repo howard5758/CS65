@@ -36,18 +36,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     static final String FRIEND_TITLE = "friends";
     private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_FRIEND_NAME = "name";
+    private static final String COLUMN_FRIEND_NAME = "friendName";
     private static final String COLUMN_FRIEND_NICKNAME = "nickname";
 
     static final String GIFT_TITLE = "gifts";
-    private static final String COLUMN_GIFT = "gift";
+    private static final String COLUMN_GIFT = "giftName";
     private static final String COLUMN_SENT = "sent";
     private static final String COLUMN_TOFROM = "toFrom";
     private static final String COLUMN_TIME = "time";
     private static final String COLUMN_LOCATION = "location";
 
     static final String ANIMAL_TITLE = "animals";
-    private static final String COLUMN_ANIMAL_NAME = "name";
+    private static final String COLUMN_ANIMAL_NAME = "animalName";
     private static final String COLUMN_RARITY = "rarity";
     private static final String COLUMN_VISITS = "visits";
     private static final String COLUMN_PERSISTENCE = "persistence";
@@ -55,6 +55,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     static final String INVENTORY_TITLE = "inventory";
     private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
+
+    static final String MAP_GIFT_TITLE = "mapGift";
+    private static final String COLUMN_MESSAGE = "message";
 
 
     private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_NAME,
@@ -67,6 +70,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_VISITS, COLUMN_PERSISTENCE };
 
     private String[] inventory_columns = { COLUMN_ID, COLUMN_TYPE, COLUMN_AMOUNT };
+
+    private String[] map_gifts_columns = { COLUMN_ID, COLUMN_GIFT, COLUMN_FRIEND_NAME,
+            COLUMN_FRIEND_NICKNAME, COLUMN_MESSAGE, COLUMN_ANIMAL_NAME,COLUMN_LOCATION,COLUMN_TIME};
 
     private static final String CREATE_FRIENDS_TABLE = "create table " + FRIEND_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -93,6 +99,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_TYPE + " TEXT, " +
             COLUMN_AMOUNT + " INTEGER NOT NULL );";
 
+    private static final String CREATE_MAP_GIFTS_TABLE = "create table " + MAP_GIFT_TITLE +
+            "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_GIFT + " TEXT, " +
+            COLUMN_FRIEND_NAME + " TEXT, " +
+            COLUMN_FRIEND_NICKNAME + " TEXT, " +
+            COLUMN_MESSAGE + " TEXT, " +
+            COLUMN_ANIMAL_NAME + " TEXT, " +
+            COLUMN_LOCATION + " BLOB, " +
+            COLUMN_TIME + " DATETIME NOT NULL );";
+
 
     // Constructor
     MySQLiteHelper(Context context) {
@@ -106,6 +122,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_GIFTS_TABLE);
         db.execSQL(CREATE_ANIMAL_TABLE);
         db.execSQL(CREATE_INVENTORY_TABLE);
+        db.execSQL(CREATE_MAP_GIFTS_TABLE);
     }
 
     // Insert a friend
@@ -207,6 +224,32 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_AMOUNT, item.getItemAmount());
 
         database.insert(INVENTORY_TITLE, null, values);
+        database.close();
+    }
+
+    // insert map gift
+    void insertMapGift(MapGift gift) {
+        // first try to insert into Firebase
+        // if user is offline, Firebase will automatically cache the data and upload it once
+        //   user is back online
+        Util.databaseReference.child("gifts").push().setValue(gift);
+
+        // insert into SQL
+        SQLiteDatabase database = getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_GIFT, gift.getGiftName());
+        values.put(COLUMN_FRIEND_NAME, gift.getUserName());
+        values.put(COLUMN_FRIEND_NICKNAME, gift.getUserNickname());
+        values.put(COLUMN_MESSAGE, gift.getMessage());
+        values.put(COLUMN_ANIMAL_NAME, gift.getAnimalName());
+        try {
+            values.put(COLUMN_LOCATION, toByte(gift.getLocation()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        values.put(COLUMN_TIME, gift.getTimePlaced());
+
+        database.insert(MAP_GIFT_TITLE, null, values);
         database.close();
     }
 
