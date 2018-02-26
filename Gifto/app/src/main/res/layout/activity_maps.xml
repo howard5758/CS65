@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         tools:context="cs65.edu.dartmouth.cs.gifto.MapsActivity">
     </fragment>
-
+<!--
     <android.support.constraint.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent">
@@ -27,5 +27,5 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:layout_height="match_parent" />
 
-    </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout> -->
 </FrameLayout>

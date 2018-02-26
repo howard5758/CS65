@@ -1,7 +1,9 @@
 package cs65.edu.dartmouth.cs.gifto;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,18 +12,28 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -29,12 +41,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager lm;                 // finds last known location
     private String provider;                    // also used to find last known location
     private Marker currentMarker;               // user's current location
-
-    int size = 0;   // number of points in locList. used for restoreInstanceState
+    private ArrayList<Marker> gifts;
+    private DatabaseReference giftsData;
 
     Context appContext;         // for keeping the service running
     SharedPreferences pref;     // stores units_int and other things
     Intent intent;
+
+    // if true, move camera as player moves around world
+    // if false, player is moving the map around (so they can look at their surroundings
+    public boolean following;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +63,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // save things during orientation change
         mapFragment.setRetainInstance(true);
 
+        gifts = new ArrayList<>();
+        giftsData = Util.databaseReference.child("gifts");
+
         // see which units to use
         pref = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 
         initLocationManager();  // get last known location
 
         mapFragment.setRetainInstance(true);
+
+        following = true;
     }
 
     /**
@@ -66,36 +87,151 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if ( Build.VERSION.SDK_INT > 23 && android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT > 23 && android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             return;
         }
         Location location = lm.getLastKnownLocation(provider);    // so you have default location
         LatLng firstMarker;
-        if(location != null){
+        if (location != null) {
             firstMarker = new LatLng(location.getLatitude(), location.getLongitude());
-        } else{
+        } else {
             // Add a marker in Hanover if no last location found
             firstMarker = new LatLng(43.7022, -72.2896);
         }
-        currentMarker = mMap.addMarker(new MarkerOptions().position(firstMarker).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        /*
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                Log.d("Jess", "onMapLongClick");
+                following = false;
+            }
+        }); */
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(final LatLng latLng) {
+                following = false;
+                Log.d("Jess", "onMapClick");
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setMessage("Place a gift here?")
+                        .setPositiveButton("YES!", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // TODO:
+                                /*
+                                Intent intent = new Intent(MapsActivity.this, MainActivity.class);
+                                Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
+                                startActivity(intent);
+                                */
+                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+                Log.d("Jess", "onMarkerClick");
+                float results[] = new float[1];
+                Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(), results);
+                if(results[0] < 50) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    builder.setMessage("Pick up gift?")
+                            .setPositiveButton("YES!", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // TODO:
+                                /*
+                                Intent intent = new Intent(MapsActivity.this, MainActivity.class);
+                                Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
+                                startActivity(intent);
+                                */
+                                    marker.remove();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "You are too far away to pick up this gift", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+
+        mMap.setMyLocationEnabled(true);
+
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setRotateGesturesEnabled(true);
+        mMap.getUiSettings().setScrollGesturesEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                following = true;
+                return false;
+            }
+        });
+
+        // default if no photo of animal found
+        BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        // display a gift or animal on the map instead
+        //if(...) icon = BitmapDescriptorFactory.fromResource(R.drawable./*name of png */);
+        //currentMarker = mMap.addMarker(new MarkerOptions().position(firstMarker).icon(icon));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(firstMarker));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstMarker,17));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstMarker, 17));
+
+        // display gifts on the map
+        giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Gift gift = snapshot.getValue(Gift.class);
+                    // TODO: determine which gift icon to use. Using generic marker for now
+                    //new MarkerOptions().position(gift.getLocation()).icon(gift.getIcon()));
+                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    Marker marker = mMap.addMarker(markerOptions);
+                    gifts.add(marker);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     public void onDestroy() {
         lm.removeUpdates(this);
-        currentMarker.remove();
+        //currentMarker.remove();
         super.onDestroy();
     }
 
     // user has chosen to save this entry to the database
-    public void saveToDatabase(final Context c){
-        new Thread(new Runnable(){
+    public void saveToDatabase(final Context c) {
+        new Thread(new Runnable() {
             //private Handler handler = StartActivity.mHandler;
-            public void run(){
+            public void run() {
 //                // talk to database
 //                DataSource dataSource = new DataSource(c);
 //                dataSource.openDb();
@@ -116,24 +252,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // save all the info if the screen is rotated
-    protected void onSaveInstanceState(Bundle outState){
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
     // get info that was saved before screen rotation
-    protected void onRestoreInstanceState(Bundle savedInstanceState){
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     public void onLocationChanged(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        // update the user's current location
-        if (currentMarker != null) currentMarker.remove();
-        currentMarker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        // move camera to this position
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         Log.d("Jess", latLng.latitude + "," + latLng.longitude);
+        Log.d("Jess", "following = " + following);
+        // update the user's current location
+        //if (currentMarker != null) currentMarker.remove();
+        //currentMarker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        // move camera to this position
+        //if(following) mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //Log.d("Jess", latLng.latitude + "," + latLng.longitude);
     }
 
     @Override
