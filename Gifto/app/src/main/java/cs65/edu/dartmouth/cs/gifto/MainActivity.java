@@ -3,6 +3,7 @@ package cs65.edu.dartmouth.cs.gifto;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity
                                         .valueOf(animalData.child("numVisits").getValue())));
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
-                                animal.setSeen((boolean) animalData.child("seen").getValue());
+                                animal.setPersistence((Long) animalData.child("persistence").getValue());
                                 datasource.insertAnimal(animal);
                             }
                         }
@@ -141,8 +142,8 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Animal> animals;
         if (Util.userID != null) {
             Friend friend = new Friend("john", "johnny");
-            animal = new Animal("cat", true, 6, 15);
-            Animal an = new Animal("dog", false, 1, 300);
+            animal = new Animal("cat", 6, 15, 15000);
+            Animal an = new Animal("dog", 1, 300, 10000);
             Gift gift = new Gift("fish", false, friend.getName(), 1000, new LatLng(23, 21));
             MySQLiteHelper helper = new MySQLiteHelper(this);
             helper.insertFriend(friend);
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity
             InventoryItem item = new InventoryItem("money", 200);
             helper.insertInventory(item);
             animals = helper.fetchAllAnimals();
+            Log.d("animal size", String.valueOf(animals.size()));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

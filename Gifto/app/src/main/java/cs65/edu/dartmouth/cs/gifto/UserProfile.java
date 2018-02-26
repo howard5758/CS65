@@ -102,9 +102,6 @@ public class UserProfile extends AppCompatActivity {
         EditText editText = findViewById(R.id.Name_field);
         editText.setText(settings.getString("Name", ""));
 
-        editText = findViewById(R.id.Email_field);
-        editText.setText(settings.getString("Email", ""));
-
         editText = findViewById(R.id.Phone_field);
         editText.setText(settings.getString("Phone", ""));
 
@@ -112,12 +109,6 @@ public class UserProfile extends AppCompatActivity {
         if (i >= 0) {
             ((RadioButton) ((RadioGroup)findViewById(R.id.gender_radio)).getChildAt(i)).setChecked(true);
         }
-
-        editText = findViewById(R.id.Class_field);
-        editText.setText(settings.getString("Class", ""));
-
-        editText = findViewById(R.id.Major_field);
-        editText.setText(settings.getString("Major", ""));
 
         ImageView imageView = findViewById(R.id.profile_picture);
         imageView.setImageURI(Uri.parse(settings.getString("uri", "")));
@@ -132,20 +123,11 @@ public class UserProfile extends AppCompatActivity {
         EditText editText = findViewById(R.id.Name_field);
         outState.putString(NAME_INSTANCE_STATE_KEY, editText.getText().toString());
 
-        editText = findViewById(R.id.Email_field);
-        outState.putString(EMAIL_INSTANCE_STATE_KEY, editText.getText().toString());
-
         editText = findViewById(R.id.Phone_field);
         outState.putString(PHONE_INSTANCE_STATE_KEY, editText.getText().toString());
 
         RadioGroup rg = findViewById(R.id.gender_radio);
         outState.putInt(GENDER_INSTANCE_STATE_KEY, rg.indexOfChild(findViewById(rg.getCheckedRadioButtonId())));
-
-        editText = findViewById(R.id.Class_field);
-        outState.putString(CLASS_INSTANCE_STATE_KEY, editText.getText().toString());
-
-        editText = findViewById(R.id.Major_field);
-        outState.putString(MAJOR_INSTANCE_STATE_KEY, editText.getText().toString());
     }
 
     /* restore state data after screen rotation */
@@ -158,22 +140,13 @@ public class UserProfile extends AppCompatActivity {
         EditText editText = findViewById(R.id.Name_field);
         editText.setText(savedInstanceState.getString(NAME_INSTANCE_STATE_KEY, ""));
 
-        editText = findViewById(R.id.Email_field);
-        editText.setText(savedInstanceState.getString(EMAIL_INSTANCE_STATE_KEY, ""));
-
         editText = findViewById(R.id.Phone_field);
         editText.setText(savedInstanceState.getString(PHONE_INSTANCE_STATE_KEY, ""));
 
         int i = savedInstanceState.getInt(GENDER_INSTANCE_STATE_KEY, -1);
         if (i >= 0) {
-            ((RadioButton) ((RadioGroup)findViewById(R.id.gender_radio)).getChildAt(i)).setChecked(true);
+            ((RadioButton) ((RadioGroup) findViewById(R.id.gender_radio)).getChildAt(i)).setChecked(true);
         }
-
-        editText = findViewById(R.id.Class_field);
-        editText.setText(savedInstanceState.getString(CLASS_INSTANCE_STATE_KEY, ""));
-
-        editText = findViewById(R.id.Major_field);
-        editText.setText(savedInstanceState.getString(MAJOR_INSTANCE_STATE_KEY, ""));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -319,24 +292,12 @@ public class UserProfile extends AppCompatActivity {
         editText.setText(editText.getText().toString());
         editor.putString("Name", editText.getText().toString());
 
-        editText = findViewById(R.id.Email_field);
-        editText.setText(editText.getText().toString());
-        editor.putString("Email", editText.getText().toString());
-
         editText = findViewById(R.id.Phone_field);
         editText.setText(editText.getText().toString());
         editor.putString("Phone", editText.getText().toString());
 
         RadioGroup rg = findViewById(R.id.gender_radio);
         editor.putInt("gender", rg.indexOfChild(findViewById(rg.getCheckedRadioButtonId())));
-
-        editText = findViewById(R.id.Class_field);
-        editText.setText(editText.getText().toString());
-        editor.putString("Class", editText.getText().toString());
-
-        editText = findViewById(R.id.Major_field);
-        editText.setText(editText.getText().toString());
-        editor.putString("Major", editText.getText().toString());
 
         editor.apply();
         saveSnap();

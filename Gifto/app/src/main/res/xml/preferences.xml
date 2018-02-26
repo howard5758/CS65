@@ -8,7 +8,7 @@
             android:title="Name, Email, Class, etc"
             android:summary="User Profile">
 
-            <intent android:action="oliver.edu.dartmouth.cs.myruns2.Settings"/>
+            <intent android:action="cs65.edu.dartmouth.cs.gifto.UserProfile"/>
 
         </PreferenceScreen>
 
@@ -21,14 +21,6 @@
 
     <PreferenceCategory
         android:title="Additional Settings">
-
-        <ListPreference
-            android:key="list_preference"
-            android:title="Unit Preferences"
-            android:summary="Select the units"
-            android:dialogTitle="Unit Preference"
-            android:entries="@array/entries_list_preference"
-            android:entryValues="@array/entryvalues_list_preference" />
 
         <EditTextPreference
             android:key="edittext_preference"
@@ -43,10 +35,10 @@
 
         <PreferenceScreen
             android:title="Webpage"
-            android:summary="Dartmouth CS Department">
+            android:summary="Gift Wix">
 
             <intent android:action="android.intent.action.VIEW"
-                android:data="http://web.cs.dartmouth.edu/" />
+                android:data="https://1557441406.wixsite.com/gifto" />
 
         </PreferenceScreen>
     </PreferenceCategory>

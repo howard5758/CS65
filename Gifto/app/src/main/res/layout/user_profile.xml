@@ -9,8 +9,7 @@
 
     <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="675dp">
+        android:layout_height="wrap_content">
 
 
         <!--Profile photo title-->
@@ -94,33 +93,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name_title" />
 
-        <!--Email title-->
-        <TextView
-            android:id="@+id/email_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/email_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Name_field" />
-
-        <!--Email input-->
-        <EditText
-            android:id="@+id/Email_field"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:hint="@string/email_hint"
-            android:inputType="textWebEmailAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/email_title" />
-
         <!--Phone title-->
         <TextView
             android:id="@+id/phone_title"
@@ -131,7 +103,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/phone_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Email_field" />
+            app:layout_constraintTop_toBottomOf="@+id/Name_field" />
 
         <!--Phone input-->
         <EditText
@@ -219,33 +191,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/class_title" />
 
-        <!--Major title-->
-        <TextView
-            android:id="@+id/major_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/major_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Class_field" />
-
-        <!--Major input-->
-        <EditText
-            android:id="@+id/Major_field"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:ems="10"
-            android:hint="@string/major_hint"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/major_title" />
-
         <!--Save-->
         <Button
             android:id="@+id/save_button"
@@ -269,12 +214,13 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="100dp"
             android:onClick="cancel"
             android:text="@string/button_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/save_button"
-            app:layout_constraintTop_toBottomOf="@+id/Major_field"
+            app:layout_constraintTop_toBottomOf="@+id/Class_field"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="8dp" />
 
