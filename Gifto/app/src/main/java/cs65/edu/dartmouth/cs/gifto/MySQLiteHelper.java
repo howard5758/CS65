@@ -303,7 +303,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return gifts;
     }
 
-    //TODO return all rows in the tables
+    ArrayList<MapGift> fetchAllMapGifts() {
+        ArrayList<MapGift> gifts = new ArrayList<>(0);
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(MAP_GIFT_TITLE, map_gifts_columns,
+                null, null, null, null, null);
+
+        cursor.moveToFirst(); //Move the cursor to the first row.
+        while (!cursor.isAfterLast()) {
+            MapGift gift = cursorToMapGift(cursor);
+            gifts.add(gift);
+            cursor.moveToNext();
+        }
+
+        // Make sure to close the cursor
+        cursor.close();
+        database.close();
+
+        return gifts;
+    }
 
     // delete every row in every table (probably so you can remake a new one)
     void deleteAll() {
@@ -344,6 +362,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return gift;
     }
 
+    private MapGift cursorToMapGift(Cursor cursor) {
+        MapGift gift = new MapGift();
+        gift.setGiftName(cursor.getString(1));
+        gift.setUserName(cursor.getString(2));
+        gift.setUserNickname(cursor.getString(3));
+        gift.setMessage(cursor.getString(4));
+        gift.setAnimalName(cursor.getString(5));
+        try {
+            gift.setLocation(toLatLng(cursor.getBlob(6)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        gift.setTimePlaced(cursor.getLong(7));
+
+        return gift;
+    }
+
     // convert a LatLng to a byte array to be stored as a BLOB
     @TargetApi(19)
     private byte[] toByte(LatLng latLng) throws IOException {
@@ -358,7 +393,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // convert a BLOB back to a LatLng
     @TargetApi(19)
-    private static LatLng toLatLng(byte[] bytes) throws IOException, ClassNotFoundException {
+    private static LatLng toLatLng(byte[] bytes) throws IOException {
         ArrayList<Double> list = new ArrayList<>(0);
         try(ByteArrayInputStream bais = new ByteArrayInputStream(bytes)){
             try(DataInputStream in = new DataInputStream(bais)){
