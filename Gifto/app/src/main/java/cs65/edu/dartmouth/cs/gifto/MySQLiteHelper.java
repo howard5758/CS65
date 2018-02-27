@@ -381,7 +381,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // convert a LatLng to a byte array to be stored as a BLOB
     @TargetApi(19)
-    private byte[] toByte(LatLng latLng) throws IOException {
+    private byte[] toByte(cs65.edu.dartmouth.cs.gifto.LatLng latLng) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (DataOutputStream out = new DataOutputStream(baos)) {
                 out.writeDouble(latLng.latitude);
@@ -393,7 +393,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // convert a BLOB back to a LatLng
     @TargetApi(19)
-    private static LatLng toLatLng(byte[] bytes) throws IOException {
+    private static cs65.edu.dartmouth.cs.gifto.LatLng toLatLng(byte[] bytes) throws IOException {
         ArrayList<Double> list = new ArrayList<>(0);
         try(ByteArrayInputStream bais = new ByteArrayInputStream(bytes)){
             try(DataInputStream in = new DataInputStream(bais)){
@@ -403,7 +403,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             }
         }
 
-        return new LatLng(list.get(0), list.get(1));
+        return new cs65.edu.dartmouth.cs.gifto.LatLng(list.get(0), list.get(1));
     }
 
     @Override

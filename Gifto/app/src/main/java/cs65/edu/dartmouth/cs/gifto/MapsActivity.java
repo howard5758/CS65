@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -119,12 +120,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                // TODO:
+                                // TODO: change test gift into real gift
                                 /*
                                 Intent intent = new Intent(MapsActivity.this, MainActivity.class);
                                 Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
                                 startActivity(intent);
                                 */
+                                // add gift to global gift database
+                                Gift gift = new Gift("testGift", true, "null", 1000, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude));
+                                giftsData.push().setValue(gift);
+                                // add gift to your map
                                 mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                             }
                         })
@@ -159,6 +164,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
                                 startActivity(intent);
                                 */
+                                // remove gift from database everyone can see,
+                                // and into your personal database
+                                    giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                double lat = snapshot.child("location").child("latitude").getValue(Double.class);
+                                                double lng = snapshot.child("location").child("longitude").getValue(Double.class);
+                                                if(lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
+                                                    cs65.edu.dartmouth.cs.gifto.LatLng latLng = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
+                                                    // move to user's database
+                                                    Util.databaseReference.child("users").child(Util.userID).child("gifts").child(snapshot.getKey()).setValue(snapshot.getValue());
+                                                    // delete from public database
+                                                    giftsData.child(snapshot.getKey()).removeValue();
+                                                }
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
+                                    // remove gift from your map
                                     marker.remove();
                                 }
                             })
@@ -200,7 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(firstMarker));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstMarker, 17));
 
-        // display gifts on the map
+        // display pre-existing gifts on the map
         giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -208,7 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Gift gift = snapshot.getValue(Gift.class);
                     // TODO: determine which gift icon to use. Using generic marker for now
                     //new MarkerOptions().position(gift.getLocation()).icon(gift.getIcon()));
-                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     Marker marker = mMap.addMarker(markerOptions);
                     gifts.add(marker);
                 }

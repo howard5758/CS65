@@ -16,11 +16,11 @@ public class Gift {
     private boolean sent;
     private String friendName;
     private long time;
-    private LatLng location;
+    private cs65.edu.dartmouth.cs.gifto.LatLng location;
 
     Gift(){}
 
-    Gift(String giftName, boolean sent, String friendName, long time, LatLng location) {
+    Gift(String giftName, boolean sent, String friendName, long time, cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.giftName = giftName;
         this.sent = sent;
         this.friendName = friendName;
@@ -60,11 +60,11 @@ public class Gift {
         this.time = time;
     }
 
-    public LatLng getLocation() {
+    public cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
         return location;
     }
 
-    public void setLocation(LatLng location) {
+    public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
     }
 }

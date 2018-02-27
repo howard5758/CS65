@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity
                                 gift.setTime((Long) giftData.child("time").getValue());
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
                                 gift.setSent((boolean) giftData.child("sent").getValue());
-                                gift.setLocation(new LatLng(
-                                        ((Long) giftData.child("location").child("latitude")
-                                                .getValue()).doubleValue(),
-                                        ((Long) giftData.child("location").child("longitude")
-                                                .getValue()).doubleValue()));
+                                gift.setLocation(new cs65.edu.dartmouth.cs.gifto.LatLng(
+                                        (giftData.child("location").child("latitude")
+                                                .getValue(Double.class)),
+                                        (giftData.child("location").child("longitude")
+                                                .getValue(Double.class))));
 
                                 // try to insert it
                                 try {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
             Friend friend = new Friend("john", "johnny");
             animal = new Animal("cat", 6, 15, 15000);
             Animal an = new Animal("dog", 1, 300, 10000);
-            Gift gift = new Gift("fish", false, friend.getName(), 1000, new LatLng(23, 21));
+            Gift gift = new Gift("fish", false, friend.getName(), 1000, new cs65.edu.dartmouth.cs.gifto.LatLng(23, 21));
             MapGift mapGift = new MapGift(gift.getGiftName(), friend.getName(),
                     friend.getNickname(), "Hello",
                     animal.getAnimalName(), gift.getLocation(), gift.getTime());

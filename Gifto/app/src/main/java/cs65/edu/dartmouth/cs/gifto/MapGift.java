@@ -14,13 +14,13 @@ public class MapGift {
     private String userNickname;
     private String Message;
     private String animalName;
-    private LatLng location;
+    private cs65.edu.dartmouth.cs.gifto.LatLng location;
     private long timePlaced;
 
     public MapGift(){}
 
     public MapGift(String giftName, String userName, String userNickname, String message,
-                   String animalName, LatLng location, long timePlaced) {
+                   String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location, long timePlaced) {
         this.giftName = giftName;
         this.userName = userName;
         this.userNickname = userNickname;
@@ -62,11 +62,11 @@ public class MapGift {
         this.animalName = animalName;
     }
 
-    public LatLng getLocation() {
+    public cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
         return location;
     }
 
-    public void setLocation(LatLng location) {
+    public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
     }
 
