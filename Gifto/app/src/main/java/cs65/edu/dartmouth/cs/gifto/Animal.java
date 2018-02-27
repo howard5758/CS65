@@ -18,17 +18,17 @@ package cs65.edu.dartmouth.cs.gifto;
 
 public class Animal {
     private String animalName;
-    private boolean seen;
     private int numVisits;
     private int rarity;
+    private long persistence;
 
     Animal(){}
 
-    Animal(String animalName, boolean seen, int numVisits, int rarity) {
+    Animal(String animalName, int numVisits, int rarity, long persistence) {
         this.animalName = animalName;
-        this.seen = seen;
         this.numVisits = numVisits;
         this.rarity = rarity;
+        this.persistence = persistence;
     }
 
     public String getAnimalName() {
@@ -37,14 +37,6 @@ public class Animal {
 
     public void setAnimalName(String animalName) {
         this.animalName = animalName;
-    }
-
-    public boolean isSeen() {
-        return seen;
-    }
-
-    public void setSeen(boolean seen) {
-        this.seen = seen;
     }
 
     public int getNumVisits() {
@@ -63,4 +55,11 @@ public class Animal {
         this.rarity = rarity;
     }
 
+    public long getPersistence() {
+        return persistence;
+    }
+
+    public void setPersistence(long persistence) {
+        this.persistence = persistence;
+    }
 }

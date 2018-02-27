@@ -21,6 +21,8 @@ class Util {
     static FirebaseUser firebaseUser;
     static DatabaseReference databaseReference;
     static String userID;
+    static String name;
+    static String email;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
