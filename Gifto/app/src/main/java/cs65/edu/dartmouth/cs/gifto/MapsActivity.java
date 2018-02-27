@@ -49,10 +49,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     SharedPreferences pref;     // stores units_int and other things
     Intent intent;
 
-    // if true, move camera as player moves around world
-    // if false, player is moving the map around (so they can look at their surroundings
-    public boolean following;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +69,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         initLocationManager();  // get last known location
 
         mapFragment.setRetainInstance(true);
-
-        following = true;
     }
 
     /**
@@ -100,19 +94,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Add a marker in Hanover if no last location found
             firstMarker = new LatLng(43.7022, -72.2896);
         }
-        /*
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                Log.d("Jess", "onMapLongClick");
-                following = false;
-            }
-        }); */
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(final LatLng latLng) {
-                following = false;
                 Log.d("Jess", "onMapClick");
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                 builder.setMessage("Place a gift here?")
@@ -153,17 +138,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(results[0] < 50) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                    builder.setMessage("Pick up gift?")
-                            .setPositiveButton("YES!", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton("YES!", new DialogInterface.OnClickListener() {
 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    // TODO:
-                                /*
-                                Intent intent = new Intent(MapsActivity.this, MainActivity.class);
-                                Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
-                                startActivity(intent);
-                                */
                                 // remove gift from database everyone can see,
                                 // and into your personal database
                                     giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -194,7 +172,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
                                 }
-                            });
+                            })
+                            //need a title for setIcon to work
+                            .setTitle("Pick up gift?")
+                            // TODO: place icon of the specific gift here
+                            // get picture of gift using something stored in database
+                            .setIcon(R.drawable.tuna);
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
@@ -213,7 +196,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                following = true;
                 return false;
             }
         });
@@ -292,12 +274,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         Log.d("Jess", latLng.latitude + "," + latLng.longitude);
-        Log.d("Jess", "following = " + following);
         // update the user's current location
         //if (currentMarker != null) currentMarker.remove();
         //currentMarker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         // move camera to this position
-        //if(following) mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //Log.d("Jess", latLng.latitude + "," + latLng.longitude);
     }
 
