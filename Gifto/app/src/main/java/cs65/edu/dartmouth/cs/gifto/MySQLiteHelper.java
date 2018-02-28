@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,11 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * Created by Oliver on 2/24/2018.
@@ -327,6 +322,110 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return gifts;
     }
 
+    ArrayList<InventoryItem> fetchAllInventoryItems() {
+        ArrayList<InventoryItem> items = new ArrayList<>(0);
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(INVENTORY_TITLE, inventory_columns,
+                null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            InventoryItem item = cursorToInventoryItem(cursor);
+            items.add(item);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        database.close();
+
+        return items;
+    }
+
+    ArrayList<Friend> fetchAllFriends() {
+        ArrayList<Friend> friends = new ArrayList<>(0);
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(FRIEND_TITLE, friends_columns,
+                null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Friend friend = cursorToFriend(cursor);
+            friends.add(friend);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        database.close();
+
+        return friends;
+    }
+
+    Animal fetchAnimalByName(String name) {
+        Animal animal = new Animal();
+        SQLiteDatabase database = getReadableDatabase();
+        String clause = COLUMN_ANIMAL_NAME + "='" + name + "'";
+        Cursor cursor = database.query(ANIMAL_TITLE, animals_columns, clause,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+        animal.setAnimalName(name);
+        animal.setRarity(cursor.getInt(3));
+        animal.setNumVisits(cursor.getInt(2));
+        animal.setPersistence(cursor.getInt(4));
+
+        cursor.close();
+        database.close();
+
+        return animal;
+    }
+
+    Gift fetchGiftByName(String name) {
+        SQLiteDatabase database = getReadableDatabase();
+        String clause = COLUMN_GIFT + "='" + name + "'";
+        Cursor cursor = database.query(GIFT_TITLE, gifts_columns, clause,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+        Gift gift =  cursorToGift(cursor);
+
+        cursor.close();
+        database.close();
+
+        return gift;
+    }
+
+    InventoryItem fetchinventoryItemByName(String name) {
+        SQLiteDatabase database = getReadableDatabase();
+        String clause = COLUMN_INVENTORY_NAME + "='" + name + "'";
+        Cursor cursor = database.query(INVENTORY_TITLE, inventory_columns, clause,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+        InventoryItem item =  cursorToInventoryItem(cursor);
+
+        cursor.close();
+        database.close();
+
+        return item;
+    }
+
+    Friend fetchFriendByName(String name) {
+        SQLiteDatabase database = getReadableDatabase();
+        String clause = COLUMN_FRIEND_NAME + "='" + name + "'";
+        Cursor cursor = database.query(FRIEND_TITLE, friends_columns, clause,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+        Friend friend = cursorToFriend(cursor);
+
+        cursor.close();
+        database.close();
+
+        return friend;
+    }
+
+    //TODO mapgiftbyname
+
     // delete every row in every table (probably so you can remake a new one)
     void deleteAll() {
         SQLiteDatabase database = getWritableDatabase();
@@ -334,6 +433,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.delete(MySQLiteHelper.FRIEND_TITLE, null, null);
         database.delete(MySQLiteHelper.ANIMAL_TITLE, null, null);
         database.delete(MySQLiteHelper.INVENTORY_TITLE, null, null);
+        database.delete(MySQLiteHelper.MAP_GIFT_TITLE, null, null);
     }
 
     private Animal cursorToAnimal(Cursor cursor) {
@@ -381,6 +481,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         gift.setTimePlaced(cursor.getLong(7));
 
         return gift;
+    }
+
+    private InventoryItem cursorToInventoryItem(Cursor cursor) {
+        InventoryItem item = new InventoryItem();
+        item.setItemName(cursor.getString(0));
+        item.setItemType(cursor.getInt(1));
+        item.setItemAmount(cursor.getInt(2));
+
+        return item;
+    }
+
+    private Friend cursorToFriend(Cursor cursor) {
+        Friend friend = new Friend();
+        friend.setName(cursor.getString(1));
+        friend.setNickname(cursor.getString(2));
+
+        return friend;
     }
 
     // convert a LatLng to a byte array to be stored as a BLOB

@@ -165,31 +165,24 @@ public class MainActivity extends AppCompatActivity
         }
 
         // test code for inserting data
-//        ArrayList<Animal> animals;
-//        if (Util.userID != null) {
-//            Friend friend = new Friend("john", "johnny");
-//            animal = new Animal("cat", 6, 15, 15000);
-//            Animal an = new Animal("dog", 1, 300, 10000);
-//            Gift gift = new Gift("fish", false, friend.getName(), 1000, new cs65.edu.dartmouth.cs.gifto.LatLng(23, 21));
-//            MapGift mapGift = new MapGift(gift.getGiftName(), friend.getName(),
-//                    friend.getNickname(), "Hello",
-//                    animal.getAnimalName(), gift.getLocation(), gift.getTime());
-//            MySQLiteHelper helper = new MySQLiteHelper(this);
-//            helper.insertFriend(friend);
-//            helper.insertAnimal(animal);
-//            helper.insertAnimal(an);
-//            helper.insertMapGift(mapGift);
-//            try {
-//                helper.insertGift(gift);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            helper.incrementVisits(animal);
-//            InventoryItem item = new InventoryItem("money", 0, 200);
-//            helper.insertInventory(item);
-//            animals = helper.fetchAllAnimals();
-//            Log.d("animal size", String.valueOf(animals.size()));
-//        }
+        ArrayList<Animal> animals;
+        if (Util.userID != null) {
+            MySQLiteHelper db = new MySQLiteHelper(this);
+            Animal a = new Animal("cat", 15, 2, 12000);
+            db.insertAnimal(a);
+            Gift g = new Gift("fish", false, "john", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
+            try {
+                db.insertGift(g);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            InventoryItem i = new InventoryItem("money", 3, 4);
+            db.insertInventory(i);
+            MapGift mg = new MapGift("giftname", "username", "usernickname", "message", "animalname", g.getLocation(), 12000);
+            Animal animal = db.fetchAnimalByName("cat");
+            ArrayList<Animal> animall = db.fetchAllAnimals();
+            Gift gift = db.fetchGiftByName(g.getGiftName());
+        }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
