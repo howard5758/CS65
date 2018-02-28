@@ -165,31 +165,31 @@ public class MainActivity extends AppCompatActivity
         }
 
         // test code for inserting data
-        ArrayList<Animal> animals;
-        if (Util.userID != null) {
-            Friend friend = new Friend("john", "johnny");
-            animal = new Animal("cat", 6, 15, 15000);
-            Animal an = new Animal("dog", 1, 300, 10000);
-            Gift gift = new Gift("fish", false, friend.getName(), 1000, new cs65.edu.dartmouth.cs.gifto.LatLng(23, 21));
-            MapGift mapGift = new MapGift(gift.getGiftName(), friend.getName(),
-                    friend.getNickname(), "Hello",
-                    animal.getAnimalName(), gift.getLocation(), gift.getTime());
-            MySQLiteHelper helper = new MySQLiteHelper(this);
-            helper.insertFriend(friend);
-            helper.insertAnimal(animal);
-            helper.insertAnimal(an);
-            helper.insertMapGift(mapGift);
-            try {
-                helper.insertGift(gift);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            helper.incrementVisits(animal);
-            InventoryItem item = new InventoryItem("money", 0, 200);
-            helper.insertInventory(item);
-            animals = helper.fetchAllAnimals();
-            Log.d("animal size", String.valueOf(animals.size()));
-        }
+//        ArrayList<Animal> animals;
+//        if (Util.userID != null) {
+//            Friend friend = new Friend("john", "johnny");
+//            animal = new Animal("cat", 6, 15, 15000);
+//            Animal an = new Animal("dog", 1, 300, 10000);
+//            Gift gift = new Gift("fish", false, friend.getName(), 1000, new cs65.edu.dartmouth.cs.gifto.LatLng(23, 21));
+//            MapGift mapGift = new MapGift(gift.getGiftName(), friend.getName(),
+//                    friend.getNickname(), "Hello",
+//                    animal.getAnimalName(), gift.getLocation(), gift.getTime());
+//            MySQLiteHelper helper = new MySQLiteHelper(this);
+//            helper.insertFriend(friend);
+//            helper.insertAnimal(animal);
+//            helper.insertAnimal(an);
+//            helper.insertMapGift(mapGift);
+//            try {
+//                helper.insertGift(gift);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            helper.incrementVisits(animal);
+//            InventoryItem item = new InventoryItem("money", 0, 200);
+//            helper.insertInventory(item);
+//            animals = helper.fetchAllAnimals();
+//            Log.d("animal size", String.valueOf(animals.size()));
+//        }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
