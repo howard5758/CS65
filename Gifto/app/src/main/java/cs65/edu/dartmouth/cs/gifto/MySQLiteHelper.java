@@ -53,6 +53,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PERSISTENCE = "persistence";
 
     static final String INVENTORY_TITLE = "inventory";
+    private static final String COLUMN_INVENTORY_NAME = "inventoryName";
     private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
 
@@ -69,7 +70,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY,
             COLUMN_VISITS, COLUMN_PERSISTENCE };
 
-    private String[] inventory_columns = { COLUMN_ID, COLUMN_TYPE, COLUMN_AMOUNT };
+    private String[] inventory_columns = { COLUMN_ID, COLUMN_INVENTORY_NAME,
+            COLUMN_TYPE, COLUMN_AMOUNT };
 
     private String[] map_gifts_columns = { COLUMN_ID, COLUMN_GIFT, COLUMN_FRIEND_NAME,
             COLUMN_FRIEND_NICKNAME, COLUMN_MESSAGE, COLUMN_ANIMAL_NAME,COLUMN_LOCATION,COLUMN_TIME};
@@ -96,7 +98,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_INVENTORY_TABLE = "create table " + INVENTORY_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            COLUMN_TYPE + " TEXT, " +
+            COLUMN_INVENTORY_NAME + " TEXT, " +
+            COLUMN_TYPE + " INTEGER, " +
             COLUMN_AMOUNT + " INTEGER NOT NULL );";
 
     private static final String CREATE_MAP_GIFTS_TABLE = "create table " + MAP_GIFT_TITLE +
@@ -221,6 +224,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, item.getItemName());
+        values.put(COLUMN_INVENTORY_NAME, item.getItemType());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
 
         database.insert(INVENTORY_TITLE, null, values);

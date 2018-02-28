@@ -29,11 +29,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.soundcloud.android.crop.Crop;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -291,6 +293,12 @@ public class UserProfile extends AppCompatActivity {
         EditText editText = findViewById(R.id.Name_field);
         editText.setText(editText.getText().toString());
         editor.putString("Name", editText.getText().toString());
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(editText.getText().toString()).build();
+        if (user != null) {
+            user.updateProfile(profileUpdates);
+        }
 
         editText = findViewById(R.id.Phone_field);
         editText.setText(editText.getText().toString());
@@ -320,6 +328,15 @@ public class UserProfile extends AppCompatActivity {
             fos.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        }
+
+        if (mImageCaptureUri != null) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(mImageCaptureUri).build();
+            if (user != null) {
+                user.updateProfile(profileUpdates);
+            }
         }
     }
 

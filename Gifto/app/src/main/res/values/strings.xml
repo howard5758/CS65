@@ -61,6 +61,8 @@
     <string name="major_text">Major</string>
     <string name="major_hint">Your Major</string>
     <string name="button_save">Save</string>
+    <string name="gifto">Gifto</string>
+    <string name="profile_picture">Profile Picture</string>
 
     <string-array name="camera_options">
         <item>Open Camera</item>

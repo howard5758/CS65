@@ -18,10 +18,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,8 +49,26 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //navigation view
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // fragment manager
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        Fragment newFragment = new Garden();
+        transaction.replace(R.id.content, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
 
         // set globals for Firebase authentication
         Util.firebaseAuth = FirebaseAuth.getInstance();
@@ -122,7 +143,8 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("items")) {
                             for (DataSnapshot itemData : userSnapshot.getChildren()) {
                                 InventoryItem item = new InventoryItem();
-                                item.setItemType((String) itemData.child("itemType").getValue());
+                                item.setItemType(Integer.parseInt(String.valueOf(itemData.child("itemType").getValue())));
+                                item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
 
@@ -163,26 +185,26 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             helper.incrementVisits(animal);
-            InventoryItem item = new InventoryItem("money", 200);
+            InventoryItem item = new InventoryItem("money", 0, 200);
             helper.insertInventory(item);
             animals = helper.fetchAllAnimals();
             Log.d("animal size", String.valueOf(animals.size()));
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        Fragment newFragment = new Garden();
-        transaction.replace(R.id.content, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            for (UserInfo profile : user.getProviderData()) {
+                View headerView = navigationView.getHeaderView(0);
+                if (profile.getDisplayName() != null && !profile.getDisplayName().equals("")) {
+                    TextView tv = headerView.findViewById(R.id.nav_header_text);
+                    tv.setText(profile.getDisplayName());
+                }
+                if (profile.getPhotoUrl() != null) {
+                    ImageView navImage = headerView.findViewById(R.id.nav_image);
+                    navImage.setImageURI(profile.getPhotoUrl());
+                }
+            }
+        }
     }
 
     @Override
