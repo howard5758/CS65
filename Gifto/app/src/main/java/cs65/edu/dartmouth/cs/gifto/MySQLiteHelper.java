@@ -215,12 +215,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         Util.databaseReference.child("users").
-                child(Util.userID).child("items").child(item.getItemType()).setValue(item);
+                child(Util.userID).child("items").child(item.getItemName()).setValue(item);
 
         // insert into SQL
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TYPE, item.getItemType());
+        values.put(COLUMN_TYPE, item.getItemName());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
 
         database.insert(INVENTORY_TITLE, null, values);

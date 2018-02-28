@@ -34,11 +34,16 @@ public class Collection extends ListActivity {
 
     Boolean goodies, gifts, pets;
 
+    public ArrayList<InventoryItem> goodiesCollection;
+    public ArrayList<Animal> petCollection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collection);
+
+        listInit();
 
         goodies = getIntent().getBooleanExtra("goodies", false);
         gifts = getIntent().getBooleanExtra("gifts", false);
@@ -104,6 +109,7 @@ public class Collection extends ListActivity {
                 view = LayoutInflater.from(getContext()).inflate(R.layout.list_collection, parent, false);
             }
 
+
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
@@ -152,6 +158,54 @@ public class Collection extends ListActivity {
             return view;
         }
 
+
+    }
+
+    public void listInit() {
+        Animal a_1 = new Animal();
+        a_1.setAnimalName("alligator");
+        Animal a_2 = new Animal();
+        a_2.setAnimalName("cat");
+        Animal a_3 = new Animal();
+        a_3.setAnimalName("dog");
+        Animal a_4 = new Animal();
+        a_4.setAnimalName("kangaroo");
+        Animal a_5 = new Animal();
+        a_5.setAnimalName("monkey");
+        Animal a_6 = new Animal();
+        a_6.setAnimalName("owl");
+        Animal a_7 = new Animal();
+        a_7.setAnimalName("squirrel");
+
+        petCollection.add(a_1);
+        petCollection.add(a_2);
+        petCollection.add(a_3);
+        petCollection.add(a_4);
+        petCollection.add(a_5);
+        petCollection.add(a_6);
+        petCollection.add(a_7);
+
+        InventoryItem i_1 = new InventoryItem();
+        i_1.setItemName("banana");
+        i_1.setItemType(1);
+        InventoryItem i_2 = new InventoryItem();
+        i_2.setItemName("pool");
+        i_2.setItemType(2);
+        InventoryItem i_3 = new InventoryItem();
+        i_3.setItemName("tennis ball");
+        i_3.setItemType(3);
+        InventoryItem i_4 = new InventoryItem();
+        i_4.setItemName("tree");
+        i_4.setItemType(2);
+        InventoryItem i_5 = new InventoryItem();
+        i_5.setItemName("tuna");
+        i_5.setItemType(1);
+
+        goodiesCollection.add(i_1);
+        goodiesCollection.add(i_2);
+        goodiesCollection.add(i_3);
+        goodiesCollection.add(i_4);
+        goodiesCollection.add(i_5);
 
     }
 

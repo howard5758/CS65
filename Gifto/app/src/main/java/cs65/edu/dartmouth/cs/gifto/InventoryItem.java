@@ -7,21 +7,23 @@ package cs65.edu.dartmouth.cs.gifto;
  */
 
 public class InventoryItem {
-    private String itemType;
+    private String itemName;
     private int itemAmount;
+    private int itemType;
 
     InventoryItem(){}
 
-    InventoryItem(String itemType, int itemAmount) {
+    InventoryItem(String itemName, int itemType, int itemAmount) {
+        this.itemName = itemName;
         this.itemType = itemType;
         this.itemAmount = itemAmount;
     }
 
-    public String getItemType() {
+    public int getItemType() {
         return itemType;
     }
 
-    public void setItemType(String itemType) {
+    public void setItemType(int itemType) {
         this.itemType = itemType;
     }
 
@@ -32,4 +34,8 @@ public class InventoryItem {
     public void setItemAmount(int itemAmount) {
         this.itemAmount = itemAmount;
     }
+
+    public String getItemName() { return itemName; }
+
+    public void setItemName(String itemName) { this.itemName = itemName; }
 }
