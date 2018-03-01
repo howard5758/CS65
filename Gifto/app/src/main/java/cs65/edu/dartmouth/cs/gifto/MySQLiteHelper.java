@@ -424,7 +424,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return friend;
     }
 
-    //TODO mapgiftbyname
+    MapGift fetchMapGiftByName(String name) {
+        SQLiteDatabase database = getReadableDatabase();
+        String clause = COLUMN_GIFT + "='" + name + "'";
+        Cursor cursor = database.query(MAP_GIFT_TITLE, map_gifts_columns, clause,
+                null, null,null,null);
+
+        cursor.moveToFirst();
+        MapGift mapGift = cursorToMapGift(cursor);
+
+        cursor.close();
+        database.close();
+
+        return mapGift;
+    }
 
     // delete every row in every table (probably so you can remake a new one)
     void deleteAll() {
