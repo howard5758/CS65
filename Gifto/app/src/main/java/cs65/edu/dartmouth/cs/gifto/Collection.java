@@ -43,6 +43,9 @@ public class Collection extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collection);
 
+        goodiesCollection =  new ArrayList<InventoryItem>();
+        petCollection = new ArrayList<Animal>();
+
         listInit();
 
         goodies = getIntent().getBooleanExtra("goodies", false);
