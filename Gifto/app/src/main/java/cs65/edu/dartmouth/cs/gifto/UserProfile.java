@@ -29,6 +29,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.soundcloud.android.crop.Crop;
 
@@ -70,7 +71,6 @@ public class UserProfile extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         checkPermissions();
         setText();
-        loadSnap();
         if (savedInstanceState != null) {
             mImageCaptureUri = savedInstanceState.getParcelable(URI_INSTANCE_STATE_KEY);
         }
@@ -99,21 +99,23 @@ public class UserProfile extends AppCompatActivity {
 
     /* Sets the text, radio fields, and profile picture with saved data from SharedPreferences */
     private void setText() {
-        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        EditText editText = findViewById(R.id.Name_field);
-        editText.setText(settings.getString("Name", ""));
+        if (user != null) {
+            for (UserInfo profile : user.getProviderData()) {
+                String name = profile.getDisplayName();
+                EditText editText = findViewById(R.id.Name_field);
+                editText.setText(name);
 
-        editText = findViewById(R.id.Phone_field);
-        editText.setText(settings.getString("Phone", ""));
-
-        int i = settings.getInt("gender", -1);
-        if (i >= 0) {
-            ((RadioButton) ((RadioGroup)findViewById(R.id.gender_radio)).getChildAt(i)).setChecked(true);
-        }
-
-        ImageView imageView = findViewById(R.id.profile_picture);
-        imageView.setImageURI(Uri.parse(settings.getString("uri", "")));
+                Uri photoUri = profile.getPhotoUrl();
+                ImageView imageView = findViewById(R.id.profile_picture);
+                if (photoUri != null) {
+                    imageView.setImageURI(photoUri);
+                } else {
+                    imageView.setImageResource(R.drawable.banana);
+                }
+            }
+         }
     }
 
     /* Save state data on screen rotation */
@@ -124,12 +126,6 @@ public class UserProfile extends AppCompatActivity {
 
         EditText editText = findViewById(R.id.Name_field);
         outState.putString(NAME_INSTANCE_STATE_KEY, editText.getText().toString());
-
-        editText = findViewById(R.id.Phone_field);
-        outState.putString(PHONE_INSTANCE_STATE_KEY, editText.getText().toString());
-
-        RadioGroup rg = findViewById(R.id.gender_radio);
-        outState.putInt(GENDER_INSTANCE_STATE_KEY, rg.indexOfChild(findViewById(rg.getCheckedRadioButtonId())));
     }
 
     /* restore state data after screen rotation */
@@ -141,14 +137,6 @@ public class UserProfile extends AppCompatActivity {
 
         EditText editText = findViewById(R.id.Name_field);
         editText.setText(savedInstanceState.getString(NAME_INSTANCE_STATE_KEY, ""));
-
-        editText = findViewById(R.id.Phone_field);
-        editText.setText(savedInstanceState.getString(PHONE_INSTANCE_STATE_KEY, ""));
-
-        int i = savedInstanceState.getInt(GENDER_INSTANCE_STATE_KEY, -1);
-        if (i >= 0) {
-            ((RadioButton) ((RadioGroup) findViewById(R.id.gender_radio)).getChildAt(i)).setChecked(true);
-        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -288,27 +276,25 @@ public class UserProfile extends AppCompatActivity {
 
     /* Save all settings to SharedPreferences, then close app */
     public void saveSettings(View view) {
-        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
-        SharedPreferences.Editor editor = settings.edit();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         EditText editText = findViewById(R.id.Name_field);
         editText.setText(editText.getText().toString());
-        editor.putString("Name", editText.getText().toString());
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(editText.getText().toString()).build();
+
+        ImageView imageView = findViewById(R.id.profile_picture);
+        UserProfileChangeRequest profileUpdates;
+        if (mImageCaptureUri != null) {
+            profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(mImageCaptureUri)
+                    .setDisplayName(editText.getText().toString()).build();
+        } else {
+            profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(editText.getText().toString()).build();
+        }
+
+
         if (user != null) {
             user.updateProfile(profileUpdates);
         }
-
-        editText = findViewById(R.id.Phone_field);
-        editText.setText(editText.getText().toString());
-        editor.putString("Phone", editText.getText().toString());
-
-        RadioGroup rg = findViewById(R.id.gender_radio);
-        editor.putInt("gender", rg.indexOfChild(findViewById(rg.getCheckedRadioButtonId())));
-
-        editor.apply();
-        saveSnap();
 
         Context context = getApplicationContext();
         Toast.makeText(context, "Login details have been saved", Toast.LENGTH_SHORT).show();
@@ -316,40 +302,9 @@ public class UserProfile extends AppCompatActivity {
         finish();
     }
 
-    /* Helper functions to save and load pictures */
-    private void saveSnap() {
-        ImageView mImageView = findViewById(R.id.profile_picture);
-        mImageView.buildDrawingCache();
-        Bitmap bmap = mImageView.getDrawingCache();
-        try {
-            FileOutputStream fos = openFileOutput(getString(R.string.profile_photo_file_name), MODE_PRIVATE);
-            bmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        if (mImageCaptureUri != null) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setPhotoUri(mImageCaptureUri).build();
-            if (user != null) {
-                user.updateProfile(profileUpdates);
-            }
-        }
-    }
-
-    private void loadSnap() {
-        ImageView mImageView = findViewById(R.id.profile_picture);
-
-        try {
-            FileInputStream fis = openFileInput(getString(R.string.profile_photo_file_name));
-            Bitmap bmap = BitmapFactory.decodeStream(fis);
-            mImageView.setImageBitmap(bmap);
-            fis.close();
-        } catch (IOException e) {
-            mImageView.setImageResource(R.drawable.default_profile);
-        }
+    public void goToWeb(View view) {
+        Uri uriUril = Uri.parse("https://1557441406.wixsite.com/gifto");
+        Intent launch = new Intent(Intent.ACTION_VIEW, uriUril);
+        startActivity(launch);
     }
 }

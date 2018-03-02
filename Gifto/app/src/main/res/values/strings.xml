@@ -45,9 +45,9 @@
     <string name="activity_type">Activity Type</string>
     <string name="start">Start</string>
     <string name="sync">Sync</string>
-    <string name="edit_message">Your Name</string>
+    <string name="edit_message">What do you want to be called?</string>
     <string name="button_send">Send</string>
-    <string name="name_text">Name</string>
+    <string name="name_text">Nickname</string>
     <string name="photo_text">Profile Photo:</string>
     <string name="button_change">Change</string>
     <string name="email_text">Email</string>
