@@ -33,30 +33,30 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "gifto.db";
     private static final int DATABASE_VERSION = 1;
 
-    static final String FRIEND_TITLE = "friends";
+    private static final String FRIEND_TITLE = "friends";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_FRIEND_NAME = "friendName";
     private static final String COLUMN_FRIEND_NICKNAME = "nickname";
 
-    static final String GIFT_TITLE = "gifts";
+    private static final String GIFT_TITLE = "gifts";
     private static final String COLUMN_GIFT = "giftName";
     private static final String COLUMN_SENT = "sent";
     private static final String COLUMN_TOFROM = "toFrom";
     private static final String COLUMN_TIME = "time";
     private static final String COLUMN_LOCATION = "location";
 
-    static final String ANIMAL_TITLE = "animals";
+    private static final String ANIMAL_TITLE = "animals";
     private static final String COLUMN_ANIMAL_NAME = "animalName";
     private static final String COLUMN_RARITY = "rarity";
     private static final String COLUMN_VISITS = "visits";
     private static final String COLUMN_PERSISTENCE = "persistence";
 
-    static final String INVENTORY_TITLE = "inventory";
+    private static final String INVENTORY_TITLE = "inventory";
     private static final String COLUMN_INVENTORY_NAME = "inventoryName";
     private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
 
-    static final String MAP_GIFT_TITLE = "mapGift";
+    private static final String MAP_GIFT_TITLE = "mapGift";
     private static final String COLUMN_FIREBASE_ID = "firebaseId";
     private static final String COLUMN_MESSAGE = "message";
 
@@ -350,8 +350,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Util.databaseReference.child("users").child(Util.userID).child("items").child(name).removeValue();
     }
 
-    void removeMapGift(String id) {
-        Util.databaseReference.child("gifts").child(id).removeValue();
+    /* removes a mapgift from firebase (not stored in SQL anyway)
+     * returns true if successfully removed, false if not connected to internet */
+    boolean removeMapGift(String id) {
+        if (isOnline()) {
+            Util.databaseReference.child("gifts").child(id).removeValue();
+            return true;
+        }
+        return false;
     }
 
     /* Method to fetch all the animals currently stored in SQLite
@@ -402,41 +408,40 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     /* Method to fetch all the mapgifts currently stored in Firebase
      * must be connected to internet to access
      * returns ArrayList with mapgift objects
-     * returns empty ArrayList if table is empty */
+     * returns empty ArrayList if table is empty or not connected to internet */
     ArrayList<MapGift> fetchAllMapGifts() {
         final ArrayList<MapGift> gifts = new ArrayList<>(0);
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    MapGift gift = new MapGift();
+        if (isOnline()) {
+            ValueEventListener listener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        MapGift gift = new MapGift();
 
-                    gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
-                    gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
-                    gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
-                    gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
-                    gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
-                    gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                    if (snapshot.child(COLUMN_TIME).getValue() != null) {
+                        gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
+                        gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
+                        gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
+                        gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
+                        gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
+                        gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
                         gift.setTimePlaced((Long) snapshot.child(COLUMN_TIME).getValue());
+                        gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
+                                child(COLUMN_LOCATION).child("latitude").getValue())),
+                                Double.parseDouble(String.valueOf(snapshot.
+                                        child(COLUMN_LOCATION).child("longitude").getValue()))));
+
+                        gifts.add(gift);
                     }
-                    gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
-                            child(COLUMN_LOCATION).child("latitude").getValue())),
-                            Double.parseDouble(String.valueOf(snapshot.
-                                    child(COLUMN_LOCATION).child("longitude").getValue()))));
-
-                    gifts.add(gift);
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        };
+                }
+            };
 
-
-        Util.databaseReference.child("gifts").addValueEventListener(listener);
+            Util.databaseReference.child("gifts").addValueEventListener(listener);
+        }
 
         return gifts;
     }
@@ -579,38 +584,37 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /* Method to return a single map gift specified by the name
      * returns the map gift if it exists
-     * returns an empty map gift if it does not exist
-     * queries Firebase, so make sure you are connected to the internet before calling */
+     * returns an empty map gift if it does not exist or not connected to internet */
     MapGift fetchMapGiftByName(final String name) {
         final MapGift gift = new MapGift();
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (snapshot.getKey().equals(name)) {
-                        gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
-                        gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
-                        gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
-                        gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
-                        gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
-                        gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                        gift.setTimePlaced((Long) snapshot.child(COLUMN_TIME).getValue());
-                        gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
-                                child(COLUMN_LOCATION).child("latitude"))),
-                                Double.parseDouble(String.valueOf(snapshot.
-                                        child(COLUMN_LOCATION).child("latitude")))));
+        if (isOnline()) {
+            ValueEventListener listener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.getKey().equals(name)) {
+                            gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
+                            gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
+                            gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
+                            gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
+                            gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
+                            gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
+                            gift.setTimePlaced((Long) snapshot.child(COLUMN_TIME).getValue());
+                            gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
+                                    child(COLUMN_LOCATION).child("latitude"))),
+                                    Double.parseDouble(String.valueOf(snapshot.
+                                            child(COLUMN_LOCATION).child("latitude")))));
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        };
-
-
-        Util.databaseReference.child("gifts").addValueEventListener(listener);
+                }
+            };
+            Util.databaseReference.child("gifts").addValueEventListener(listener);
+        }
         return gift;
     }
 
