@@ -603,7 +603,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                             gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
                                     child(COLUMN_LOCATION).child("latitude").getValue())),
                                     Double.parseDouble(String.valueOf(snapshot.
-                                            child(COLUMN_LOCATION).child("longitude").getValue();
+                                            child(COLUMN_LOCATION).child("longitude").getValue()))));
                         }
                     }
                 }
