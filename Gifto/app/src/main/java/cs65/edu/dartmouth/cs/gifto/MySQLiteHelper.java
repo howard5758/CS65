@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
-    private static final boolean connected = false;
+    private static boolean failed_insert = false;
 
     private static final String DATABASE_NAME = "gifto.db";
     private static final int DATABASE_VERSION = 1;
@@ -155,8 +155,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Util.databaseReference.child("users").
                     child(Util.userID).child("friends").child(friend.getName()).setValue(friend);
             flagged = 0;
+            if (failed_insert) {
+                insertFlagged();
+            }
         } else {
             Log.d("if", "not connected");
+            failed_insert = true;
         }
 
 
@@ -182,8 +186,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Util.databaseReference.child("users").
                     child(Util.userID).child("gifts").child(gift.getGiftName()).setValue(gift);
             flagged = 0;
+            if (failed_insert) {
+                insertFlagged();
+            }
         } else {
             Log.d("if", "not connected");
+            failed_insert = true;
         }
 
 
@@ -212,8 +220,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Util.databaseReference.child("users").
                     child(Util.userID).child("animals").child(animal.getAnimalName()).setValue(animal);
             flagged = 0;
+            if (failed_insert) {
+                insertFlagged();
+            }
         } else {
             Log.d("if", "not connected");
+            failed_insert = true;
         }
 
 
@@ -265,8 +277,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Util.databaseReference.child("users").
                     child(Util.userID).child("items").child(item.getItemName()).setValue(item);
             flagged = 0;
+            if (failed_insert) {
+                insertFlagged();
+            }
         } else {
             Log.d("if", "not connected");
+            failed_insert = true;
         }
 
 
@@ -293,8 +309,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             Log.d("if", "online");
             Util.databaseReference.child("gifts").push().setValue(gift);
             flagged = 0;
+            if (failed_insert) {
+                insertFlagged();
+            }
         } else {
             Log.d("if", "not connected");
+            failed_insert = true;
         }
 
         // insert into SQL
