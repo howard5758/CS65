@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class MapGift {
+    private String id;
     private String giftName;
     private String userName;
     private String userNickname;
@@ -84,5 +85,13 @@ public class MapGift {
 
     public void setUserNickname(String userNickname) {
         this.userNickname = userNickname;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

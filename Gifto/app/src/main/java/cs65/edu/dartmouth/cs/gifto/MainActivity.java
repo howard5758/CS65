@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -131,11 +132,7 @@ public class MainActivity extends AppCompatActivity
                                                 .getValue(Double.class))));
 
                                 // try to insert it
-                                try {
-                                    datasource.insertGift(gift);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                datasource.insertGift(gift);
                             }
                         }
 
@@ -168,22 +165,65 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Animal> animals;
         if (Util.userID != null) {
             MySQLiteHelper db = new MySQLiteHelper(this);
-            Animal a = new Animal("cat", 15, 2, 12000);
-            db.insertAnimal(a);
-            Gift g = new Gift("fish", false, "john", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
-            try {
-                db.insertGift(g);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            InventoryItem i = new InventoryItem("money", 3, 4);
-            db.insertInventory(i);
-            MapGift mg = new MapGift("giftname", "username", "usernickname", "message", "animalname", g.getLocation(), 12000);
-            Animal animal = db.fetchAnimalByName("cat");
-            ArrayList<Animal> animall = db.fetchAllAnimals();
-            Gift gift = db.fetchGiftByName(g.getGiftName());
-        }
+            Animal a1 = new Animal("cat1", 15, 2, 12000);
+            Animal a2 = new Animal("cat2", 16, 3, 12001);
+            Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
+            Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
+            InventoryItem i1 = new InventoryItem("money1", 3, 4);
+            InventoryItem i2 = new InventoryItem("money2", 4, 5);
+            Friend f1 = new Friend("john1", "johnny1");
+            Friend f2 = new Friend("john2", "johnny2");
+            MapGift mg1 = new MapGift("giftname1", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000);
+            MapGift mg2 = new MapGift("giftname2", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001);
 
+            db.insertAnimal(a1);
+            db.insertAnimal(a2);
+            db.insertGift(g1);
+            db.insertGift(g2);
+            db.insertInventory(i1);
+            db.insertInventory(i2);
+            db.insertMapGift(mg1);
+            db.insertMapGift(mg2);
+            db.insertFriend(f1);
+            db.insertFriend(f2);
+
+            Animal animal1 = db.fetchAnimalByName("cat1");
+            Animal animal2 = db.fetchAnimalByName("cat2");
+            ArrayList<Animal> animall = db.fetchAllAnimals();
+
+            Gift gift1 = db.fetchGiftByName(g1.getGiftName());
+            Gift gift2 = db.fetchGiftByName(g2.getGiftName());
+            ArrayList<Gift> giftl = db.fetchAllGifts();
+
+            InventoryItem item1 = db.fetchinventoryItemByName("money1");
+            InventoryItem item2 = db.fetchinventoryItemByName("money2");
+            ArrayList<InventoryItem> iteml = db.fetchAllInventoryItems();
+
+            Friend friend1 = db.fetchFriendByName("john1");
+            Friend friend2 = db.fetchFriendByName("john2");
+            ArrayList<Friend> friendl = db.fetchAllFriends();
+
+            MapGift mapGift1 = db.fetchMapGiftByName("giftname1");
+            MapGift mapGift2 = db.fetchMapGiftByName("giftname2");
+            ArrayList<MapGift> mapGiftl = db.fetchAllMapGifts();
+
+            Log.d("olivermct", "insert and fetch completed");
+
+            db.removeAnimal(a1.getAnimalName());
+            db.removeGift(g1.getGiftName());
+            db.removeFriend(f1.getName());
+            db.removeInventoryItem(i1.getItemName());
+            db.removeMapGift(mg1.getId());
+
+            Log.d("olivermct", "remove completed");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             for (UserInfo profile : user.getProviderData()) {
@@ -207,6 +247,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            finish();
         }
     }
 
