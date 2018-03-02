@@ -203,8 +203,8 @@ public class MainActivity extends AppCompatActivity
             Friend friend2 = db.fetchFriendByName("john2");
             ArrayList<Friend> friendl = db.fetchAllFriends();
 
-            MapGift mapGift1 = db.fetchMapGiftByName("giftname1");
-            MapGift mapGift2 = db.fetchMapGiftByName("giftname2");
+            MapGift mapGift1 = db.fetchMapGiftByName(mg1.getId());
+            MapGift mapGift2 = db.fetchMapGiftByName(mg2.getId());
             ArrayList<MapGift> mapGiftl = db.fetchAllMapGifts();
 
             Log.d("olivermct", "insert and fetch completed");

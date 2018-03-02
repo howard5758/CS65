@@ -424,7 +424,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
                         gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
                         gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                        gift.setTimePlaced((Long) snapshot.child(COLUMN_TIME).getValue());
+                        gift.setTimePlaced((Long) snapshot.child("timePlaced").getValue());
                         gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
                                 child(COLUMN_LOCATION).child("latitude").getValue())),
                                 Double.parseDouble(String.valueOf(snapshot.
@@ -585,25 +585,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     /* Method to return a single map gift specified by the name
      * returns the map gift if it exists
      * returns an empty map gift if it does not exist or not connected to internet */
-    MapGift fetchMapGiftByName(final String name) {
+    MapGift fetchMapGiftByName(final String id) {
         final MapGift gift = new MapGift();
         if (isOnline()) {
             ValueEventListener listener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if (snapshot.getKey().equals(name)) {
+                        if (snapshot.getKey().equals(id)) {
                             gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
                             gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
                             gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
                             gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
                             gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
                             gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                            gift.setTimePlaced((Long) snapshot.child(COLUMN_TIME).getValue());
+                            gift.setTimePlaced((Long) snapshot.child("timePlaced").getValue());
                             gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
-                                    child(COLUMN_LOCATION).child("latitude"))),
+                                    child(COLUMN_LOCATION).child("latitude").getValue())),
                                     Double.parseDouble(String.valueOf(snapshot.
-                                            child(COLUMN_LOCATION).child("latitude")))));
+                                            child(COLUMN_LOCATION).child("longitude").getValue();
                         }
                     }
                 }
