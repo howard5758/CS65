@@ -185,7 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 if(lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
                                                     String giftName = snapshot.child("giftName").getValue(String.class);
                                                     String friendName = snapshot.child("userName").getValue(String.class);
-                                                    Log.d("Jess", "gift data so far: " + giftName + ", " + friendName);
                                                     long time = snapshot.child("timePlaced").getValue(Long.TYPE);
                                                     cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
                                                     Gift gift = new Gift(giftName, true, friendName, time, location);
