@@ -187,9 +187,6 @@ public class MainActivity extends AppCompatActivity
             db.insertFriend(f1);
             db.insertFriend(f2);
 
-            InventoryItem moneyy = new InventoryItem(("money"), 10, 100);
-            db.insertInventory(moneyy);
-
             Animal animal1 = db.fetchAnimalByName("cat1");
             Animal animal2 = db.fetchAnimalByName("cat2");
             ArrayList<Animal> animall = db.fetchAllAnimals();

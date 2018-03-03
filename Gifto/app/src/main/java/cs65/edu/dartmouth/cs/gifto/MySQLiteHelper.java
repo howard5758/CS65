@@ -272,7 +272,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
         // insert into SQL
-        SQLiteDatabase database = getReadableDatabase();
+        SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, item.getItemType());
         values.put(COLUMN_INVENTORY_NAME, item.getItemName());
