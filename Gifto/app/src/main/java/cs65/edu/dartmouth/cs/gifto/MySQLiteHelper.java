@@ -271,10 +271,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
         // insert into SQL
-        SQLiteDatabase database = getReadableDatabase();
+        SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TYPE, item.getItemName());
-        values.put(COLUMN_INVENTORY_NAME, item.getItemType());
+        values.put(COLUMN_TYPE, item.getItemType());
+        values.put(COLUMN_INVENTORY_NAME, item.getItemName());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
 
