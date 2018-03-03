@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -252,6 +251,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
