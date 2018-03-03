@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("items")) {
                             for (DataSnapshot itemData : userSnapshot.getChildren()) {
                                 InventoryItem item = new InventoryItem();
-                                item.setItemType(Integer.parseInt(String.valueOf(itemData.child("itemType").getValue())));
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
@@ -161,12 +160,12 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Animal> animals;
         if (Util.userID != null) {
             MySQLiteHelper db = new MySQLiteHelper(this);
-            Animal a1 = new Animal("cat1", 15, 2, 12000);
-            Animal a2 = new Animal("cat2", 16, 3, 12001);
+            Animal a1 = new Animal("cat1", 15, 2, 12000, 1);
+            Animal a2 = new Animal("cat2", 16, 3, 12001, 0);
             Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
             Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
-            InventoryItem i1 = new InventoryItem("money1", 3, 4);
-            InventoryItem i2 = new InventoryItem("money2", 4, 5);
+            InventoryItem i1 = new InventoryItem("money1", 4);
+            InventoryItem i2 = new InventoryItem("money2", 5);
             Friend f1 = new Friend("john1", "johnny1");
             Friend f2 = new Friend("john2", "johnny2");
             MapGift mg1 = new MapGift("giftname1", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000);

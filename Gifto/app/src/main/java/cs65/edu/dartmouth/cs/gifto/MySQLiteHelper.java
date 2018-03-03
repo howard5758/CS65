@@ -50,10 +50,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_RARITY = "rarity";
     private static final String COLUMN_VISITS = "visits";
     private static final String COLUMN_PERSISTENCE = "persistence";
+    private static final String COLUMN_PRESENT = "present";
 
     private static final String INVENTORY_TITLE = "inventory";
     private static final String COLUMN_INVENTORY_NAME = "inventoryName";
-    private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
 
     private static final String MAP_GIFT_TITLE = "mapGift";
@@ -70,10 +70,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_TIME, COLUMN_LOCATION, COLUMN_FIREBASE_FLAG };
 
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY,
-            COLUMN_VISITS, COLUMN_PERSISTENCE, COLUMN_FIREBASE_FLAG };
+            COLUMN_VISITS, COLUMN_PERSISTENCE, COLUMN_FIREBASE_FLAG, COLUMN_PRESENT };
 
     private String[] inventory_columns = { COLUMN_ID, COLUMN_INVENTORY_NAME,
-            COLUMN_TYPE, COLUMN_AMOUNT, COLUMN_FIREBASE_FLAG };
+            COLUMN_AMOUNT, COLUMN_FIREBASE_FLAG };
 
     private String[] map_gifts_columns = { COLUMN_ID, COLUMN_FIREBASE_ID, COLUMN_GIFT, COLUMN_FRIEND_NAME,
             COLUMN_FRIEND_NICKNAME, COLUMN_MESSAGE, COLUMN_ANIMAL_NAME,
@@ -105,12 +105,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_RARITY + " INTEGER NOT NULL, " +
             COLUMN_VISITS + " INTEGER NOT NULL, " +
             COLUMN_PERSISTENCE + " INTEGER, " +
-            COLUMN_FIREBASE_FLAG + " INTEGER );";
+            COLUMN_FIREBASE_FLAG + " INTEGER, " +
+            COLUMN_PRESENT + " INTEGER );";
 
     private static final String CREATE_INVENTORY_TABLE = "create table " + INVENTORY_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_INVENTORY_NAME + " TEXT, " +
-            COLUMN_TYPE + " INTEGER, " +
             COLUMN_AMOUNT + " INTEGER NOT NULL, " +
             COLUMN_FIREBASE_FLAG + " INTEGER );";
 
@@ -249,6 +249,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_VISITS, animal.getNumVisits());
         values.put(COLUMN_PERSISTENCE, animal.getPersistence());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
+        values.put(COLUMN_PRESENT, animal.getPresent());
 
         database.insert(ANIMAL_TITLE, null, values);
         database.close();
@@ -278,7 +279,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // insert into SQL
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TYPE, item.getItemType());
         values.put(COLUMN_INVENTORY_NAME, item.getItemName());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
@@ -690,6 +690,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         animal.setRarity(cursor.getInt(2));
         animal.setNumVisits(cursor.getInt(3));
         animal.setPersistence(cursor.getLong(4));
+        animal.setPresent(cursor.getInt(6));
 
         return animal;
     }
@@ -722,8 +723,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private InventoryItem cursorToInventoryItem(Cursor cursor) {
         InventoryItem item = new InventoryItem();
         item.setItemName(cursor.getString(1));
-        item.setItemType(cursor.getInt(2));
-        item.setItemAmount(cursor.getInt(3));
+        item.setItemAmount(cursor.getInt(2));
 
         return item;
     }

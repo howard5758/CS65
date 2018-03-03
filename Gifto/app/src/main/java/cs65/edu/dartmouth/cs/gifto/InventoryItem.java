@@ -9,22 +9,12 @@ package cs65.edu.dartmouth.cs.gifto;
 public class InventoryItem {
     private String itemName;
     private int itemAmount;
-    private int itemType;
 
     InventoryItem(){}
 
-    InventoryItem(String itemName, int itemType, int itemAmount) {
+    InventoryItem(String itemName, int itemAmount) {
         this.itemName = itemName;
-        this.itemType = itemType;
         this.itemAmount = itemAmount;
-    }
-
-    public int getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(int itemType) {
-        this.itemType = itemType;
     }
 
     public int getItemAmount() {
