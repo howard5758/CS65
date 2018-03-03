@@ -105,6 +105,10 @@ public class Garden extends Fragment {
         button_place1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 1);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose food from your fridge",
                         Toast.LENGTH_SHORT).show();
             }
@@ -113,6 +117,10 @@ public class Garden extends Fragment {
         button_place2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 2);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose from your storage",
                         Toast.LENGTH_SHORT).show();
             }
@@ -121,14 +129,22 @@ public class Garden extends Fragment {
         button_place3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 3);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose from your storage",
                         Toast.LENGTH_SHORT).show();
             }
         });
 
-        button_place3.setOnClickListener(new View.OnClickListener() {
+        button_place4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 4);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose from your toys",
                         Toast.LENGTH_SHORT).show();
             }

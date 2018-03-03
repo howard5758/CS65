@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Oliver on 2/19/2018.
@@ -32,10 +33,12 @@ public class Collection extends ListActivity {
     item_adapter item_adapter;
     pet_adapter pet_adapter;
 
-    Boolean goodies, gifts, pets;
+    Boolean goodies, gifts, pets, selection;
 
     public ArrayList<InventoryItem> goodiesCollection;
     public ArrayList<Animal> petCollection;
+
+    MySQLiteHelper helper;
 
 
     @Override
@@ -43,7 +46,7 @@ public class Collection extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collection);
 
-
+        helper = new MySQLiteHelper(this);
         petCollection = new ArrayList<>();
         goodiesCollection = new ArrayList<>();
         listInit();
@@ -52,6 +55,7 @@ public class Collection extends ListActivity {
         goodies = getIntent().getBooleanExtra("goodies", false);
         gifts = getIntent().getBooleanExtra("gifts", false);
         pets = getIntent().getBooleanExtra("pets", false);
+        selection = getIntent().getBooleanExtra("selection", false);
 
         title = (TextView) findViewById(R.id.list_title);
 
@@ -67,13 +71,25 @@ public class Collection extends ListActivity {
             title.setText("GIFTS");
 
 
-        } else {
+        } else if (pets){
 
             title.setText("PETS");
             pet_adapter = new pet_adapter(this, R.layout.list_collection, petCollection);
             setListAdapter(pet_adapter);
+        } else if(selection){
+            title.setText("Choose an item to place!");
+            int loc_type = getIntent().getIntExtra("loc_type", 0);
+            ArrayList<InventoryItem> selection_list = helper.fetchAllInventoryItems();
+            Iterator<InventoryItem> iter = selection_list.iterator();
 
-
+            while(iter.hasNext()) {
+                InventoryItem i = iter.next();
+                if(i.getItemType() != loc_type){
+                    iter.remove();
+                }
+            }
+            item_adapter = new item_adapter(this, R.layout.list_collection, selection_list);
+            setListAdapter(item_adapter);
         }
 
     }
@@ -82,19 +98,23 @@ public class Collection extends ListActivity {
     public void onListItemClick(ListView parent, View v, int position, long id) {
         super.onListItemClick(parent, v, position, id);
 
-        Intent intent = new Intent(this, purchase_screen.class);
-        if(goodies){
-            intent.putExtra("name", goodiesCollection.get(position).getItemName());
-            intent.putExtra("type", "goodies");
-            intent.putExtra("actual_object", goodiesCollection.get(position));
+        if(selection){
+            finish();
         }
-        else if(pets){
-            intent.putExtra("name", petCollection.get(position).getAnimalName());
-            intent.putExtra("type", "pets");
-            intent.putExtra("actual_object", petCollection.get(position));
-        }
+        else {
+            Intent intent = new Intent(this, purchase_screen.class);
+            if (goodies) {
+                intent.putExtra("name", goodiesCollection.get(position).getItemName());
+                intent.putExtra("type", "goodies");
+                intent.putExtra("actual_object", goodiesCollection.get(position));
+            } else if (pets) {
+                intent.putExtra("name", petCollection.get(position).getAnimalName());
+                intent.putExtra("type", "pets");
+                intent.putExtra("actual_object", petCollection.get(position));
+            }
 
-        startActivity(intent);
+            startActivity(intent);
+        }
     }
 
     public class item_adapter extends ArrayAdapter<InventoryItem>{
@@ -118,7 +138,7 @@ public class Collection extends ListActivity {
 
             image.setImageResource(Util.getImageIdFromName(getItem(position).getItemName()));
 
-            namee.setText(getItem(position).getItemName());
+            namee.setText(getItem(position).getItemName() + " amount: " + getItem(position).getItemAmount());
 
             return view;
         }
