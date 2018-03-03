@@ -23,6 +23,7 @@ class Util {
     static String userID;
     static String name;
     static String email;
+    static String token;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

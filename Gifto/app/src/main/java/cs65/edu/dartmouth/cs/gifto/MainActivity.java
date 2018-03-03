@@ -217,6 +217,9 @@ public class MainActivity extends AppCompatActivity
 
             Log.d("olivermct", "remove completed");
         }
+
+        startService(new Intent(this, MyFirebaseMessagingService.class));
+        startService(new Intent(this, MyFirebaseInstanceIDService.class));
     }
 
     @Override
