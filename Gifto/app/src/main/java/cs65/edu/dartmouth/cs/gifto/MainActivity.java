@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
                 Util.email = user.getEmail();
+                for (UserInfo profile : user.getProviderData()) {
+                    Util.name = profile.getDisplayName();
+                }
             }
             listener = new ValueEventListener() {
                 @Override

@@ -1,6 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> gifts;
     private ArrayList<Gift> giftObjects;
     private DatabaseReference giftsData;
+    private LatLng savedLatLng;
 
     Context appContext;         // for keeping the service running
     SharedPreferences pref;     // stores units_int and other things
@@ -114,12 +118,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
                                 startActivity(intent);
                                 */
+                                Intent intent = new Intent(getBaseContext(), GiftChooser.class);
+                                savedLatLng = latLng;
+                                startActivityForResult(intent, 1);
                                 // add gift to global gift database
-                                Calendar c = Calendar.getInstance();
-                                MapGift gift = new MapGift("fish", Util.userID, Util.name, "test message", "cat", new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
-                                giftsData.push().setValue(gift);
-                                // add gift to your map
-                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
+//                                Calendar c = Calendar.getInstance();
+//                                MapGift gift = new MapGift("fish", Util.userID, Util.name, "test message", "cat", new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
+//                                giftsData.push().setValue(gift);
+//                                // add gift to your map
+//                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -141,7 +148,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(), results);
                 if(results[0] < 50) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    final String[] nickname = {"null"};
+                    final String message[] = {"no message"};
+                    giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                double lat = snapshot.child("location").child("latitude").getValue(Double.class);
+                                double lng = snapshot.child("location").child("longitude").getValue(Double.class);
+                                if (lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
+                                    nickname[0] = snapshot.child("userNickname").getValue(String.class);
+                                    message[0] = snapshot.child("message").getValue(String.class);
+                                    builder.setMessage(nickname[0] + ": " + message[0]);
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
                     builder.setPositiveButton("YES!", new DialogInterface.OnClickListener() {
 
                                 @Override
@@ -183,12 +211,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             })
                             //need a title for setIcon to work
-                            .setMessage("Pick up gift?")
-                            // TODO: place icon of the specific gift here
-                            // get picture of gift using something stored in database
+                            .setTitle("Pick up gift?")
                             .setIcon(R.drawable.gift_icon);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
                 } else {
                     Toast.makeText(getApplicationContext(), "You are too far away to pick up this gift", Toast.LENGTH_SHORT).show();
                 }
@@ -268,6 +292,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         criteria.setAccuracy(Criteria.ACCURACY_FINE);    // can also get bearings, alt, etc.
         provider = lm.getBestProvider(criteria, true);    // only get GPS if it's on
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String giftName = data.getStringExtra("giftName");
+                String animalName =data.getStringExtra("animalName");
+                String message = data.getStringExtra("message");
+                LatLng latLng = savedLatLng;
+
+                Calendar c = Calendar.getInstance();
+                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
+                giftsData.push().setValue(gift);
+                // add gift to your map
+                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 
     // save all the info if the screen is rotated
     protected void onSaveInstanceState(Bundle outState) {
