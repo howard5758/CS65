@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -35,6 +36,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -43,6 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String provider;                    // also used to find last known location
     private Marker currentMarker;               // user's current location
     private ArrayList<Marker> gifts;
+    private ArrayList<Gift> giftObjects;
     private DatabaseReference giftsData;
 
     Context appContext;         // for keeping the service running
@@ -112,10 +115,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 startActivity(intent);
                                 */
                                 // add gift to global gift database
-                                Gift gift = new Gift("testGift", true, "null", 1000, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude));
+                                Calendar c = Calendar.getInstance();
+                                MapGift gift = new MapGift("fish", Util.userID, Util.name, "test message", "cat", new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
                                 giftsData.push().setValue(gift);
                                 // add gift to your map
-                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -151,7 +155,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 double lat = snapshot.child("location").child("latitude").getValue(Double.class);
                                                 double lng = snapshot.child("location").child("longitude").getValue(Double.class);
                                                 if(lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
-                                                    cs65.edu.dartmouth.cs.gifto.LatLng latLng = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
+                                                    String giftName = snapshot.child("giftName").getValue(String.class);
+                                                    String friendName = snapshot.child("userName").getValue(String.class);
+                                                    Log.d("Jess", "gift data so far: " + giftName + ", " + friendName);
+                                                    long time = snapshot.child("timePlaced").getValue(Long.TYPE);
+                                                    cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
+                                                    Gift gift = new Gift(giftName, true, friendName, time, location);
                                                     // move to user's database
                                                     Util.databaseReference.child("users").child(Util.userID).child("gifts").child(snapshot.getKey()).setValue(snapshot.getValue());
                                                     // delete from public database
@@ -174,10 +183,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             })
                             //need a title for setIcon to work
-                            .setTitle("Pick up gift?")
+                            .setMessage("Pick up gift?")
                             // TODO: place icon of the specific gift here
                             // get picture of gift using something stored in database
-                            .setIcon(R.drawable.tuna);
+                            .setIcon(R.drawable.gift_icon);
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
@@ -216,8 +225,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Gift gift = snapshot.getValue(Gift.class);
                     // TODO: determine which gift icon to use. Using generic marker for now
-                    //new MarkerOptions().position(gift.getLocation()).icon(gift.getIcon()));
-                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon));
+                    //MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     Marker marker = mMap.addMarker(markerOptions);
                     gifts.add(marker);
                 }

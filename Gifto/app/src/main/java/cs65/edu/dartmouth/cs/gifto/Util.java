@@ -39,4 +39,35 @@ class Util {
         context.startActivity(intent);
     }
 
+    public static int getImageIdFromName(String name){
+        switch (name){
+            case "banana":
+                return R.drawable.banana;
+            case "tuna":
+                return R.drawable.tuna;
+            case "pool":
+                return R.drawable.pool;
+            case "tree":
+                return R.drawable.tree;
+            case "tennis ball":
+                return (R.drawable.tennis_ball);
+            case "alligator":
+                return (R.drawable.alligator);
+            case "cat":
+                return (R.drawable.cat);
+            case "dog":
+                return (R.drawable.dog_side);
+            case "kangaroo":
+                return (R.drawable.kangaroo);
+            case "monkey":
+                return (R.drawable.monkey);
+            case "owl":
+                return (R.drawable.owl);
+            case "squirrel":
+                return (R.drawable.squirrel);
+            default:
+                return (R.drawable.tiffany_box);
+        }
+    }
+
 }
