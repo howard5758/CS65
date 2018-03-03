@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity
                         if (userSnapshot.getKey().equals("animals")) {
                             for (DataSnapshot animalData : userSnapshot.getChildren()) {
                                 Animal animal = new Animal();
+                                animal.setPresent(Integer.parseInt(String.valueOf(animalData.child("present").getValue())));
                                 animal.setAnimalName((String) animalData.child("animalName").getValue());
                                 animal.setNumVisits(Integer.parseInt(String
                                         .valueOf(animalData.child("numVisits").getValue())));
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("gifts")) {
                             for (DataSnapshot giftData : userSnapshot.getChildren()) {
                                 Gift gift = new Gift();
+                                gift.setId(String.valueOf(giftData.getKey()));
                                 gift.setGiftName((String)giftData.child("giftName").getValue());
                                 gift.setTime((Long) giftData.child("time").getValue());
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
@@ -157,69 +159,69 @@ public class MainActivity extends AppCompatActivity
         }
 
         // test code for inserting data
-        ArrayList<Animal> animals;
-        if (Util.userID != null) {
-            MySQLiteHelper db = new MySQLiteHelper(this);
-            Animal a1 = new Animal("cat1", 15, 2, 12000, 1);
-            Animal a2 = new Animal("cat2", 16, 3, 12001, 0);
-            Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
-            Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
-            InventoryItem i1 = new InventoryItem("money1", 4);
-            InventoryItem i2 = new InventoryItem("money2", 5);
-            Friend f1 = new Friend("john1", "johnny1");
-            Friend f2 = new Friend("john2", "johnny2");
-            MapGift mg1 = new MapGift("giftname1", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000);
-            MapGift mg2 = new MapGift("giftname2", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001);
-
-            db.insertAnimal(a1);
-            db.insertAnimal(a2);
-            db.insertGift(g1);
-            db.insertGift(g2);
-            db.insertInventory(i1);
-            db.insertInventory(i2);
-            db.insertMapGift(mg1);
-            db.insertMapGift(mg2);
-            db.insertFriend(f1);
-            db.insertFriend(f2);
-
-            Animal animal1 = db.fetchAnimalByName("cat1");
-            Animal animal2 = db.fetchAnimalByName("cat2");
-            ArrayList<Animal> animall = db.fetchAllAnimals();
-
-            Gift gift1 = db.fetchGiftByName(g1.getGiftName());
-            Gift gift2 = db.fetchGiftByName(g2.getGiftName());
-            ArrayList<Gift> giftl = db.fetchAllGifts();
-
-            InventoryItem item1 = db.fetchinventoryItemByName("money1");
-            InventoryItem item2 = db.fetchinventoryItemByName("money2");
-            ArrayList<InventoryItem> iteml = db.fetchAllInventoryItems();
-
-            Friend friend1 = db.fetchFriendByName("john1");
-            Friend friend2 = db.fetchFriendByName("john2");
-            ArrayList<Friend> friendl = db.fetchAllFriends();
-
-            MapGift mapGift1 = db.fetchMapGiftByName(mg1.getId());
-            MapGift mapGift2 = db.fetchMapGiftByName(mg2.getId());
-            ArrayList<MapGift> mapGiftl = db.fetchAllMapGifts();
-
-            Log.d("olivermct", "insert and fetch completed");
-
-            db.removeAnimal(a1.getAnimalName());
-            db.removeGift(g1.getGiftName());
-            db.removeFriend(f1.getName());
-            db.removeInventoryItem(i1.getItemName());
-            db.removeMapGift(mg1.getId());
-
-            animall = db.fetchAllAnimals();
-            giftl = db.fetchAllGifts();
-            iteml = db.fetchAllInventoryItems();
-            friendl = db.fetchAllFriends();
-            mapGiftl = db.fetchAllMapGifts();
-
-            animal1 = db.fetchAnimalByName("cat1");
-
-            Log.d("olivermct", "remove completed");
-        }
+//        ArrayList<Animal> animals;
+//        if (Util.userID != null) {
+//            MySQLiteHelper db = new MySQLiteHelper(this);
+//            Animal a1 = new Animal("cat1", 15, 2, 12000, 1);
+//            Animal a2 = new Animal("cat2", 16, 3, 12001, 0);
+//            Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
+//            Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
+//            InventoryItem i1 = new InventoryItem("money1", 4);
+//            InventoryItem i2 = new InventoryItem("money2", 5);
+//            Friend f1 = new Friend("john1", "johnny1");
+//            Friend f2 = new Friend("john2", "johnny2");
+//            MapGift mg1 = new MapGift("giftname1", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000);
+//            MapGift mg2 = new MapGift("giftname2", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001);
+//
+//            db.insertAnimal(a1);
+//            db.insertAnimal(a2);
+//            db.insertGift(g1);
+//            db.insertGift(g2);
+//            db.insertInventory(i1);
+//            db.insertInventory(i2);
+//            db.insertMapGift(mg1);
+//            db.insertMapGift(mg2);
+//            db.insertFriend(f1);
+//            db.insertFriend(f2);
+//
+//            Animal animal1 = db.fetchAnimalByName("cat1");
+//            Animal animal2 = db.fetchAnimalByName("cat2");
+//            ArrayList<Animal> animall = db.fetchAllAnimals();
+//
+//            Gift gift1 = db.fetchGiftByName(g1.getGiftName());
+//            Gift gift2 = db.fetchGiftByName(g2.getGiftName());
+//            ArrayList<Gift> giftl = db.fetchAllGifts();
+//
+//            InventoryItem item1 = db.fetchinventoryItemByName("money1");
+//            InventoryItem item2 = db.fetchinventoryItemByName("money2");
+//            ArrayList<InventoryItem> iteml = db.fetchAllInventoryItems();
+//
+//            Friend friend1 = db.fetchFriendByName("john1");
+//            Friend friend2 = db.fetchFriendByName("john2");
+//            ArrayList<Friend> friendl = db.fetchAllFriends();
+//
+//            MapGift mapGift1 = db.fetchMapGiftByName(mg1.getId());
+//            MapGift mapGift2 = db.fetchMapGiftByName(mg2.getId());
+//            ArrayList<MapGift> mapGiftl = db.fetchAllMapGifts();
+//
+//            Log.d("olivermct", "insert and fetch completed");
+//
+//            db.removeAnimal(a1.getAnimalName());
+//            db.removeGift(g1.getGiftName());
+//            db.removeFriend(f1.getName());
+//            db.removeInventoryItem(i1.getItemName());
+//            db.removeMapGift(mg1.getId());
+//
+//            animall = db.fetchAllAnimals();
+//            giftl = db.fetchAllGifts();
+//            iteml = db.fetchAllInventoryItems();
+//            friendl = db.fetchAllFriends();
+//            mapGiftl = db.fetchAllMapGifts();
+//
+//            animal1 = db.fetchAnimalByName("cat1");
+//
+//            Log.d("olivermct", "remove completed");
+//        }
     }
 
     @Override
