@@ -3,14 +3,11 @@ package cs65.edu.dartmouth.cs.gifto;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,8 +15,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -38,7 +33,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -50,26 +44,21 @@ import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, NavigationView.OnNavigationItemSelectedListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;                     // google map
     private LocationManager lm;                 // finds last known location
     private String provider;                    // also used to find last known location
-    private Marker currentMarker;               // user's current location
     private ArrayList<Marker> gifts;
-    private ArrayList<Gift> giftObjects;
     private DatabaseReference giftsData;
     private LatLng savedLatLng;
 
-    Context appContext;         // for keeping the service running
     SharedPreferences pref;     // stores units_int and other things
-    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             firstMarker = new LatLng(43.7022, -72.2896);
         }
 
+        // allow users to place gift anywhere
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(final LatLng latLng) {
@@ -141,27 +131,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                // TODO: change test gift into real gift
-                                /*
-                                Intent intent = new Intent(MapsActivity.this, MainActivity.class);
-                                Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
-                                startActivity(intent);
-                                */
                                 Intent intent = new Intent(getBaseContext(), GiftChooser.class);
+                                // remember where to put the gift
                                 savedLatLng = latLng;
+                                // open gift creation activity
                                 startActivityForResult(intent, 1);
-                                // add gift to global gift database
-//                                Calendar c = Calendar.getInstance();
-//                                MapGift gift = new MapGift("fish", Util.userID, Util.name, "test message", "cat", new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
-//                                giftsData.push().setValue(gift);
-//                                // add gift to your map
-//                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
+                                // cancel
                             }
                         });
                 AlertDialog dialog = builder.create();
@@ -169,17 +149,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        // allow user to pick up gifts
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
                 Log.d("Jess", "onMarkerClick");
                 float results[] = new float[1];
+                // compare gift's location to user's location
+                // user has to be within certain distance of gift to pick it up
                 Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(), results);
                 if(results[0] < 50) {
+                    // user is close enough to pick up gift
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                     final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    // store as array because we need the listener to be able to access/change it
                     final String[] nickname = {"null"};
                     final String message[] = {"no message"};
+                    // determine which gift they're picking up
                     giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -187,6 +173,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 double lat = snapshot.child("location").child("latitude").getValue(Double.class);
                                 double lng = snapshot.child("location").child("longitude").getValue(Double.class);
                                 if (lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
+                                    // display sender and message that come with the gift
                                     nickname[0] = snapshot.child("userNickname").getValue(String.class);
                                     message[0] = snapshot.child("message").getValue(String.class);
                                     builder.setMessage(nickname[0] + ": " + message[0]);
@@ -199,6 +186,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onCancelled(DatabaseError databaseError) {
                         }
                     });
+                    // user decided to pick up gift
                     builder.setPositiveButton("YES!", new DialogInterface.OnClickListener() {
 
                                 @Override
@@ -232,15 +220,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     marker.remove();
                                 }
                             })
+                            // user decides to not pick up this gift
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    // do nothing other than closing the alert dialog
                                 }
                             })
-                            //need a title for setIcon to work
                             .setTitle("Pick up gift?")
                             .setIcon(R.drawable.gift_icon);
+                // user is not close enough to pick up gift
                 } else {
                     Toast.makeText(getApplicationContext(), "You are too far away to pick up this gift", Toast.LENGTH_SHORT).show();
                 }
@@ -248,8 +237,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        // useful google built-in functions to determine user location and interact with map
         mMap.setMyLocationEnabled(true);
-
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
@@ -261,12 +250,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        // default if no photo of animal found
-        BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        // display a gift or animal on the map instead
-        //if(...) icon = BitmapDescriptorFactory.fromResource(R.drawable./*name of png */);
-        //currentMarker = mMap.addMarker(new MarkerOptions().position(firstMarker).icon(icon));
-
+        // zoom in on user's current location
         mMap.moveCamera(CameraUpdateFactory.newLatLng(firstMarker));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstMarker, 17));
 
@@ -276,9 +260,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Gift gift = snapshot.getValue(Gift.class);
-                    // TODO: determine which gift icon to use. Using generic marker for now
+                    // TODO: different gift packages? Need some way to determine which image to use
                     MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon));
-                    //MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     Marker marker = mMap.addMarker(markerOptions);
                     gifts.add(marker);
                 }
@@ -287,28 +270,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-    }
-
-    public void onDestroy() {
-        lm.removeUpdates(this);
-        //currentMarker.remove();
-        super.onDestroy();
-    }
-
-    // user has chosen to save this entry to the database
-    public void saveToDatabase(final Context c) {
-        new Thread(new Runnable() {
-            //private Handler handler = StartActivity.mHandler;
-            public void run() {
-//                // talk to database
-//                DataSource dataSource = new DataSource(c);
-//                dataSource.openDb();
-//                long id = dataSource.insertEntry(entry);
-//                dataSource.closeDb();
-            }
-        }).start();
     }
 
     // use this to get last known location of user (to improve UX)
@@ -321,6 +282,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         provider = lm.getBestProvider(criteria, true);    // only get GPS if it's on
     }
 
+    // user is placing a gift
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -338,11 +300,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+                // don't add anything to the map
             }
         }
     }//onActivityResult
 
+    // user has selected item from navbar
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -350,6 +313,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.nav_garden) {
+            // user has to have come from the garden. So, finish this activity to return to garden
             finish();
         } else if (id == R.id.nav_map) {
 
@@ -364,6 +328,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onResume() {
         super.onResume();
 
+        // display user's nickname and profile pic in navbar
         NavigationView navigationView = findViewById(R.id.nav_view);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -379,9 +344,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         }
+        // map must be the item selected if you are in this navbar
+        // see "MainActivity" comments for more details
         navigationView.getMenu().getItem(1).setChecked(true);
     }
 
+    // allow user to access settings and logout from map
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -408,6 +376,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+    // if back pressed and drawer open, close drawer
+    // otherwise, close map
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -427,32 +397,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // get info that was saved before screen rotation
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        Log.d("Jess", latLng.latitude + "," + latLng.longitude);
-        // update the user's current location
-        //if (currentMarker != null) currentMarker.remove();
-        //currentMarker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        // move camera to this position
-        //Log.d("Jess", latLng.latitude + "," + latLng.longitude);
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
     }
 }
 

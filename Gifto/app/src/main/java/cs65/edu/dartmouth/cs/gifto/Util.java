@@ -40,6 +40,8 @@ class Util {
         context.startActivity(intent);
     }
 
+    // name = the String used for things like Gift.giftName, Animal.animalName, etc.
+    // returns the image that this gift/animal/toy/whatever is associated with
     public static int getImageIdFromName(String name){
         switch (name){
             case "banana":
