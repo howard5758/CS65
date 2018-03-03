@@ -424,7 +424,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
                         gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
                         gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                        gift.setTimePlaced((Long) snapshot.child("timePlaced").getValue());
+                        if (snapshot.child("timePlaced").getValue() != null) {
+                            gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot.child("timePlaced").getValue())));
+                        }
                         gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
                                 child(COLUMN_LOCATION).child("latitude").getValue())),
                                 Double.parseDouble(String.valueOf(snapshot.
@@ -599,7 +601,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                             gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
                             gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
                             gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                            gift.setTimePlaced((Long) snapshot.child("timePlaced").getValue());
+                            if (snapshot.child("timePlaced").getValue() != null) {
+                                gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot.child("timePlaced").getValue())));
+                            }
                             gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
                                     child(COLUMN_LOCATION).child("latitude").getValue())),
                                     Double.parseDouble(String.valueOf(snapshot.
