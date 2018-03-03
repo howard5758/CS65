@@ -66,7 +66,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_NAME,
             COLUMN_FRIEND_NICKNAME, COLUMN_FIREBASE_FLAG };
 
-    private String[] gifts_columns = { COLUMN_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
+    private String[] gifts_columns = { COLUMN_ID, COLUMN_FIREBASE_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
             COLUMN_TIME, COLUMN_LOCATION, COLUMN_FIREBASE_FLAG };
 
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY,
@@ -91,6 +91,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_GIFTS_TABLE = "create table " + GIFT_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_FIREBASE_ID + " TEXT, " +
             COLUMN_GIFT + " TEXT, " +
             COLUMN_SENT + " INTEGER NOT NULL, " +
             COLUMN_TOFROM + " TEXT, " +
@@ -184,10 +185,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         int flagged = 1;
+        String key = "";
         if (isOnline()) {
             Log.d("if", "online");
+            key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
             Util.databaseReference.child("users").
-                    child(Util.userID).child("gifts").child(gift.getGiftName()).setValue(gift);
+                    child(Util.userID).child("gifts").child(key).setValue(gift);
             flagged = 0;
             if (failed_insert) {
                 insertFlagged();
@@ -201,7 +204,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // insert into SQL
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
+
         values.put(COLUMN_GIFT, gift.getGiftName());
+        values.put(COLUMN_FIREBASE_ID, key);
         values.put(COLUMN_SENT, gift.isSent());
         values.put(COLUMN_TOFROM, gift.getFriendName());
         values.put(COLUMN_TIME, gift.getTime());
@@ -652,8 +657,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     database.update(FRIEND_TITLE, values, COLUMN_FRIEND_NAME + "='" + friend.getName() + "'", null);
                 } else if (i == 1) {
                     Gift gift = cursorToGift(cursor);
+                    String key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
                     Util.databaseReference.child("users").
-                            child(Util.userID).child("gifts").child(gift.getGiftName()).setValue(gift);
+                            child(Util.userID).child("gifts").child(key).setValue(gift);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
                     database.update(GIFT_TITLE, values, COLUMN_GIFT + "='" + gift.getGiftName() + "'", null);
@@ -692,39 +698,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * cursor checking done before this method is called */
     private Gift cursorToGift(Cursor cursor) {
         Gift gift = new Gift();
-        gift.setGiftName(cursor.getString(1));
-        if (cursor.getInt(2) == 0) {
+        gift.setId(cursor.getString(1));
+        gift.setGiftName(cursor.getString(2));
+        if (cursor.getInt(3) == 0) {
             gift.setSent(false);
         } else {
             gift.setSent(true);
         }
 
-        gift.setFriendName(cursor.getString(3));
-        gift.setTime(cursor.getLong(4));
+        gift.setFriendName(cursor.getString(4));
+        gift.setTime(cursor.getLong(5));
         try {
-            gift.setLocation(toLatLng(cursor.getBlob(5)));
+            gift.setLocation(toLatLng(cursor.getBlob(6)));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return gift;
-    }
-
-    /* Turns a cursor into a single map gift object
-     * cursor checking done before this method is called */
-    private MapGift cursorToMapGift(Cursor cursor) {
-        MapGift gift = new MapGift();
-        gift.setGiftName(cursor.getString(1));
-        gift.setUserName(cursor.getString(2));
-        gift.setUserNickname(cursor.getString(3));
-        gift.setMessage(cursor.getString(4));
-        gift.setAnimalName(cursor.getString(5));
-        try {
-            gift.setLocation(toLatLng(cursor.getBlob(6)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        gift.setTimePlaced(cursor.getLong(7));
 
         return gift;
     }
