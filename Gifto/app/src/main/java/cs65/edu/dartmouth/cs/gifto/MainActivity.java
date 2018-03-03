@@ -27,17 +27,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -86,6 +79,7 @@ public class MainActivity extends AppCompatActivity
             Util.userID = Util.firebaseUser.getUid();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
+                // update some constants in Util.
                 Util.email = user.getEmail();
                 for (UserInfo profile : user.getProviderData()) {
                     Util.name = profile.getDisplayName();
@@ -251,6 +245,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+        // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
+        // here, and pretty much copy all the map activity code into here
+        // so to keep the code organized, mapActicity has it's own navBar, and this navbar will
+        // always have item 0 selected
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 

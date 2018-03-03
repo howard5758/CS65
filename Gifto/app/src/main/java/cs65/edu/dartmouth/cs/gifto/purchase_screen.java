@@ -20,46 +20,10 @@ public class purchase_screen extends AppCompatActivity {
         String object = getIntent().getStringExtra("object");
         image = (ImageView) findViewById(R.id.item_picture);
 
-//        switch (object) {
-//            case "banana":
-//                image.setImageResource(R.drawable.banana);
-//                break;
-//            case "tuna":
-//                image.setImageResource(R.drawable.tuna);
-//                break;
-//            case "pool":
-//                image.setImageResource(R.drawable.pool);
-//                break;
-//            case "tree":
-//                image.setImageResource(R.drawable.tree);
-//                break;
-//            case "tennis ball":
-//                image.setImageResource(R.drawable.tennis_ball);
-//                break;
-//            case "alligator":
-//                image.setImageResource(R.drawable.alligator);
-//                break;
-//            case "cat":
-//                image.setImageResource(R.drawable.cat);
-//                break;
-//            case "dog":
-//                image.setImageResource(R.drawable.dog_side);
-//                break;
-//            case "kangaroo":
-//                image.setImageResource(R.drawable.kangaroo);
-//                break;
-//            case "monkey":
-//                image.setImageResource(R.drawable.monkey);
-//                break;
-//            case "owl":
-//                image.setImageResource(R.drawable.owl);
-//                break;
-//            case "squirrel":
-//                image.setImageResource(R.drawable.squirrel);
-//                break;
-//
-//        }
-
+        // edit by Jess: I've made a Util function that takes String names
+        // and returns the appropriate R.drawables
+        // I saw the same long case statement in a few places in the code,
+        // and thought this would make things easier
         image.setImageResource(Util.getImageIdFromName(object));
 
         buy = (Button) findViewById(R.id.buy);

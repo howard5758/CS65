@@ -34,6 +34,8 @@ public class GiftChooser extends AppCompatActivity {
 
         final List<String> spinnerArray =  new ArrayList<String>();
 
+        // figure out which animals user can use to deliver gift
+        // uses "animals" info from firebase
         DatabaseReference ref = Util.databaseReference.child("users").child(Util.userID);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -53,6 +55,7 @@ public class GiftChooser extends AppCompatActivity {
             }
         });
 
+        // which types of gifts the user can send
         final List<String> spinnergift_array =  new ArrayList<String>();
         spinnergift_array.add("Gift Type 1");
         spinnergift_array.add("Gift Type 2");
@@ -67,6 +70,7 @@ public class GiftChooser extends AppCompatActivity {
     public void onClick(View view) {
         Intent returnIntent = new Intent();
 
+        // send gift info to mapview, so it can put the new gift on the map and in the database
         if(view == findViewById(R.id.button_send)) {
             returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());

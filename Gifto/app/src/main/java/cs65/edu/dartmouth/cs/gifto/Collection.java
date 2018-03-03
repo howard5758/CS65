@@ -1,14 +1,9 @@
 package cs65.edu.dartmouth.cs.gifto;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -99,8 +92,6 @@ public class Collection extends ListActivity {
 
     public class collection_adapter extends ArrayAdapter<String>{
 
-        LayoutInflater inflater;
-
         public collection_adapter(Context context, int textViewResourceId, ArrayList<String> objects) {
             super(context, textViewResourceId, objects);
         }
@@ -115,45 +106,6 @@ public class Collection extends ListActivity {
 
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
-
-//            switch (getItem(position)){
-//                case "banana":
-//                    image.setImageResource(R.drawable.banana);
-//                    break;
-//                case "tuna":
-//                    image.setImageResource(R.drawable.tuna);
-//                    break;
-//                case "pool":
-//                    image.setImageResource(R.drawable.pool);
-//                    break;
-//                case "tree":
-//                    image.setImageResource(R.drawable.tree);
-//                    break;
-//                case "tennis ball":
-//                    image.setImageResource(R.drawable.tennis_ball);
-//                    break;
-//                case "alligator":
-//                    image.setImageResource(R.drawable.alligator);
-//                    break;
-//                case "cat":
-//                    image.setImageResource(R.drawable.cat);
-//                    break;
-//                case "dog":
-//                    image.setImageResource(R.drawable.dog_side);
-//                    break;
-//                case "kangaroo":
-//                    image.setImageResource(R.drawable.kangaroo);
-//                    break;
-//                case "monkey":
-//                    image.setImageResource(R.drawable.monkey);
-//                    break;
-//                case "owl":
-//                    image.setImageResource(R.drawable.owl);
-//                    break;
-//                case "squirrel":
-//                    image.setImageResource(R.drawable.squirrel);
-//                    break;
-//            }
 
             image.setImageResource(Util.getImageIdFromName(getItem(position)));
 

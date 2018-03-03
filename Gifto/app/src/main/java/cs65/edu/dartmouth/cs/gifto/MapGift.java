@@ -1,7 +1,5 @@
 package cs65.edu.dartmouth.cs.gifto;
 
-import com.google.android.gms.maps.model.LatLng;
-
 /**
  * Created by Oliver on 2/26/2018.
  *
