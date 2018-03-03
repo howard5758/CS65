@@ -218,8 +218,19 @@ public class MainActivity extends AppCompatActivity
             db.removeInventoryItem(i1.getItemName());
             db.removeMapGift(mg1.getId());
 
+            animall = db.fetchAllAnimals();
+            giftl = db.fetchAllGifts();
+            iteml = db.fetchAllInventoryItems();
+            friendl = db.fetchAllFriends();
+            mapGiftl = db.fetchAllMapGifts();
+
+            animal1 = db.fetchAnimalByName("cat1");
+
             Log.d("olivermct", "remove completed");
         }
+
+        startService(new Intent(this, MyFirebaseMessagingService.class));
+        startService(new Intent(this, MyFirebaseInstanceIDService.class));
     }
 
     @Override
