@@ -50,7 +50,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity android:name=".Preferences" />
@@ -66,6 +67,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+        <activity android:name=".GiftChooser"></activity>
 
         <service
             android:name=".MyFirebaseMessagingService">

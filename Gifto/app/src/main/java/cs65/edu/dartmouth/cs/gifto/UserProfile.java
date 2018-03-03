@@ -290,6 +290,7 @@ public class UserProfile extends AppCompatActivity {
             profileUpdates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(editText.getText().toString()).build();
         }
+        Util.name = editText.getText().toString();
 
 
         if (user != null) {

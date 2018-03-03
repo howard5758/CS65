@@ -1,7 +1,10 @@
 package cs65.edu.dartmouth.cs.gifto;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,10 +16,22 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +44,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +56,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;                     // google map
     private LocationManager lm;                 // finds last known location
@@ -47,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> gifts;
     private ArrayList<Gift> giftObjects;
     private DatabaseReference giftsData;
+    private LatLng savedLatLng;
 
     Context appContext;         // for keeping the service running
     SharedPreferences pref;     // stores units_int and other things
@@ -72,6 +91,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         initLocationManager();  // get last known location
 
         mapFragment.setRetainInstance(true);
+
+        // toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Gifto");
+
+        //navigation view
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     /**
@@ -114,12 +147,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 Toast.makeText(getApplicationContext(), "Choose animal to deliver gift", Toast.LENGTH_SHORT).show();
                                 startActivity(intent);
                                 */
+                                Intent intent = new Intent(getBaseContext(), GiftChooser.class);
+                                savedLatLng = latLng;
+                                startActivityForResult(intent, 1);
                                 // add gift to global gift database
-                                Calendar c = Calendar.getInstance();
-                                MapGift gift = new MapGift("fish", Util.userID, Util.name, "test message", "cat", new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
-                                giftsData.push().setValue(gift);
-                                // add gift to your map
-                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
+//                                Calendar c = Calendar.getInstance();
+//                                MapGift gift = new MapGift("fish", Util.userID, Util.name, "test message", "cat", new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
+//                                giftsData.push().setValue(gift);
+//                                // add gift to your map
+//                                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -141,7 +177,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(), results);
                 if(results[0] < 50) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    final String[] nickname = {"null"};
+                    final String message[] = {"no message"};
+                    giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                double lat = snapshot.child("location").child("latitude").getValue(Double.class);
+                                double lng = snapshot.child("location").child("longitude").getValue(Double.class);
+                                if (lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
+                                    nickname[0] = snapshot.child("userNickname").getValue(String.class);
+                                    message[0] = snapshot.child("message").getValue(String.class);
+                                    builder.setMessage(nickname[0] + ": " + message[0]);
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
                     builder.setPositiveButton("YES!", new DialogInterface.OnClickListener() {
 
                                 @Override
@@ -157,7 +214,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 if(lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
                                                     String giftName = snapshot.child("giftName").getValue(String.class);
                                                     String friendName = snapshot.child("userName").getValue(String.class);
-                                                    Log.d("Jess", "gift data so far: " + giftName + ", " + friendName);
                                                     long time = snapshot.child("timePlaced").getValue(Long.TYPE);
                                                     cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
                                                     Gift gift = new Gift(giftName, true, friendName, time, location);
@@ -183,12 +239,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             })
                             //need a title for setIcon to work
-                            .setMessage("Pick up gift?")
-                            // TODO: place icon of the specific gift here
-                            // get picture of gift using something stored in database
+                            .setTitle("Pick up gift?")
                             .setIcon(R.drawable.gift_icon);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
                 } else {
                     Toast.makeText(getApplicationContext(), "You are too far away to pick up this gift", Toast.LENGTH_SHORT).show();
                 }
@@ -267,6 +319,104 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);    // can also get bearings, alt, etc.
         provider = lm.getBestProvider(criteria, true);    // only get GPS if it's on
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String giftName = data.getStringExtra("giftName");
+                String animalName =data.getStringExtra("animalName");
+                String message = data.getStringExtra("message");
+                LatLng latLng = savedLatLng;
+
+                Calendar c = Calendar.getInstance();
+                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis());
+                giftsData.push().setValue(gift);
+                // add gift to your map
+                mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_garden) {
+            finish();
+        } else if (id == R.id.nav_map) {
+
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            for (UserInfo profile : user.getProviderData()) {
+                View headerView = navigationView.getHeaderView(0);
+                if (profile.getDisplayName() != null && !profile.getDisplayName().equals("")) {
+                    TextView tv = headerView.findViewById(R.id.nav_header_text);
+                    tv.setText(profile.getDisplayName());
+                }
+                if (profile.getPhotoUrl() != null) {
+                    ImageView navImage = headerView.findViewById(R.id.nav_image);
+                    navImage.setImageURI(profile.getPhotoUrl());
+                }
+            }
+        }
+        navigationView.getMenu().getItem(1).setChecked(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, UserProfile.class));
+            return true;
+        } else if (id == R.id.action_logout) {
+            Util.firebaseAuth.signOut();
+            Util.showActivity(this, LoginActivity.class);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+            finish();
+        }
     }
 
     // save all the info if the screen is rotated

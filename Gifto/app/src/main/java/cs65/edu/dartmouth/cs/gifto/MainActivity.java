@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -88,6 +87,9 @@ public class MainActivity extends AppCompatActivity
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
                 Util.email = user.getEmail();
+                for (UserInfo profile : user.getProviderData()) {
+                    Util.name = profile.getDisplayName();
+                }
             }
             listener = new ValueEventListener() {
                 @Override
@@ -241,6 +243,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
