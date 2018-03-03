@@ -132,8 +132,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         columns.add(friends_columns);
         columns.add(gifts_columns);
         columns.add(animals_columns);
-        columns.add(inventory_columns);
         columns.add(map_gifts_columns);
+        columns.add(inventory_columns);
+
     }
 
     // Create table schema if not exists
@@ -273,8 +274,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // insert into SQL
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TYPE, item.getItemName());
-        values.put(COLUMN_INVENTORY_NAME, item.getItemType());
+        values.put(COLUMN_TYPE, item.getItemType());
+        values.put(COLUMN_INVENTORY_NAME, item.getItemName());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
 

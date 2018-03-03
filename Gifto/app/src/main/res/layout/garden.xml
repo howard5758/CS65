@@ -119,5 +119,14 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:text="@string/pet_collection" />
+
+    <TextView
+        android:id="@+id/money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_place3"
+        android:layout_toLeftOf="@+id/button_gift_collections"
+        android:layout_toStartOf="@+id/button_gift_collections"
+        android:text="TextView" />
 </RelativeLayout>
 

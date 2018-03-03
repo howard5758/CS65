@@ -20,6 +20,8 @@ import android.widget.Toast;
 public class Garden extends Fragment {
     String background;
     String place1, place2, place3, place4;
+    MySQLiteHelper helper;
+    public static TextView money_text;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -29,6 +31,7 @@ public class Garden extends Fragment {
         place2 = Globals.DEFAULT_PLACE2;
         place3 = Globals.DEFAULT_PLACE3;
         place4 = Globals.EMPTY;
+        helper = new MySQLiteHelper(getActivity());
     }
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -45,6 +48,9 @@ public class Garden extends Fragment {
         Button button_place4 = view.findViewById(R.id.button_place4);
         Button button_expand_left = view.findViewById(R.id.expand_left);
         Button button_expand_right = view.findViewById(R.id.expand_right);
+
+        money_text = (TextView) view.findViewById(R.id.money);
+        money_text.setText("Money: " + helper.fetchinventoryItemByName("money").getItemAmount());
 
         // Food button
         button_food.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +77,7 @@ public class Garden extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Collection.class);
-                intent.putExtra("animals", true);
+                intent.putExtra("pets", true);
                 startActivity(intent);
             }
         });

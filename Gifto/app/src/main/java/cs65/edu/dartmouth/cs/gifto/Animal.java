@@ -1,5 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import java.io.Serializable;
+
 /**
  * Created by Oliver on 2/24/2018.
  *
@@ -16,7 +18,7 @@ package cs65.edu.dartmouth.cs.gifto;
  * haven't decided which I'm going to use; will discuss
  */
 
-public class Animal {
+public class Animal implements Serializable {
     private String animalName;
     private int numVisits;
     private int rarity;
