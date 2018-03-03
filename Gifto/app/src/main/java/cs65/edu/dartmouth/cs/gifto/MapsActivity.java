@@ -162,7 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
                                                     Gift gift = new Gift(giftName, true, friendName, time, location);
                                                     // move to user's database
-                                                    Util.databaseReference.child("users").child(Util.userID).child("gifts").child(snapshot.getKey()).setValue(snapshot.getValue());
+                                                    Util.databaseReference.child("users").child(Util.userID).child("gifts").push().setValue(gift);
                                                     // delete from public database
                                                     giftsData.child(snapshot.getKey()).removeValue();
                                                 }
