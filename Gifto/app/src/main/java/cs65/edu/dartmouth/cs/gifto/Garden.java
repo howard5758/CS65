@@ -2,6 +2,7 @@ package cs65.edu.dartmouth.cs.gifto;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ public class Garden extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.garden, container, false);
 
+
         Button button_food = view.findViewById(R.id.button_food);
         Button button_gifts = view.findViewById(R.id.button_gift_collections);
         Button button_animals = view.findViewById(R.id.button_pet_collections);
@@ -50,7 +52,9 @@ public class Garden extends Fragment {
         Button button_expand_right = view.findViewById(R.id.expand_right);
 
         money_text = (TextView) view.findViewById(R.id.money);
-        money_text.setText("Money: " + helper.fetchinventoryItemByName("money").getItemAmount());
+        money_text.setText("Money: ");
+
+
 
         // Food button
         button_food.setOnClickListener(new View.OnClickListener() {

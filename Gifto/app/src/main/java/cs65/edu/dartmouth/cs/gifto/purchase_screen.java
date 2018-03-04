@@ -107,7 +107,7 @@ public class purchase_screen extends AppCompatActivity {
                 }
 
                 Garden.money_text.setText(String.valueOf(money.getItemAmount()));
-
+                Collection.title.setText("GOODIES" + String.valueOf(money.getItemAmount()));
 
 
                 finish();

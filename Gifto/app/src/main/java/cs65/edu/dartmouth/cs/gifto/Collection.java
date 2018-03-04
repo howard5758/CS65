@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 public class Collection extends ListActivity {
 
-    TextView title;
+    public static TextView title;
     item_adapter item_adapter;
     pet_adapter pet_adapter;
 
@@ -53,8 +53,13 @@ public class Collection extends ListActivity {
         title = (TextView) findViewById(R.id.list_title);
 
         if (goodies) {
-
-            title.setText("GOODIES");
+            InventoryItem moneyy = helper.fetchinventoryItemByName("money");
+            if (moneyy.getItemAmount() == -1){
+                moneyy.setItemName("money");
+                moneyy.setItemAmount(300);
+                helper.insertInventory(moneyy);
+            }
+            title.setText("GOODIES" + String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount()));
             item_adapter = new item_adapter(this, R.layout.list_collection, goodiesCollection);
             setListAdapter(item_adapter);
 
@@ -73,14 +78,14 @@ public class Collection extends ListActivity {
             title.setText("Choose an item to place!");
             int loc_type = getIntent().getIntExtra("loc_type", 0);
             ArrayList<InventoryItem> selection_list = helper.fetchAllInventoryItems();
-            Iterator<InventoryItem> iter = selection_list.iterator();
-
-            while(iter.hasNext()) {
-                InventoryItem i = iter.next();
-                if(i.getItemType() != loc_type){
-                    iter.remove();
-                }
-            }
+//            Iterator<InventoryItem> iter = selection_list.iterator();
+//
+//            while(iter.hasNext()) {
+//                InventoryItem i = iter.next();
+//                //if(i.getItemType() != loc_type){
+//                    //iter.remove();
+//                //}
+//            }
             item_adapter = new item_adapter(this, R.layout.list_collection, selection_list);
             setListAdapter(item_adapter);
         }
@@ -130,8 +135,11 @@ public class Collection extends ListActivity {
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
             image.setImageResource(Util.getImageIdFromName(getItem(position).getItemName()));
-
-            namee.setText(getItem(position).getItemName() + " amount: " + getItem(position).getItemAmount());
+            if(selection) {
+                namee.setText(getItem(position).getItemName() + " amount: " + getItem(position).getItemAmount());
+            } else {
+                namee.setText(getItem(position).getItemName());
+            }
 
             return view;
         }

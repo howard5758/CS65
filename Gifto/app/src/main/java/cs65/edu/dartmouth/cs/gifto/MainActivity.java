@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity
             Util.userID = Util.firebaseUser.getUid();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
-                // update some constants in Util.
                 Util.email = user.getEmail();
                 for (UserInfo profile : user.getProviderData()) {
                     Util.name = profile.getDisplayName();
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("friends")) {
                             for (DataSnapshot friendData : userSnapshot.getChildren()) {
                                 Friend friend = new Friend();
-                                friend.setName((String) friendData.child("name").getValue());
+                                //friend.setName((String) friendData.child("name").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
                                 datasource.insertFriend(friend);
                             }
@@ -141,15 +140,18 @@ public class MainActivity extends AppCompatActivity
 
                         // insert all the items
                         else if (userSnapshot.getKey().equals("items")) {
+
                             for (DataSnapshot itemData : userSnapshot.getChildren()) {
                                 InventoryItem item = new InventoryItem();
-                                item.setItemType(Integer.parseInt(String.valueOf(itemData.child("itemType").getValue())));
+                                //item.setItemType(Integer.parseInt(String.valueOf(itemData.child("itemType").getValue())));
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
-
                                 datasource.insertInventory(item);
+
                             }
+
+
                         }
                     }
                     // we only want to download once, so end listener after it executes once
