@@ -2,6 +2,7 @@ package cs65.edu.dartmouth.cs.gifto;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 public class Garden extends Fragment {
     String background;
     String place1, place2, place3, place4;
+    MySQLiteHelper helper;
+    public static TextView money_text;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -29,11 +32,13 @@ public class Garden extends Fragment {
         place2 = Globals.DEFAULT_PLACE2;
         place3 = Globals.DEFAULT_PLACE3;
         place4 = Globals.EMPTY;
+        helper = new MySQLiteHelper(getActivity());
     }
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.garden, container, false);
+
 
         Button button_food = view.findViewById(R.id.button_food);
         Button button_gifts = view.findViewById(R.id.button_gift_collections);
@@ -45,6 +50,11 @@ public class Garden extends Fragment {
         Button button_place4 = view.findViewById(R.id.button_place4);
         Button button_expand_left = view.findViewById(R.id.expand_left);
         Button button_expand_right = view.findViewById(R.id.expand_right);
+
+        money_text = (TextView) view.findViewById(R.id.money);
+        money_text.setText("Money: ");
+
+
 
         // Food button
         button_food.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +81,7 @@ public class Garden extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Collection.class);
-                intent.putExtra("animals", true);
+                intent.putExtra("pets", true);
                 startActivity(intent);
             }
         });
@@ -99,6 +109,10 @@ public class Garden extends Fragment {
         button_place1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 1);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose food from your fridge",
                         Toast.LENGTH_SHORT).show();
             }
@@ -107,6 +121,10 @@ public class Garden extends Fragment {
         button_place2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 2);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose from your storage",
                         Toast.LENGTH_SHORT).show();
             }
@@ -115,14 +133,22 @@ public class Garden extends Fragment {
         button_place3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 3);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose from your storage",
                         Toast.LENGTH_SHORT).show();
             }
         });
 
-        button_place3.setOnClickListener(new View.OnClickListener() {
+        button_place4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Collection.class);
+                intent.putExtra("selection", true);
+                intent.putExtra("loc_type", 4);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "choose from your toys",
                         Toast.LENGTH_SHORT).show();
             }

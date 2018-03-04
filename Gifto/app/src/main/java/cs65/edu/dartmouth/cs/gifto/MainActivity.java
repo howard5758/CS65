@@ -27,10 +27,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -79,13 +86,9 @@ public class MainActivity extends AppCompatActivity
             Util.userID = Util.firebaseUser.getUid();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
-                // update some constants in Util.
                 Util.email = user.getEmail();
-                Util.name = user.getEmail();
                 for (UserInfo profile : user.getProviderData()) {
-                    if (profile.getDisplayName() != null && !profile.getDisplayName().equals("")) {
-                        Util.name = profile.getDisplayName();
-                    }
+                    Util.name = profile.getDisplayName();
                 }
             }
             listener = new ValueEventListener() {
@@ -96,14 +99,13 @@ public class MainActivity extends AppCompatActivity
                         if (userSnapshot.getKey().equals("animals")) {
                             for (DataSnapshot animalData : userSnapshot.getChildren()) {
                                 Animal animal = new Animal();
-                                animal.setPresent(Integer.parseInt(String.valueOf(animalData.child("present").getValue())));
                                 animal.setAnimalName((String) animalData.child("animalName").getValue());
                                 animal.setNumVisits(Integer.parseInt(String
                                         .valueOf(animalData.child("numVisits").getValue())));
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
                                 animal.setPersistence((Long) animalData.child("persistence").getValue());
-                                //datasource.insertAnimal(animal);
+                                datasource.insertAnimal(animal);
                             }
                         }
 
@@ -111,10 +113,9 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("friends")) {
                             for (DataSnapshot friendData : userSnapshot.getChildren()) {
                                 Friend friend = new Friend();
-                                friend.setEmail((String) friendData.child("friendEmail").getValue());
+                                //friend.setName((String) friendData.child("name").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
-                                friend.setFirebaseId((String)friendData.child("firebaseId").getValue());
-                                //datasource.insertFriend(friend);
+                                datasource.insertFriend(friend);
                             }
                         }
 
@@ -122,7 +123,6 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("gifts")) {
                             for (DataSnapshot giftData : userSnapshot.getChildren()) {
                                 Gift gift = new Gift();
-                                gift.setId(String.valueOf(giftData.getKey()));
                                 gift.setGiftName((String)giftData.child("giftName").getValue());
                                 gift.setTime((Long) giftData.child("time").getValue());
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
@@ -135,20 +135,24 @@ public class MainActivity extends AppCompatActivity
                                                 .getValue(Double.class))));
 
                                 // try to insert it
-                                //datasource.insertGift(gift);
+                                datasource.insertGift(gift);
                             }
                         }
 
                         // insert all the items
                         else if (userSnapshot.getKey().equals("items")) {
+
                             for (DataSnapshot itemData : userSnapshot.getChildren()) {
                                 InventoryItem item = new InventoryItem();
+                                //item.setItemType(Integer.parseInt(String.valueOf(itemData.child("itemType").getValue())));
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
-
                                 datasource.insertInventory(item);
+
                             }
+
+
                         }
                     }
                     // we only want to download once, so end listener after it executes once
