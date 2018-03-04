@@ -29,6 +29,7 @@ class Util {
     static String name;
     static String email;
     static Uri photo;
+    static boolean completed = false;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
