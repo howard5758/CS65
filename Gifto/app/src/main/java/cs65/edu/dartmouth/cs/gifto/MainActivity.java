@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
                                 animal.setPersistence((Long) animalData.child("persistence").getValue());
-                                datasource.insertAnimal(animal);
+                                //datasource.insertAnimal(animal);
                             }
                         }
 
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                                 Friend friend = new Friend();
                                 //friend.setName((String) friendData.child("name").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
-                                datasource.insertFriend(friend);
+                                //datasource.insertFriend(friend);
                             }
                         }
 
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
                                                 .getValue(Double.class))));
 
                                 // try to insert it
-                                datasource.insertGift(gift);
+                                //datasource.insertGift(gift);
                             }
                         }
 
@@ -168,26 +168,30 @@ public class MainActivity extends AppCompatActivity
         }
 
         // test code for inserting data
-//        ArrayList<Animal> animals;
-//        if (Util.userID != null) {
+        ArrayList<Animal> animals;
+        if (Util.userID != null) {
 //            MySQLiteHelper db = new MySQLiteHelper(this);
-//            Animal a1 = new Animal("cat1", 15, 2, 12000, 1);
-//            Animal a2 = new Animal("cat2", 16, 3, 12001, 0);
+//            Animal a1 = new Animal("pink squirrel", 15, 2, 12000, 1);
+//            Animal a2 = new Animal("kangaroo", 16, 3, 12001, 1);
+//            Animal a3 = new Animal("owl",1,3,12000,0);
+//            Animal a4 = new Animal("cat",1,3,12000,1);
 //            Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
 //            Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
-//            InventoryItem i1 = new InventoryItem("money1", 4);
-//            InventoryItem i2 = new InventoryItem("money2", 5);
+//            InventoryItem i1 = new InventoryItem("money", 300);
+//            //InventoryItem i2 = new InventoryItem("money2", 5);
 //            Friend f1 = new Friend("john1", "johnny1");
 //            Friend f2 = new Friend("john2", "johnny2");
-//            MapGift mg1 = new MapGift("giftname1", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000, "john1");
-//            MapGift mg2 = new MapGift("giftname2", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001, "john2");
+//            MapGift mg1 = new MapGift("watermelon bag", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000, "john1");
+//            MapGift mg2 = new MapGift("red box", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001, "john2");
 //
 //            db.insertAnimal(a1);
 //            db.insertAnimal(a2);
+//            db.insertAnimal(a3);
+//            db.insertAnimal(a4);
 //            db.insertGift(g1);
 //            db.insertGift(g2);
 //            db.insertInventory(i1);
-//            db.insertInventory(i2);
+//            //db.insertInventory(i2);
 //            db.insertMapGift(mg1);
 //            db.insertMapGift(mg2);
 //            db.insertFriend(f1);
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity
 //            animal1 = db.fetchAnimalByName("cat1");
 //
 //            Log.d("olivermct", "remove completed");
-//        }
+        }
     }
 
     @Override
