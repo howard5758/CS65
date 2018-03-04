@@ -84,6 +84,8 @@ class Util {
                 return (R.drawable.owl);
             case "squirrel":
                 return (R.drawable.squirrel);
+            case "American Shorthair":
+                return (R.drawable.shorthair);
             default:
                 return (R.drawable.tiffany_box);
         }
