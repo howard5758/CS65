@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class InventoryItem implements Serializable {
     private String itemName;
     private int itemAmount;
+    private int present;
 
     InventoryItem(){}
 
@@ -30,4 +31,12 @@ public class InventoryItem implements Serializable {
     public String getItemName() { return itemName; }
 
     public void setItemName(String itemName) { this.itemName = itemName; }
+
+    public int getPresent() {
+        return present;
+    }
+
+    public void setPresent(int present) {
+        this.present = present;
+    }
 }

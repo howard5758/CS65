@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
+                                item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
                                 datasource.insertInventory(item);
 
                             }

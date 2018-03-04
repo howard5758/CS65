@@ -74,7 +74,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_VISITS, COLUMN_PERSISTENCE, COLUMN_FIREBASE_FLAG, COLUMN_PRESENT };
 
     private String[] inventory_columns = { COLUMN_ID, COLUMN_INVENTORY_NAME,
-            COLUMN_AMOUNT, COLUMN_FIREBASE_FLAG };
+            COLUMN_AMOUNT, COLUMN_PRESENT, COLUMN_FIREBASE_FLAG };
 
     private String[] titles = {FRIEND_TITLE, GIFT_TITLE, ANIMAL_TITLE, INVENTORY_TITLE, MAP_GIFT_TITLE};
 
@@ -111,6 +111,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_INVENTORY_NAME + " TEXT, " +
             COLUMN_AMOUNT + " INTEGER NOT NULL, " +
+            COLUMN_PRESENT + " INTEGER, " +
             COLUMN_FIREBASE_FLAG + " INTEGER );";
 
 
@@ -275,6 +276,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_INVENTORY_NAME, item.getItemName());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
+        values.put(COLUMN_PRESENT, item.getPresent());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
 
 
@@ -729,6 +731,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         InventoryItem item = new InventoryItem();
         item.setItemName(cursor.getString(1));
         item.setItemAmount(cursor.getInt(2));
+        item.setPresent(cursor.getInt(3));
 
         return item;
     }
