@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity
                     // we only want to download once, so end listener after it executes once
                     endListener();
                     Util.completed = true;
+                    Garden.check_animals();
                 }
 
                 @Override

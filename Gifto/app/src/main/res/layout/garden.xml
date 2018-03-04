@@ -19,10 +19,16 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginTop="420dp"
+        android:layout_marginTop="320dp"
         android:layout_marginLeft="100dp"
-        android:id="@+id/place1"
-        app:srcCompat="@drawable/tuna" />
+        android:id="@+id/place1" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/animal1" />
 
     <Button
         android:id="@+id/button_place1"
@@ -37,8 +43,15 @@
         android:layout_height="300dp"
         android:layout_marginTop="80dp"
         android:layout_marginLeft="100dp"
-        android:id="@+id/place2"
-       />
+        android:id="@+id/place2" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/animal2" />
+
 
     <Button
         android:id="@+id/button_place2"
@@ -55,6 +68,13 @@
         android:layout_marginLeft="240dp"
         android:id="@+id/place3" />
 
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="220dp"
+        android:layout_marginLeft="220dp"
+        android:id="@+id/animal3" />
+
     <Button
         android:id="@+id/button_place3"
         android:layout_width="100dp"
@@ -69,6 +89,13 @@
         android:layout_marginTop="100dp"
         android:layout_marginLeft="200dp"
         android:id="@+id/place4" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="200dp"
+        android:id="@+id/animal4" />
 
     <Button
         android:id="@+id/button_place4"
@@ -121,12 +148,31 @@
         android:text="@string/pet_collection" />
 
     <TextView
-        android:id="@+id/money"
+        android:id="@+id/place1_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_place3"
-        android:layout_toLeftOf="@+id/button_gift_collections"
-        android:layout_toStartOf="@+id/button_gift_collections"
+        android:visibility="invisible"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/place2_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/place3_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/place4_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
         android:text="TextView" />
 </RelativeLayout>
 

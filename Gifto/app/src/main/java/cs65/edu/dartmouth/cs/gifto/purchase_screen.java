@@ -25,61 +25,21 @@ public class purchase_screen extends AppCompatActivity {
         buy = (Button) findViewById(R.id.buy);
         cancel = (Button) findViewById(R.id.cancel);
         helper = new MySQLiteHelper(this);
-        String object = getIntent().getStringExtra("name");
+        final String object = getIntent().getStringExtra("name");
         String type = getIntent().getStringExtra("type");
         image = (ImageView) findViewById(R.id.item_picture);
 
         switch (type) {
             case "goodies":
-                item = (InventoryItem) getIntent().getSerializableExtra("actual_object");
                 break;
             case "pets":
 
                 buy.setVisibility(View.GONE);
 
-                pet = (Animal) getIntent().getSerializableExtra("actual_object");
                 break;
         }
 
-        switch (object) {
-            case "banana":
-                image.setImageResource(R.drawable.banana);
-                break;
-            case "tuna":
-                image.setImageResource(R.drawable.tuna);
-                break;
-            case "pool":
-                image.setImageResource(R.drawable.pool);
-                break;
-            case "tree":
-                image.setImageResource(R.drawable.tree);
-                break;
-            case "tennis ball":
-                image.setImageResource(R.drawable.tennis_ball);
-                break;
-            case "alligator":
-                image.setImageResource(R.drawable.alligator);
-                break;
-            case "cat":
-                image.setImageResource(R.drawable.cat);
-                break;
-            case "dog":
-                image.setImageResource(R.drawable.dog_side);
-                break;
-            case "kangaroo":
-                image.setImageResource(R.drawable.kangaroo);
-                break;
-            case "monkey":
-                image.setImageResource(R.drawable.monkey);
-                break;
-            case "owl":
-                image.setImageResource(R.drawable.owl);
-                break;
-            case "squirrel":
-                image.setImageResource(R.drawable.squirrel);
-                break;
-
-        }
+        image.setImageResource(Util.getImageIdFromName(object));
 
 
 
@@ -90,12 +50,13 @@ public class purchase_screen extends AppCompatActivity {
                 InventoryItem money = helper.fetchinventoryItemByName("money");
                 if (money.getItemAmount() >= 30) {
 
-                    InventoryItem temp = helper.fetchinventoryItemByName(item.getItemName());
+                    InventoryItem temp = helper.fetchinventoryItemByName(object);
                     int prev = temp.getItemAmount();
                     Log.d("master", String.valueOf(prev));
-                    item.setItemAmount(prev + 1);
-                    helper.removeInventoryItem(item.getItemName());
-                    helper.insertInventory(item);
+                    temp.setItemName(object);
+                    temp.setItemAmount(prev + 1);
+                    helper.removeInventoryItem(object);
+                    helper.insertInventory(temp);
 
                     prev = money.getItemAmount();
                     money.setItemAmount(prev - 30);
@@ -106,7 +67,7 @@ public class purchase_screen extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "Not Enough Money", Toast.LENGTH_SHORT).show();
                 }
 
-                Garden.money_text.setText(String.valueOf(money.getItemAmount()));
+                //Garden.money_text.setText(String.valueOf(money.getItemAmount()));
                 Collection.title.setText("GOODIES" + String.valueOf(money.getItemAmount()));
 
 

@@ -49,7 +49,7 @@ public class Globals {
         ANIMAL_TO_TYPE.put("owl", 0);
         ANIMAL_TO_TYPE.put("sleeping owl", 0);
         ANIMAL_TO_TYPE.put("American Shorthair's head", 1);
-        ANIMAL_TO_TYPE.put("sleeping American Shorthair", 1);
+        ANIMAL_TO_TYPE.put("Sleeping American Shorthair", 1);
         ANIMAL_TO_TYPE.put("American Shorthair", 1);
         ANIMAL_TO_TYPE.put("sleeping Siamese Cat", 1);
         ANIMAL_TO_TYPE.put("Siamese Cat", 1);
@@ -160,7 +160,7 @@ public class Globals {
         ANIMAL_TO_PROB.put("giggling unicorn", .1);
         ANIMAL_TO_PROB.put("unicorn", .1);
         ANIMAL_TO_PROB.put("Corgi's back", .3);
-        ANIMAL_TO_PROB.put("Corgi", .3);
+        ANIMAL_TO_PROB.put("Corgi", .9);
         ANIMAL_TO_PROB.put("sleeping Corgi", .3);
         ANIMAL_TO_PROB.put("Corgi's side", .2);
         ANIMAL_TO_PROB.put("Corgi's head", .2);

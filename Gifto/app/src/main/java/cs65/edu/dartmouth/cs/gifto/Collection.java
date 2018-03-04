@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +29,11 @@ public class Collection extends ListActivity {
 
     Boolean goodies, gifts, pets, selection;
 
-    public ArrayList<InventoryItem> goodiesCollection;
+    public ArrayList<String> goodiesCollection;
     public ArrayList<Animal> petCollection;
+    ArrayList<String> selection_list;
+
+    int loc_type;
 
     MySQLiteHelper helper;
 
@@ -42,6 +46,10 @@ public class Collection extends ListActivity {
         helper = new MySQLiteHelper(this);
         petCollection = new ArrayList<>();
         goodiesCollection = new ArrayList<>();
+        selection_list = new ArrayList<>();
+        goodiesCollection.addAll(Globals.ITEM_TO_TYPE.keySet());
+        Log.d("master", goodiesCollection.get(5));
+        selection_list.addAll(Globals.ITEM_TO_TYPE.keySet());
         listInit();
 
 
@@ -76,16 +84,30 @@ public class Collection extends ListActivity {
             setListAdapter(pet_adapter);
         } else if(selection){
             title.setText("Choose an item to place!");
-            int loc_type = getIntent().getIntExtra("loc_type", 0);
-            ArrayList<InventoryItem> selection_list = helper.fetchAllInventoryItems();
-//            Iterator<InventoryItem> iter = selection_list.iterator();
-//
-//            while(iter.hasNext()) {
-//                InventoryItem i = iter.next();
-//                //if(i.getItemType() != loc_type){
-//                    //iter.remove();
-//                //}
-//            }
+            loc_type = getIntent().getIntExtra("loc_type", 0);
+
+            Iterator<String> iter = selection_list.iterator();
+
+            while(iter.hasNext()) {
+                String i = iter.next();
+                if(loc_type == 1 && Globals.ITEM_TO_TYPE.get(i) != 0){
+                    iter.remove();
+                }
+                else if(loc_type == 2 && Globals.ITEM_TO_TYPE.get(i) == 0){
+                    iter.remove();
+                }
+                else if(loc_type == 3 && Globals.ITEM_TO_TYPE.get(i) == 0){
+                    iter.remove();
+                }
+                else if(loc_type == 4 && Globals.ITEM_TO_TYPE.get(i) != 1){
+                    iter.remove();
+                }
+                else{
+                    if(helper.fetchinventoryItemByName(i).getItemAmount() == 0){
+                        iter.remove();
+                    }
+                }
+            }
             item_adapter = new item_adapter(this, R.layout.list_collection, selection_list);
             setListAdapter(item_adapter);
         }
@@ -97,29 +119,56 @@ public class Collection extends ListActivity {
         super.onListItemClick(parent, v, position, id);
 
         if(selection){
+            InventoryItem temp = helper.fetchinventoryItemByName(selection_list.get(position));
+            int prev = temp.getItemAmount();
+            temp.setItemAmount(prev - 1);
+
+
+            if (loc_type == 1){
+                Garden.loc1.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
+                Garden.place1_name.setText(selection_list.get(position));
+                temp.setPresent(1);
+            }
+            else if(loc_type == 2){
+                Garden.loc2.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
+                Garden.place2_name.setText(selection_list.get(position));
+                temp.setPresent(2);
+            }
+            else if(loc_type == 3){
+                Garden.loc3.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
+                Garden.place3_name.setText(selection_list.get(position));
+                temp.setPresent(3);
+            }
+            else if(loc_type == 4) {
+                Garden.loc4.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
+                Garden.place4_name.setText(selection_list.get(position));
+                temp.setPresent(4);
+            }
+            helper.removeInventoryItem(selection_list.get(position));
+            helper.insertInventory(temp);
             finish();
         }
         else {
             Intent intent = new Intent(this, purchase_screen.class);
             if (goodies) {
-                intent.putExtra("name", goodiesCollection.get(position).getItemName());
+                intent.putExtra("name", goodiesCollection.get(position));
                 intent.putExtra("type", "goodies");
-                intent.putExtra("actual_object", goodiesCollection.get(position));
+
             } else if (pets) {
                 intent.putExtra("name", petCollection.get(position).getAnimalName());
                 intent.putExtra("type", "pets");
-                intent.putExtra("actual_object", petCollection.get(position));
+
             }
 
             startActivity(intent);
         }
     }
 
-    public class item_adapter extends ArrayAdapter<InventoryItem>{
+    public class item_adapter extends ArrayAdapter<String>{
 
         LayoutInflater inflater;
 
-        public item_adapter(Context context, int textViewResourceId, ArrayList<InventoryItem> objects) {
+        public item_adapter(Context context, int textViewResourceId, ArrayList<String> objects) {
             super(context, textViewResourceId, objects);
         }
 
@@ -134,11 +183,11 @@ public class Collection extends ListActivity {
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
-            image.setImageResource(Util.getImageIdFromName(getItem(position).getItemName()));
+            image.setImageResource(Util.getImageIdFromName(getItem(position)));
             if(selection) {
-                namee.setText(getItem(position).getItemName() + " amount: " + getItem(position).getItemAmount());
+                namee.setText(getItem(position) + " amount: " + helper.fetchinventoryItemByName(getItem(position)).getItemAmount());
             } else {
-                namee.setText(getItem(position).getItemName());
+                namee.setText(getItem(position));
             }
 
             return view;

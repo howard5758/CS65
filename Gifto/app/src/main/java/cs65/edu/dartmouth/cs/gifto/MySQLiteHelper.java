@@ -556,11 +556,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
-            Log.d("master", "find money");
             item = cursorToInventoryItem(cursor);
         }
         else{
-            item.setItemAmount(-1);
+            if(name == "money") {
+                item.setItemAmount(-1);
+            }
+            else{
+                item.setItemAmount(0);
+            }
         }
 
         cursor.close();
