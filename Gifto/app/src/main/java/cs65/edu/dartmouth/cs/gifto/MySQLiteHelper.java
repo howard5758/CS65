@@ -137,24 +137,27 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * when this is called you do not need to know the FirebaseId of the friend
      * the method will automatically create and set an Id for the given friend
      * so, after this method is called, the friend object will have an id inside it */
-    void insertFriend(Friend friend) {
+    void insertFriend(Friend friend, boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 1;
-        if (Util.isOnline()) {
-            Log.d("if", "online");
-            String key = Util.databaseReference.child("users").child(Util.userID).child("friends").push().getKey();
-            friend.setFirebaseId(key);
-            Util.databaseReference.child("users").
-                    child(Util.userID).child("friends").child(key).setValue(friend);
-            flagged = 0;
-            if (failed_insert) {
-                insertFlagged();
+        int flagged = 0;
+        if (insert_firebase) {
+            flagged = 1;
+            if (Util.isOnline()) {
+                Log.d("if", "online");
+                String key = Util.databaseReference.child("users").child(Util.userID).child("friends").push().getKey();
+                friend.setFirebaseId(key);
+                Util.databaseReference.child("users").
+                        child(Util.userID).child("friends").child(key).setValue(friend);
+                flagged = 0;
+                if (failed_insert) {
+                    insertFlagged();
+                }
+            } else {
+                Log.d("if", "not connected");
+                failed_insert = true;
             }
-        } else {
-            Log.d("if", "not connected");
-            failed_insert = true;
         }
 
 
@@ -172,25 +175,28 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /* insert a gift
      * does the same thing as a friend when you insert with setting the firebase Id */
-    void insertGift(Gift gift) {
+    void insertGift(Gift gift, boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 1;
+        int flagged = 0;
         String key = "";
-        if (Util.isOnline()) {
-            Log.d("if", "online");
-            key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
-            gift.setId(key);
-            Util.databaseReference.child("users").
-                    child(Util.userID).child("gifts").child(key).setValue(gift);
-            flagged = 0;
-            if (failed_insert) {
-                insertFlagged();
+        if (insert_firebase) {
+            flagged = 1;
+            if (Util.isOnline()) {
+                Log.d("if", "online");
+                key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
+                gift.setId(key);
+                Util.databaseReference.child("users").
+                        child(Util.userID).child("gifts").child(key).setValue(gift);
+                flagged = 0;
+                if (failed_insert) {
+                    insertFlagged();
+                }
+            } else {
+                Log.d("if", "not connected");
+                failed_insert = true;
             }
-        } else {
-            Log.d("if", "not connected");
-            failed_insert = true;
         }
 
 
@@ -199,7 +205,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_GIFT, gift.getGiftName());
-        values.put(COLUMN_FIREBASE_ID, key);
+        values.put(COLUMN_FIREBASE_ID, gift.getId());
         values.put(COLUMN_SENT, gift.isSent());
         values.put(COLUMN_TOFROM, gift.getFriendName());
         values.put(COLUMN_TIME, gift.getTime());
@@ -217,22 +223,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /* Insert an animal
      * does not have firebase Id so does not return Firebase Id */
-    void insertAnimal(Animal animal) {
+    void insertAnimal(Animal animal, boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 1;
-        if (Util.isOnline()) {
-            Log.d("if", "online");
-            Util.databaseReference.child("users").
-                    child(Util.userID).child("animals").child(animal.getAnimalName()).setValue(animal);
-            flagged = 0;
-            if (failed_insert) {
-                insertFlagged();
+        int flagged = 0;
+        if (insert_firebase) {
+            flagged = 1;
+            if (Util.isOnline()) {
+                Log.d("if", "online");
+                Util.databaseReference.child("users").
+                        child(Util.userID).child("animals").child(animal.getAnimalName()).setValue(animal);
+                flagged = 0;
+                if (failed_insert) {
+                    insertFlagged();
+                }
+            } else {
+                Log.d("if", "not connected");
+                failed_insert = true;
             }
-        } else {
-            Log.d("if", "not connected");
-            failed_insert = true;
         }
 
 
@@ -252,22 +261,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /* insert inventory item
      * also use this if you want to change the amount of an item */
-    void insertInventory(InventoryItem item) {
+    void insertInventory(InventoryItem item, boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 1;
-        if (Util.isOnline()) {
-            Log.d("if", "online");
-            Util.databaseReference.child("users").
-                    child(Util.userID).child("items").child(item.getItemName()).setValue(item);
-            flagged = 0;
-            if (failed_insert) {
-                insertFlagged();
+        int flagged = 0;
+        if (insert_firebase) {
+            flagged = 1;
+            if (Util.isOnline()) {
+                Log.d("if", "online");
+                Util.databaseReference.child("users").
+                        child(Util.userID).child("items").child(item.getItemName()).setValue(item);
+                flagged = 0;
+                if (failed_insert) {
+                    insertFlagged();
+                }
+            } else {
+                Log.d("if", "not connected");
+                failed_insert = true;
             }
-        } else {
-            Log.d("if", "not connected");
-            failed_insert = true;
         }
 
 

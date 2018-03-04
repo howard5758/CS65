@@ -65,7 +65,7 @@ public class Collection extends ListActivity {
             if (moneyy.getItemAmount() == -1){
                 moneyy.setItemName("money");
                 moneyy.setItemAmount(300);
-                helper.insertInventory(moneyy);
+                helper.insertInventory(moneyy, true);
             }
             title.setText("GOODIES" + String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount()));
             item_adapter = new item_adapter(this, R.layout.list_collection, goodiesCollection);
@@ -145,7 +145,7 @@ public class Collection extends ListActivity {
                 temp.setPresent(4);
             }
             helper.removeInventoryItem(selection_list.get(position));
-            helper.insertInventory(temp);
+            helper.insertInventory(temp, true);
             finish();
         }
         else {

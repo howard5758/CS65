@@ -221,7 +221,7 @@ public class Garden extends Fragment {
                     pet.setAnimalName(target);
                     pet.setPresent(1);
                     helper.removeAnimal(target);
-                    helper.insertAnimal(pet);
+                    helper.insertAnimal(pet, true);
                     Garden.pet1.setImageResource(Util.getImageIdFromName(target));
                 }
             }

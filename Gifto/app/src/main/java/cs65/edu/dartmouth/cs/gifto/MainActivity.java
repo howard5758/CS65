@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
                                 animal.setPersistence(Long.parseLong(String.valueOf(animalData.child("persistence").getValue())));
-                                datasource.insertAnimal(animal);
+                                datasource.insertAnimal(animal, false);
                             }
                         }
 
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                                 Friend friend = new Friend();
                                 friend.setEmail((String) friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
-                                datasource.insertFriend(friend);
+                                datasource.insertFriend(friend, false);
                             }
                         }
 
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
                                 // try to insert it
                                 // TODO: this is causing tons and tons of things to be added to the firebase
-                                datasource.insertGift(gift);
+                                datasource.insertGift(gift, false);
                             }
                         }
 
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity
                                         valueOf(itemData.child("itemAmount").getValue())));
                                 if(String.valueOf(itemData.child("present").getValue()) != null) item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
                                 else item.setPresent(-1);
-                                datasource.insertInventory(item);
+                                datasource.insertInventory(item, false);
 
                             }
 
