@@ -20,7 +20,15 @@ public class Gift {
     private cs65.edu.dartmouth.cs.gifto.LatLng location;
     private int giftBox;
 
-    Gift(){}
+    Gift(){
+        id = "";
+        giftName = "";
+        sent = false;
+        friendName = "";
+        time = -1;
+        location = new cs65.edu.dartmouth.cs.gifto.LatLng(-1,-1);
+        giftBox = -1;
+    }
 
     Gift(String giftName, boolean sent, String friendName, long time, cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.giftName = giftName;

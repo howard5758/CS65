@@ -18,7 +18,18 @@ public class MapGift {
     private String sendTo;          // email address!!
     private int giftBox;
 
-    public MapGift(){}
+    public MapGift(){
+        id = "";
+        giftName = "";
+        userName = "";
+        userNickname = "";
+        Message = "";
+        animalName = "";
+        location = new LatLng(-1, -1);
+        timePlaced = -1;
+        sendTo = "";
+        giftBox = -1;
+    }
 
     public MapGift(String giftName, String userName, String userNickname, String message,
                    String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location,

@@ -13,7 +13,11 @@ public class InventoryItem implements Serializable {
     private int itemAmount;
     private int present;
 
-    InventoryItem(){}
+    InventoryItem(){
+        itemName = "";
+        itemAmount = 0;
+        present = -1;
+    }
 
     InventoryItem(String itemName, int itemAmount) {
         this.itemName = itemName;

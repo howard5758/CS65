@@ -25,7 +25,13 @@ public class Animal implements Serializable {
     private long persistence;
     private int present;
 
-    Animal(){}
+    Animal(){
+        animalName = "";
+        numVisits = 0;
+        rarity = -1;
+        persistence = -1;
+        present = -1;
+    }
 
     Animal(String animalName, int numVisits, int rarity, long persistence, int present) {
         this.animalName = animalName;

@@ -12,7 +12,11 @@ public class Friend {
     private String firebaseId;
 
     // if you want to just make an empty friend
-    Friend(){}
+    Friend(){
+        email = "";
+        nickname = "";
+        firebaseId = "";
+    }
 
     // to initialize with name and nickname, if known
     Friend(String email, String nickname) {
