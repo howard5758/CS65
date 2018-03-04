@@ -38,8 +38,8 @@ public class Garden extends Fragment {
         super.onCreate(savedInstanceState);
         background = Globals.DEFAULT_BACKGROUND;
         place1 = Globals.EMPTY;
-        place2 = Globals.DEFAULT_PLACE2;
-        place3 = Globals.DEFAULT_PLACE3;
+        place2 = Globals.EMPTY;
+        place3 = Globals.EMPTY;
         place4 = Globals.EMPTY;
         helper = new MySQLiteHelper(getActivity());
 

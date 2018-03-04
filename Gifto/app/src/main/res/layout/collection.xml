@@ -22,4 +22,14 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="36dp" />
 
+    <ImageView
+        android:id="@+id/small_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="23dp"
+        android:layout_marginRight="23dp"
+        />
 </RelativeLayout>

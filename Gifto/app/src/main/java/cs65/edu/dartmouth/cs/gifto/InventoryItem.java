@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class InventoryItem implements Serializable {
     private String itemName;
     private int itemAmount;
-    private int present;
+    private int present; // location
 
     InventoryItem(){
         itemName = "";

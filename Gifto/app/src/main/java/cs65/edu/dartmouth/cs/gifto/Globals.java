@@ -13,8 +13,7 @@ public class Globals {
 
     public static final String DEFAULT_BACKGROUND = "default_bg";
     public static final String EMPTY = "empty";
-    public static final String DEFAULT_PLACE2 = "pile_of_leaves";
-    public static final String DEFAULT_PLACE3 = "trunk";
+
     // list of animals, animal size and items, gifts, and gift size and money hashmap
     public static final Map<String, Integer> ANIMAL_TO_TYPE = new HashMap<String, Integer>();
     public static final Map<String, Integer> ITEM_TO_TYPE = new HashMap<String, Integer>();
@@ -26,6 +25,7 @@ public class Globals {
             new HashMap<String, ArrayList<String>>();
     public static final Map<String, ArrayList<String>> ANIMAL_TO_BOX_LIST =
             new HashMap<String, ArrayList<String>>();
+    public static final ArrayList<String> INT_TO_BOX = new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope”, “black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "tiffany box", "dog food bag", "lucky bag", "envelope"));
 
     static {
         /** animals: 0: small, can only carry messages
@@ -180,15 +180,27 @@ public class Globals {
         ANIMAL_TO_GIFT.put("Corgi", "brown pot");
 
 
-        // animals that could come for a item
-        ITEM_TO_ANIMAL_LIST.put("boxing glove",new ArrayList<String> (Arrays.asList("kangaroo","Corgi's back", "Corgi", "Corgi's side","monkey")));
-        ITEM_TO_ANIMAL_LIST.put("butterfly teaser",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","giggling unicorn", "unicorn")));
-        ITEM_TO_ANIMAL_LIST.put("white cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
-        ITEM_TO_ANIMAL_LIST.put("blue cloud cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair")));
-        ITEM_TO_ANIMAL_LIST.put("orange cloud cushion",new ArrayList<String> (Arrays.asList("Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
-        ITEM_TO_ANIMAL_LIST.put("green cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
-        ITEM_TO_ANIMAL_LIST.put("pink cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
-        ITEM_TO_ANIMAL_LIST.put("purple cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
+        // animals that could come for an item
+        ITEM_TO_ANIMAL_LIST.put("boxing glove",new ArrayList<String> (Arrays.asList("kangaroo",
+                "Corgi's back", "Corgi", "Corgi's side","monkey")));
+        ITEM_TO_ANIMAL_LIST.put("butterfly teaser",new ArrayList<String> (Arrays.asList("cat",
+                "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side",
+                "giggling unicorn", "unicorn")));
+        ITEM_TO_ANIMAL_LIST.put("white cushion",new ArrayList<String> (Arrays.asList("cat",
+                "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side",
+                "monkey", "pink squirrel", "squirrel")));
+        ITEM_TO_ANIMAL_LIST.put("blue cloud cushion",new ArrayList<String> (Arrays.asList("cat",
+                "Siamese Cat", "American Shorthair")));
+        ITEM_TO_ANIMAL_LIST.put("orange cloud cushion",new ArrayList<String> (Arrays.asList
+                ("Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
+        ITEM_TO_ANIMAL_LIST.put("green cushion",new ArrayList<String> (Arrays.asList("cat",
+                "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side",
+                "monkey", "pink squirrel", "squirrel")));
+        ITEM_TO_ANIMAL_LIST.put("pink cushion",new ArrayList<String> (Arrays.asList("cat",
+                "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey",
+                "pink squirrel", "squirrel")));
+        ITEM_TO_ANIMAL_LIST.put("purple cushion",new ArrayList<String> (Arrays.asList("cat",
+                "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
         ITEM_TO_ANIMAL_LIST.put("yellow cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi's back", "Corgi", "Corgi's side","monkey", "pink squirrel", "squirrel")));
         ITEM_TO_ANIMAL_LIST.put("flower pot 1",new ArrayList<String> (Arrays.asList("cat's head","American Shorthair's head","Siamese Cat's head","Corgi’s head","monkey's head")));
         ITEM_TO_ANIMAL_LIST.put("flower pot 2",new ArrayList<String> (Arrays.asList("cat's head","American Shorthair's head","Siamese Cat's head","Corgi’s head","monkey's head")));
