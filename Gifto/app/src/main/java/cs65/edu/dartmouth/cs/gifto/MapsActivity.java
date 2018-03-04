@@ -198,6 +198,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             builder.setTitle("Pick up gift?");
                                         }
                                         builder.setMessage(nickname[0] + ": " + message[0]);
+                                        builder.setIcon(Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class)));
                                         AlertDialog dialog = builder.create();
                                         dialog.show();
                                     }
@@ -228,11 +229,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
                                                 Gift gift = new Gift(giftName, true, friendName, time, location);
                                                 // move to user's database
-                                                //Util.databaseReference.child("users").child(Util.userID).child("gifts").push().setValue(gift);
+                                                Util.databaseReference.child("users").child(Util.userID).child("gifts").push().setValue(gift);
                                                 // delete from public database
+                                                //MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
+                                                //helper.insertGift(gift);
+                                                //helper.close();
                                                 giftsData.child(snapshot.getKey()).removeValue();
-                                                MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
-                                                helper.insertGift(gift);
                                                 if (marker != null) {
                                                     marker.remove();
                                                     gifts.remove(marker);
@@ -266,8 +268,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         // do nothing other than closing the alert dialog
                                     }
-                                })
-                                .setIcon(R.drawable.gift_icon);
+                                });
 //                    AlertDialog dialog = builder.create();
 //                    dialog.show();
                         // user is not close enough to pick up gift
@@ -283,7 +284,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(Util.getImageIdFromName(dataSnapshot.child("giftName").getValue(String.class)))));
                 gifts.add(marker);
             }
 
@@ -339,7 +340,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Gift gift = snapshot.getValue(Gift.class);
                     // TODO: different gift packages? Need some way to determine which image to use
-                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon));
+                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class))));
                     Marker marker = mMap.addMarker(markerOptions);
                     gifts.add(marker);
                 }
