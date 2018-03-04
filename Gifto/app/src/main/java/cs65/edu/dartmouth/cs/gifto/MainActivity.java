@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
                                 animal.setPersistence((Long) animalData.child("persistence").getValue());
-                                datasource.insertAnimal(animal);
+                                //datasource.insertAnimal(animal);
                             }
                         }
 
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity
                                 friend.setEmail((String) friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
                                 friend.setFirebaseId((String)friendData.child("firebaseId").getValue());
-                                datasource.insertFriend(friend);
+                                //datasource.insertFriend(friend);
                             }
                         }
 
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity
                                 gift.setTime((Long) giftData.child("time").getValue());
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
                                 gift.setSent((boolean) giftData.child("sent").getValue());
+                                gift.setGiftBox(giftData.child("giftBox").getValue(Integer.class));
                                 gift.setLocation(new cs65.edu.dartmouth.cs.gifto.LatLng(
                                         (giftData.child("location").child("latitude")
                                                 .getValue(Double.class)),
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity
                                                 .getValue(Double.class))));
 
                                 // try to insert it
-                                datasource.insertGift(gift);
+                                //datasource.insertGift(gift);
                             }
                         }
 

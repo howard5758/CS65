@@ -443,7 +443,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 }
             };
 
-            Util.databaseReference.child("gifts").addValueEventListener(listener);
+            Util.databaseReference.child("gifts").addListenerForSingleValueEvent(listener);
         }
 
         return gifts;
