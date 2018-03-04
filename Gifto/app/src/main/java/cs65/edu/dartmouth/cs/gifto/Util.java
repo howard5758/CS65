@@ -9,6 +9,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Oliver on 2/24/2018.
@@ -128,6 +130,8 @@ class Util {
                 return (R.drawable.dog_sleep);
             case "Corgi's side":
                 return (R.drawable.dog_side);
+            case "Corgi's head":
+                return (R.drawable.dog_head);
             case "flower pot 1":
                 return (R.drawable.flower_pot1);
             case "flower pot 2":
@@ -182,7 +186,6 @@ class Util {
                 return (R.drawable.pile_leaves);
             case "pool":
                 return (R.drawable.pool);
-
             case "brown pot":
                 return (R.drawable.pot_brown);
             case "green pot":
@@ -236,7 +239,9 @@ class Util {
 
             default:
                 return (R.drawable.tiffany_box);
+
         }
     }
 
+    
 }
