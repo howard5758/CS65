@@ -198,6 +198,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             builder.setTitle("Pick up gift?");
                                         }
                                         builder.setMessage(nickname[0] + ": " + message[0]);
+                                        // TODO: pick gift to display using gift box type, rather than name
                                         builder.setIcon(Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class)));
                                         AlertDialog dialog = builder.create();
                                         dialog.show();
@@ -284,7 +285,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(Util.getImageIdFromName(dataSnapshot.child("giftName").getValue(String.class)))));
+                int id;
+                if((id = Util.getImageIdFromName(dataSnapshot.child("giftName").getValue(String.class))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id)));
                 gifts.add(marker);
             }
 
@@ -340,7 +343,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Gift gift = snapshot.getValue(Gift.class);
                     // TODO: different gift packages? Need some way to determine which image to use
-                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class))));
+                    int id;
+                    if((id = Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id));
                     Marker marker = mMap.addMarker(markerOptions);
                     gifts.add(marker);
                 }

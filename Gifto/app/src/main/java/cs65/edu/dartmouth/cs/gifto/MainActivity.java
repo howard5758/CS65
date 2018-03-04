@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                                 Friend friend = new Friend();
                                 friend.setEmail((String) friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
-                                datasource.insertFriend(friend);
+                                //datasource.insertFriend(friend);
                             }
                         }
 
@@ -124,7 +124,8 @@ public class MainActivity extends AppCompatActivity
                             for (DataSnapshot giftData : userSnapshot.getChildren()) {
                                 Gift gift = new Gift();
                                 gift.setGiftName((String)giftData.child("giftName").getValue());
-                                gift.setTime((Long.getLong(String.valueOf(giftData.child("time").getValue()))));
+                                if(Long.getLong(String.valueOf(giftData.child("timePlaced").getValue())) != null) gift.setTime((Long.getLong(String.valueOf(giftData.child("time").getValue()))));
+                                else gift.setTime(0);
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
                                 gift.setSent((boolean) giftData.child("sent").getValue());
                                 gift.setGiftBox(Integer.parseInt(String.valueOf(giftData.child("giftBox").getValue())));
@@ -135,7 +136,8 @@ public class MainActivity extends AppCompatActivity
                                                 .getValue())))));
 
                                 // try to insert it
-                                datasource.insertGift(gift);
+                                // TODO: this is causing tons and tons of things to be added to the firebase
+                                //datasource.insertGift(gift);
                             }
                         }
 
@@ -147,8 +149,9 @@ public class MainActivity extends AppCompatActivity
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
-                                item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
-                                datasource.insertInventory(item);
+                                if(String.valueOf(itemData.child("present").getValue()) != null) item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
+                                else item.setPresent(-1);
+                                //datasource.insertInventory(item);
 
                             }
 
@@ -172,28 +175,36 @@ public class MainActivity extends AppCompatActivity
         if (Util.userID != null) {
 //            MySQLiteHelper db = new MySQLiteHelper(this);
 //            Animal a1 = new Animal("pink squirrel", 15, 2, 12000, 1);
-//            Animal a2 = new Animal("kangaroo", 16, 3, 12001, 1);
-//            Animal a3 = new Animal("owl",1,3,12000,0);
-//            Animal a4 = new Animal("cat",1,3,12000,1);
+//            Animal a2 = new Animal("kangaroo", 16, 3, 12001, 2);
+//            Animal a3 = new Animal("owl",1,3,12000,-1);
+//            Animal a4 = new Animal("cat",1,3,12000,0);
 //            Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
 //            Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
 //            InventoryItem i1 = new InventoryItem("money", 300);
+//            InventoryItem i2 = new InventoryItem("boxing glove", 3);
+//            InventoryItem i3 = new InventoryItem("grapes", 1);
+//            InventoryItem i4 = new InventoryItem("blue mitten", 5);
+//            InventoryItem i5 = new InventoryItem("trunk", 2);
 //            //InventoryItem i2 = new InventoryItem("money2", 5);
 //            Friend f1 = new Friend("john1", "johnny1");
 //            Friend f2 = new Friend("john2", "johnny2");
-//            MapGift mg1 = new MapGift("watermelon bag", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000, "john1");
-//            MapGift mg2 = new MapGift("red box", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001, "john2");
-//
+////            MapGift mg1 = new MapGift("watermelon bag", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000, "john1");
+////            MapGift mg2 = new MapGift("red box", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001, "john2");
+////
 //            db.insertAnimal(a1);
 //            db.insertAnimal(a2);
 //            db.insertAnimal(a3);
 //            db.insertAnimal(a4);
-//            db.insertGift(g1);
-//            db.insertGift(g2);
+////            db.insertGift(g1);
+////            db.insertGift(g2);
 //            db.insertInventory(i1);
-//            //db.insertInventory(i2);
-//            db.insertMapGift(mg1);
-//            db.insertMapGift(mg2);
+//            db.insertInventory(i2);
+//            db.insertInventory(i3);
+//            db.insertInventory(i4);
+//            db.insertInventory(i5);
+////            db.insertInventory(i2);
+////            db.insertMapGift(mg1);
+////            db.insertMapGift(mg2);
 //            db.insertFriend(f1);
 //            db.insertFriend(f2);
 //
