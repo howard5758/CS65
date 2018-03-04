@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
                                 animal.setPersistence((Long) animalData.child("persistence").getValue());
-                                //datasource.insertAnimal(animal);
+                                datasource.insertAnimal(animal);
                             }
                         }
 
@@ -113,9 +113,9 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("friends")) {
                             for (DataSnapshot friendData : userSnapshot.getChildren()) {
                                 Friend friend = new Friend();
-                                //friend.setName((String) friendData.child("name").getValue());
+                                friend.setEmail((String) friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
-                                //datasource.insertFriend(friend);
+                                datasource.insertFriend(friend);
                             }
                         }
 
@@ -124,18 +124,18 @@ public class MainActivity extends AppCompatActivity
                             for (DataSnapshot giftData : userSnapshot.getChildren()) {
                                 Gift gift = new Gift();
                                 gift.setGiftName((String)giftData.child("giftName").getValue());
-                                gift.setTime((Long) giftData.child("time").getValue());
+                                gift.setTime((Long.getLong(String.valueOf(giftData.child("time").getValue()))));
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
                                 gift.setSent((boolean) giftData.child("sent").getValue());
-                                gift.setGiftBox(giftData.child("giftBox").getValue(Integer.class));
+                                gift.setGiftBox(Integer.parseInt(String.valueOf(giftData.child("giftBox").getValue())));
                                 gift.setLocation(new cs65.edu.dartmouth.cs.gifto.LatLng(
-                                        (giftData.child("location").child("latitude")
-                                                .getValue(Double.class)),
-                                        (giftData.child("location").child("longitude")
-                                                .getValue(Double.class))));
+                                        (Double.parseDouble(String.valueOf(giftData.child("location").child("latitude")
+                                                .getValue()))),
+                                        (Double.parseDouble(String.valueOf(giftData.child("location").child("longitude")
+                                                .getValue())))));
 
                                 // try to insert it
-                                //datasource.insertGift(gift);
+                                datasource.insertGift(gift);
                             }
                         }
 
@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity
 
                             for (DataSnapshot itemData : userSnapshot.getChildren()) {
                                 InventoryItem item = new InventoryItem();
-                                //item.setItemType(Integer.parseInt(String.valueOf(itemData.child("itemType").getValue())));
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
