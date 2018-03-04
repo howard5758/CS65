@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity
                         if (userSnapshot.getKey().equals("animals")) {
                             for (DataSnapshot animalData : userSnapshot.getChildren()) {
                                 Animal animal = new Animal();
+                                animal.setPresent(Integer.parseInt(String.valueOf(animalData.child("present").getValue())));
                                 animal.setAnimalName((String) animalData.child("animalName").getValue());
                                 animal.setNumVisits(Integer.parseInt(String
                                         .valueOf(animalData.child("numVisits").getValue())));

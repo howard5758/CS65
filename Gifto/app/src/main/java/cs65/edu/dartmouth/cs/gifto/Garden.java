@@ -204,25 +204,33 @@ public class Garden extends Fragment {
 
     public static void check_animals(){
         ArrayList<InventoryItem> items = helper.fetchAllInventoryItems();
-
+        ArrayList<Animal> animals = helper.fetchAllAnimals();
+        for(Animal a : animals){
+            if(a.getPresent() == 1){
+                Garden.pet1.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                Garden.place1_name.setText(a.getAnimalName());
+            }
+        }
         for(InventoryItem i : items){
             Log.d("master", i.getItemName());
             if(i.getPresent() == 1){
                 Log.d("master", "present!!");
                 loc1.setImageResource(Util.getImageIdFromName(i.getItemName()));
-                ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
-                Random random = new Random();
-                String target = related_animals.get(random.nextInt(related_animals.size()));
-                double prob = Globals.ANIMAL_TO_PROB.get(target);
-                Log.d("master", String.valueOf(prob));
-                if(Math.random() <= prob){
-                    Log.d("master", "animal!!");
-                    Animal pet = new Animal();
-                    pet.setAnimalName(target);
-                    pet.setPresent(1);
-                    helper.removeAnimal(target);
-                    helper.insertAnimal(pet, true);
-                    Garden.pet1.setImageResource(Util.getImageIdFromName(target));
+                if(Garden.place1_name.getText() == "") {
+                    ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
+                    Random random = new Random();
+                    String target = related_animals.get(random.nextInt(related_animals.size()));
+                    double prob = Globals.ANIMAL_TO_PROB.get(target);
+                    Log.d("master", String.valueOf(prob));
+                    if (Math.random() <= prob) {
+                        Log.d("master", "animal!!");
+                        Animal pet = new Animal();
+                        pet.setAnimalName(target);
+                        pet.setPresent(1);
+                        helper.removeAnimal(target);
+                        helper.insertAnimal(pet, true);
+                        Garden.pet1.setImageResource(Util.getImageIdFromName(target));
+                    }
                 }
             }
             else if(i.getPresent() == 2){
