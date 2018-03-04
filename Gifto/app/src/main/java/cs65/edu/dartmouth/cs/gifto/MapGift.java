@@ -33,7 +33,7 @@ public class MapGift {
 
     public MapGift(String giftName, String userName, String userNickname, String message,
                    String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location,
-                   long timePlaced, String sendTo) {
+                   long timePlaced, String sendTo, int giftBox) {
         this.giftName = giftName;
         this.userName = userName;
         this.userNickname = userNickname;
@@ -42,6 +42,7 @@ public class MapGift {
         this.location = location;
         this.timePlaced = timePlaced;
         this.sendTo = sendTo;
+        this.giftBox = giftBox;
     }
 
     public String getGiftName() {

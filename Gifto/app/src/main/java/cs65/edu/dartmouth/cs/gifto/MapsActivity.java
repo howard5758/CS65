@@ -50,6 +50,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
@@ -198,8 +200,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             builder.setTitle("Pick up gift?");
                                         }
                                         builder.setMessage(nickname[0] + ": " + message[0]);
-                                        // TODO: pick gift to display using gift box type, rather than name
-                                        builder.setIcon(Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class)));
+                                        int id;
+                                        int box_num;
+                                        if((snapshot.child("giftBox").getValue()) == null) box_num = 0;
+                                        else box_num = snapshot.child("giftBox").getValue(Integer.class);
+                                        String box = Globals.INT_TO_BOX.get(box_num);
+                                        if((id = Util.getImageIdFromName(box)) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                                        builder.setIcon(id);
                                         AlertDialog dialog = builder.create();
                                         dialog.show();
                                     }
@@ -232,14 +239,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 // move to user's database
                                                 Util.databaseReference.child("users").child(Util.userID).child("gifts").push().setValue(gift);
                                                 // delete from public database
-                                                //MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
-                                                //helper.insertGift(gift);
-                                                //helper.close();
+                                                MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
+                                                helper.insertGift(gift, false);
+                                                helper.close();
                                                 giftsData.child(snapshot.getKey()).removeValue();
                                                 if (marker != null) {
                                                     marker.remove();
                                                     gifts.remove(marker);
                                                 }
+                                                // TODO: put inventory object in sql and firebase
                                             }
                                         }
                                     }
@@ -286,7 +294,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
                 int id;
-                if((id = Util.getImageIdFromName(dataSnapshot.child("giftName").getValue(String.class))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                if(dataSnapshot.child("giftBox").getValue(Integer.class) != null) {
+                    if ((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(dataSnapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName(""))
+                        id = R.drawable.gift_icon;
+                } else id = R.drawable.gift_icon;
                 Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id)));
                 gifts.add(marker);
             }
@@ -344,7 +355,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Gift gift = snapshot.getValue(Gift.class);
                     // TODO: different gift packages? Need some way to determine which image to use
                     int id;
-                    if((id = Util.getImageIdFromName(snapshot.child("giftName").getValue(String.class))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                    if(snapshot.child("giftBox").getValue(Integer.class) != null){
+                        if((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(snapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                    } else id = R.drawable.gift_icon;
                     MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id));
                     Marker marker = mMap.addMarker(markerOptions);
                     gifts.add(marker);
@@ -384,10 +397,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng latLng = savedLatLng;
 
                 Calendar c = Calendar.getInstance();
-                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), null);
+                Random rand = new Random();
+                int randomNum = rand.nextInt((Globals.ANIMAL_TO_BOX_LIST.get(animalName).size() - 1) + 1) + 1;
+                String giftbox_name = Globals.ANIMAL_TO_BOX_LIST.get(animalName).get(randomNum);
+                int giftbox = 0;
+                for(int i=0; i<Globals.INT_TO_BOX.size(); i++) {
+                    if(Globals.INT_TO_BOX.get(i) == giftbox_name) {
+                        giftbox = i;
+                        break;
+                    }
+                }
+                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), null, giftbox);
                 String key = giftsData.push().getKey();
                 gift.setId(key);
                 giftsData.child(key).setValue(gift);
+                // TODO: remove animal and inventory object from sql and from firebase
                 //Util.databaseReference.child("users").child(Util.userID).removeValue();
                 //String id = helper.insertMapGift(gift);
 //                MySQLiteHelper helper = new MySQLiteHelper(this);

@@ -194,22 +194,22 @@ public class MainActivity extends AppCompatActivity
 ////            MapGift mg1 = new MapGift("watermelon bag", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000, "john1");
 ////            MapGift mg2 = new MapGift("red box", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001, "john2");
 ////
-//            db.insertAnimal(a1);
-//            db.insertAnimal(a2);
-//            db.insertAnimal(a3);
-//            db.insertAnimal(a4);
+//            db.insertAnimal(a1, true);
+//            db.insertAnimal(a2, true);
+//            db.insertAnimal(a3, true);
+//            db.insertAnimal(a4, true);
 ////            db.insertGift(g1);
 ////            db.insertGift(g2);
-//            db.insertInventory(i1);
-//            db.insertInventory(i2);
-//            db.insertInventory(i3);
-//            db.insertInventory(i4);
-//            db.insertInventory(i5);
+//            db.insertInventory(i1, true);
+//            db.insertInventory(i2, true);
+//            db.insertInventory(i3, true);
+//            db.insertInventory(i4, true);
+//            db.insertInventory(i5, true);
 ////            db.insertInventory(i2);
 ////            db.insertMapGift(mg1);
 ////            db.insertMapGift(mg2);
-//            db.insertFriend(f1);
-//            db.insertFriend(f2);
+//            db.insertFriend(f1, true);
+//            db.insertFriend(f2, true);
 //
 //            Animal animal1 = db.fetchAnimalByName("cat1");
 //            Animal animal2 = db.fetchAnimalByName("cat2");

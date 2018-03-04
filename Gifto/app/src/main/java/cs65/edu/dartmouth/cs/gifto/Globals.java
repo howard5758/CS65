@@ -25,7 +25,7 @@ public class Globals {
             new HashMap<String, ArrayList<String>>();
     public static final Map<String, ArrayList<String>> ANIMAL_TO_BOX_LIST =
             new HashMap<String, ArrayList<String>>();
-    public static final ArrayList<String> INT_TO_BOX = new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope”, “black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "tiffany box", "dog food bag", "lucky bag", "envelope"));
+    public static final ArrayList<String> INT_TO_BOX = new ArrayList<String> (Arrays.asList("", "blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope”, “black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "tiffany box", "dog food bag", "lucky bag", "envelope"));
 
     static {
         /** animals: 0: small, can only carry messages
