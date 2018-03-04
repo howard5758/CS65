@@ -35,7 +35,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String FRIEND_TITLE = "friends";
     private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_FRIEND_NAME = "friendName";
+    private static final String COLUMN_FRIEND_EMAIL = "friendEmail";
     private static final String COLUMN_FRIEND_NICKNAME = "nickname";
 
     private static final String GIFT_TITLE = "gifts";
@@ -44,16 +44,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TOFROM = "toFrom";
     private static final String COLUMN_TIME = "time";
     private static final String COLUMN_LOCATION = "location";
+    private static final String COLUMN_GIFT_BOX = "giftBox";
 
     private static final String ANIMAL_TITLE = "animals";
     private static final String COLUMN_ANIMAL_NAME = "animalName";
     private static final String COLUMN_RARITY = "rarity";
     private static final String COLUMN_VISITS = "visits";
     private static final String COLUMN_PERSISTENCE = "persistence";
+    private static final String COLUMN_PRESENT = "present";
 
     private static final String INVENTORY_TITLE = "inventory";
     private static final String COLUMN_INVENTORY_NAME = "inventoryName";
-    private static final String COLUMN_TYPE = "type";
     private static final String COLUMN_AMOUNT = "amount";
 
     private static final String MAP_GIFT_TITLE = "mapGift";
@@ -63,21 +64,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FIREBASE_FLAG = "flag";
 
 
-    private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_NAME,
-            COLUMN_FRIEND_NICKNAME, COLUMN_FIREBASE_FLAG };
+    private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_EMAIL,
+            COLUMN_FRIEND_NICKNAME, COLUMN_FIREBASE_ID, COLUMN_FIREBASE_FLAG };
 
-    private String[] gifts_columns = { COLUMN_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
-            COLUMN_TIME, COLUMN_LOCATION, COLUMN_FIREBASE_FLAG };
+    private String[] gifts_columns = { COLUMN_ID, COLUMN_FIREBASE_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
+            COLUMN_TIME, COLUMN_GIFT_BOX, COLUMN_LOCATION, COLUMN_FIREBASE_FLAG };
 
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY,
-            COLUMN_VISITS, COLUMN_PERSISTENCE, COLUMN_FIREBASE_FLAG };
+            COLUMN_VISITS, COLUMN_PERSISTENCE, COLUMN_FIREBASE_FLAG, COLUMN_PRESENT };
 
     private String[] inventory_columns = { COLUMN_ID, COLUMN_INVENTORY_NAME,
-            COLUMN_TYPE, COLUMN_AMOUNT, COLUMN_FIREBASE_FLAG };
-
-    private String[] map_gifts_columns = { COLUMN_ID, COLUMN_FIREBASE_ID, COLUMN_GIFT, COLUMN_FRIEND_NAME,
-            COLUMN_FRIEND_NICKNAME, COLUMN_MESSAGE, COLUMN_ANIMAL_NAME,
-            COLUMN_LOCATION, COLUMN_TIME, COLUMN_FIREBASE_FLAG };
+            COLUMN_AMOUNT, COLUMN_FIREBASE_FLAG };
 
     private String[] titles = {FRIEND_TITLE, GIFT_TITLE, ANIMAL_TITLE, INVENTORY_TITLE, MAP_GIFT_TITLE};
 
@@ -85,16 +82,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_FRIENDS_TABLE = "create table " + FRIEND_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            COLUMN_FRIEND_NAME + " TEXT, " +
+            COLUMN_FRIEND_EMAIL + " TEXT, " +
             COLUMN_FRIEND_NICKNAME + " TEXT, " +
+            COLUMN_FIREBASE_ID + " TEXT, " +
             COLUMN_FIREBASE_FLAG + " INTEGER );";
 
     private static final String CREATE_GIFTS_TABLE = "create table " + GIFT_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_FIREBASE_ID + " TEXT, " +
             COLUMN_GIFT + " TEXT, " +
             COLUMN_SENT + " INTEGER NOT NULL, " +
             COLUMN_TOFROM + " TEXT, " +
             COLUMN_TIME + " DATETIME NOT NULL, " +
+            COLUMN_GIFT_BOX + " INTEGER, " +
             COLUMN_LOCATION + " BLOB, " +
             COLUMN_FIREBASE_FLAG + " INTEGER );";
 
@@ -104,25 +104,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_RARITY + " INTEGER NOT NULL, " +
             COLUMN_VISITS + " INTEGER NOT NULL, " +
             COLUMN_PERSISTENCE + " INTEGER, " +
-            COLUMN_FIREBASE_FLAG + " INTEGER );";
+            COLUMN_FIREBASE_FLAG + " INTEGER, " +
+            COLUMN_PRESENT + " INTEGER );";
 
     private static final String CREATE_INVENTORY_TABLE = "create table " + INVENTORY_TITLE +
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_INVENTORY_NAME + " TEXT, " +
-            COLUMN_TYPE + " INTEGER, " +
             COLUMN_AMOUNT + " INTEGER NOT NULL, " +
-            COLUMN_FIREBASE_FLAG + " INTEGER );";
-
-    private static final String CREATE_MAP_GIFTS_TABLE = "create table " + MAP_GIFT_TITLE +
-            "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            COLUMN_FIREBASE_ID + " TEXT, " +
-            COLUMN_GIFT + " TEXT, " +
-            COLUMN_FRIEND_NAME + " TEXT, " +
-            COLUMN_FRIEND_NICKNAME + " TEXT, " +
-            COLUMN_MESSAGE + " TEXT, " +
-            COLUMN_ANIMAL_NAME + " TEXT, " +
-            COLUMN_LOCATION + " BLOB, " +
-            COLUMN_TIME + " DATETIME NOT NULL, " +
             COLUMN_FIREBASE_FLAG + " INTEGER );";
 
 
@@ -132,9 +120,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         columns.add(friends_columns);
         columns.add(gifts_columns);
         columns.add(animals_columns);
-        columns.add(map_gifts_columns);
         columns.add(inventory_columns);
-
     }
 
     // Create table schema if not exists
@@ -144,20 +130,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_GIFTS_TABLE);
         db.execSQL(CREATE_ANIMAL_TABLE);
         db.execSQL(CREATE_INVENTORY_TABLE);
-        db.execSQL(CREATE_MAP_GIFTS_TABLE);
     }
 
-    // Insert a friend
-    /*** username must be unique! ***/
+    /* Insert a friend
+     * when this is called you do not need to know the FirebaseId of the friend
+     * the method will automatically create and set an Id for the given friend
+     * so, after this method is called, the friend object will have an id inside it */
     void insertFriend(Friend friend) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         int flagged = 1;
-        if (isOnline()) {
+        if (Util.isOnline()) {
             Log.d("if", "online");
+            String key = Util.databaseReference.child("users").child(Util.userID).child("friends").push().getKey();
+            friend.setFirebaseId(key);
             Util.databaseReference.child("users").
-                    child(Util.userID).child("friends").child(friend.getName()).setValue(friend);
+                    child(Util.userID).child("friends").child(key).setValue(friend);
             flagged = 0;
             if (failed_insert) {
                 insertFlagged();
@@ -171,24 +160,29 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // now insert into SQL
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_FRIEND_NAME, friend.getName());
+        values.put(COLUMN_FRIEND_EMAIL, friend.getEmail());
         values.put(COLUMN_FRIEND_NICKNAME, friend.getNickname());
+        values.put(COLUMN_FIREBASE_ID, friend.getFirebaseId());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
 
         database.insert(FRIEND_TITLE, null, values);
         database.close();
     }
 
-    // Insert a gift
+    /* insert a gift
+     * does the same thing as a friend when you insert with setting the firebase Id */
     void insertGift(Gift gift) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         int flagged = 1;
-        if (isOnline()) {
+        String key = "";
+        if (Util.isOnline()) {
             Log.d("if", "online");
+            key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
+            gift.setId(key);
             Util.databaseReference.child("users").
-                    child(Util.userID).child("gifts").child(gift.getGiftName()).setValue(gift);
+                    child(Util.userID).child("gifts").child(key).setValue(gift);
             flagged = 0;
             if (failed_insert) {
                 insertFlagged();
@@ -202,10 +196,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // insert into SQL
         SQLiteDatabase database = getReadableDatabase();
         ContentValues values = new ContentValues();
+
         values.put(COLUMN_GIFT, gift.getGiftName());
+        values.put(COLUMN_FIREBASE_ID, key);
         values.put(COLUMN_SENT, gift.isSent());
         values.put(COLUMN_TOFROM, gift.getFriendName());
         values.put(COLUMN_TIME, gift.getTime());
+        values.put(COLUMN_GIFT_BOX, gift.getGiftBox());
         try {
             values.put(COLUMN_LOCATION, toByte(gift.getLocation()));        // converting to byte throws IOException
         } catch (IOException e) {
@@ -217,13 +214,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    // Insert an animal
+    /* Insert an animal
+     * does not have firebase Id so does not return Firebase Id */
     void insertAnimal(Animal animal) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         int flagged = 1;
-        if (isOnline()) {
+        if (Util.isOnline()) {
             Log.d("if", "online");
             Util.databaseReference.child("users").
                     child(Util.userID).child("animals").child(animal.getAnimalName()).setValue(animal);
@@ -245,19 +243,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_VISITS, animal.getNumVisits());
         values.put(COLUMN_PERSISTENCE, animal.getPersistence());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
+        values.put(COLUMN_PRESENT, animal.getPresent());
 
         database.insert(ANIMAL_TITLE, null, values);
         database.close();
     }
 
-    // insert inventory item
-    // also use this if you want to change the amount of an item
+    /* insert inventory item
+     * also use this if you want to change the amount of an item */
     void insertInventory(InventoryItem item) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         int flagged = 1;
-        if (isOnline()) {
+        if (Util.isOnline()) {
             Log.d("if", "online");
             Util.databaseReference.child("users").
                     child(Util.userID).child("items").child(item.getItemName()).setValue(item);
@@ -274,7 +273,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // insert into SQL
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TYPE, item.getItemType());
         values.put(COLUMN_INVENTORY_NAME, item.getItemName());
         values.put(COLUMN_AMOUNT, item.getItemAmount());
         values.put(COLUMN_FIREBASE_FLAG, flagged);
@@ -292,7 +290,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         String id = "";
-        if (isOnline()) {
+        if (Util.isOnline()) {
             Log.d("if", "online");
             id = Util.databaseReference.child("gifts").push().getKey();
             gift.setId(id);
@@ -318,26 +316,27 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Util.databaseReference.child("users").child(Util.userID).child("animals").child(name).removeValue();
     }
 
-    /* remove friend by name
-     * also deletes from Firebase at the specified name */
-    void removeFriend(String name) {
+    /* remove friend by Firebase ID
+     * also deletes from Firebase at the specified id
+     * has to be removed by firebase id otherwise firebase will never find it*/
+    void removeFriend(String id) {
         SQLiteDatabase database = getWritableDatabase();
-        String whereClause = COLUMN_FRIEND_NAME + "='" + name + "'";
+        String whereClause = COLUMN_FIREBASE_ID + "='" + id + "'";
         database.delete(FRIEND_TITLE, whereClause, null);
         database.close();
 
-        Util.databaseReference.child("users").child(Util.userID).child("friends").child(name).removeValue();
+        Util.databaseReference.child("users").child(Util.userID).child("friends").child(id).removeValue();
     }
 
     /* remove gift by name
-     * also deletes from Firebase at the specified name */
-    void removeGift(String name) {
+     * also deletes from Firebase at the specified id */
+    void removeGift(String id) {
         SQLiteDatabase database = getWritableDatabase();
-        String whereClause = COLUMN_GIFT + "='" + name + "'";
+        String whereClause = COLUMN_FIREBASE_ID + "='" + id + "'";
         database.delete(GIFT_TITLE, whereClause, null);
         database.close();
 
-        Util.databaseReference.child("users").child(Util.userID).child("gifts").child(name).removeValue();
+        Util.databaseReference.child("users").child(Util.userID).child("gifts").child(id).removeValue();
     }
 
     /* remove inventory item by name
@@ -354,7 +353,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     /* removes a mapgift from firebase (not stored in SQL anyway)
      * returns true if successfully removed, false if not connected to internet */
     boolean removeMapGift(String id) {
-        if (isOnline()) {
+        if (Util.isOnline()) {
             Util.databaseReference.child("gifts").child(id).removeValue();
             return true;
         }
@@ -412,7 +411,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns empty ArrayList if table is empty or not connected to internet */
     ArrayList<MapGift> fetchAllMapGifts() {
         final ArrayList<MapGift> gifts = new ArrayList<>(0);
-        if (isOnline()) {
+        if (Util.isOnline()) {
             ValueEventListener listener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -423,8 +422,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
                         gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
                         gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
-                        gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
+                        gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_EMAIL).getValue()));
                         gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
+                        gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot.child(COLUMN_GIFT_BOX).getValue())));
                         if (snapshot.child("timePlaced").getValue() != null) {
                             gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot.child("timePlaced").getValue())));
                         }
@@ -567,10 +567,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns the friend if it exists
      * returns an empty friend object if it does not exist
      * queries SQLite, not firebase */
-    Friend fetchFriendByName(String name) {
+    Friend fetchFriendByEmail(String email) {
         Friend friend = new Friend();
         SQLiteDatabase database = getReadableDatabase();
-        String clause = COLUMN_FRIEND_NAME + "='" + name + "'";
+        String clause = COLUMN_FRIEND_EMAIL + "='" + email + "'";
         Cursor cursor = database.query(FRIEND_TITLE, friends_columns, clause,
                 null, null, null, null);
 
@@ -590,7 +590,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns an empty map gift if it does not exist or not connected to internet */
     MapGift fetchMapGiftByName(final String id) {
         final MapGift gift = new MapGift();
-        if (isOnline()) {
+        if (Util.isOnline()) {
             ValueEventListener listener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -600,8 +600,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                             gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
                             gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
                             gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
-                            gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_NAME).getValue()));
+                            gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_EMAIL).getValue()));
                             gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
+                            gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot.child(COLUMN_GIFT_BOX).getValue())));
                             if (snapshot.child("timePlaced").getValue() != null) {
                                 gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot.child("timePlaced").getValue())));
                             }
@@ -630,7 +631,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.delete(MySQLiteHelper.FRIEND_TITLE, null, null);
         database.delete(MySQLiteHelper.ANIMAL_TITLE, null, null);
         database.delete(MySQLiteHelper.INVENTORY_TITLE, null, null);
-        database.delete(MySQLiteHelper.MAP_GIFT_TITLE, null, null);
     }
 
     /* Goes through every table in SQLite, gets the flagged data, and inserts it to firebase */
@@ -646,15 +646,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             while (cursor.getCount() > 0 && !cursor.isAfterLast()) {
                 if (i == 0) {
                     Friend friend = cursorToFriend(cursor);
+                    String key = Util.databaseReference.child("users").child(Util.userID).child("friends").push().getKey();
                     Util.databaseReference.child("users").
-                            child(Util.userID).child("friends").child(friend.getName()).setValue(friend);
+                            child(Util.userID).child("friends").child(key).setValue(friend);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(FRIEND_TITLE, values, COLUMN_FRIEND_NAME + "='" + friend.getName() + "'", null);
+                    database.update(FRIEND_TITLE, values, COLUMN_FRIEND_EMAIL + "='" + friend.getEmail() + "'", null);
+                    ContentValues id = new ContentValues();
+                    id.put(COLUMN_FIREBASE_ID, key);
+                    database.update(FRIEND_TITLE, id, COLUMN_FRIEND_EMAIL + "='" + friend.getEmail() + "'", null);
                 } else if (i == 1) {
                     Gift gift = cursorToGift(cursor);
+                    String key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
                     Util.databaseReference.child("users").
-                            child(Util.userID).child("gifts").child(gift.getGiftName()).setValue(gift);
+                            child(Util.userID).child("gifts").child(key).setValue(gift);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
                     database.update(GIFT_TITLE, values, COLUMN_GIFT + "='" + gift.getGiftName() + "'", null);
@@ -685,6 +690,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         animal.setRarity(cursor.getInt(2));
         animal.setNumVisits(cursor.getInt(3));
         animal.setPersistence(cursor.getLong(4));
+        animal.setPresent(cursor.getInt(6));
 
         return animal;
     }
@@ -693,39 +699,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * cursor checking done before this method is called */
     private Gift cursorToGift(Cursor cursor) {
         Gift gift = new Gift();
-        gift.setGiftName(cursor.getString(1));
-        if (cursor.getInt(2) == 0) {
+        gift.setId(cursor.getString(1));
+        gift.setGiftName(cursor.getString(2));
+        if (cursor.getInt(3) == 0) {
             gift.setSent(false);
         } else {
             gift.setSent(true);
         }
 
-        gift.setFriendName(cursor.getString(3));
-        gift.setTime(cursor.getLong(4));
+        gift.setFriendName(cursor.getString(4));
+        gift.setTime(cursor.getLong(5));
+        gift.setGiftBox(cursor.getInt(6));
         try {
-            gift.setLocation(toLatLng(cursor.getBlob(5)));
+            gift.setLocation(toLatLng(cursor.getBlob(7)));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return gift;
-    }
-
-    /* Turns a cursor into a single map gift object
-     * cursor checking done before this method is called */
-    private MapGift cursorToMapGift(Cursor cursor) {
-        MapGift gift = new MapGift();
-        gift.setGiftName(cursor.getString(1));
-        gift.setUserName(cursor.getString(2));
-        gift.setUserNickname(cursor.getString(3));
-        gift.setMessage(cursor.getString(4));
-        gift.setAnimalName(cursor.getString(5));
-        try {
-            gift.setLocation(toLatLng(cursor.getBlob(6)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        gift.setTimePlaced(cursor.getLong(7));
 
         return gift;
     }
@@ -735,8 +724,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private InventoryItem cursorToInventoryItem(Cursor cursor) {
         InventoryItem item = new InventoryItem();
         item.setItemName(cursor.getString(1));
-        item.setItemType(cursor.getInt(2));
-        item.setItemAmount(cursor.getInt(3));
+        item.setItemAmount(cursor.getInt(2));
 
         return item;
     }
@@ -745,25 +733,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * cursor checking done before this method is called */
     private Friend cursorToFriend(Cursor cursor) {
         Friend friend = new Friend();
-        friend.setName(cursor.getString(1));
+        friend.setEmail(cursor.getString(1));
         friend.setNickname(cursor.getString(2));
+        friend.setFirebaseId(cursor.getString(3));
 
         return friend;
-    }
-
-    /* checks if the user is online
-     * used to see if should insert into firebase or just mark flag in SQL */
-    private boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
-
-        return false;
     }
 
     // convert a LatLng to a byte array to be stored as a BLOB

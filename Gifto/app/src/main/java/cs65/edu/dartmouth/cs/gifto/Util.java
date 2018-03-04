@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
+import java.io.IOException;
+
 /**
  * Created by Oliver on 2/24/2018.
  *
@@ -23,7 +25,6 @@ class Util {
     static String userID;
     static String name;
     static String email;
-    static String token;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -38,6 +39,21 @@ class Util {
         Intent intent = new Intent(context, c);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
+    }
+
+    /* checks if the user is online
+     * used to see if should insert into firebase or just mark flag in SQL */
+    static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
 
     // name = the String used for things like Gift.giftName, Animal.animalName, etc.
@@ -68,6 +84,8 @@ class Util {
                 return (R.drawable.owl);
             case "squirrel":
                 return (R.drawable.squirrel);
+            case "American Shorthair":
+                return (R.drawable.shorthair);
             default:
                 return (R.drawable.tiffany_box);
         }

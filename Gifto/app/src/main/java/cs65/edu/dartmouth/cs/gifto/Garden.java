@@ -159,7 +159,7 @@ public class Garden extends Fragment {
     public View setBackground(View view){
         if (background == Globals.DEFAULT_BACKGROUND){
             ImageView bg = (ImageView) view.findViewById(R.id.bg);
-            bg.setImageResource(R.drawable.plain_bg);
+            bg.setImageResource(R.drawable.bg_plain);
         }
         if (place2 == Globals.DEFAULT_PLACE2){
             ImageView p2 = (ImageView) view.findViewById(R.id.place2);

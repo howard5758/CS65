@@ -220,27 +220,27 @@ public class Collection extends ListActivity {
         petCollection.add(a_6);
         petCollection.add(a_7);
 
-        InventoryItem i_1 = new InventoryItem();
-        i_1.setItemName("banana");
-        i_1.setItemType(1);
-        InventoryItem i_2 = new InventoryItem();
-        i_2.setItemName("pool");
-        i_2.setItemType(2);
-        InventoryItem i_3 = new InventoryItem();
-        i_3.setItemName("tennis ball");
-        i_3.setItemType(3);
-        InventoryItem i_4 = new InventoryItem();
-        i_4.setItemName("tree");
-        i_4.setItemType(2);
-        InventoryItem i_5 = new InventoryItem();
-        i_5.setItemName("tuna");
-        i_5.setItemType(1);
-
-        goodiesCollection.add(i_1);
-        goodiesCollection.add(i_2);
-        goodiesCollection.add(i_3);
-        goodiesCollection.add(i_4);
-        goodiesCollection.add(i_5);
+//        InventoryItem i_1 = new InventoryItem();
+//        i_1.setItemName("banana");
+//        i_1.setItemType(1);
+//        InventoryItem i_2 = new InventoryItem();
+//        i_2.setItemName("pool");
+//        i_2.setItemType(2);
+//        InventoryItem i_3 = new InventoryItem();
+//        i_3.setItemName("tennis ball");
+//        i_3.setItemType(3);
+//        InventoryItem i_4 = new InventoryItem();
+//        i_4.setItemName("tree");
+//        i_4.setItemType(2);
+//        InventoryItem i_5 = new InventoryItem();
+//        i_5.setItemName("tuna");
+//        i_5.setItemType(1);
+//
+//        goodiesCollection.add(i_1);
+//        goodiesCollection.add(i_2);
+//        goodiesCollection.add(i_3);
+//        goodiesCollection.add(i_4);
+//        goodiesCollection.add(i_5);
 
     }
 

@@ -23,14 +23,16 @@ public class Animal implements Serializable {
     private int numVisits;
     private int rarity;
     private long persistence;
+    private int present;
 
     Animal(){}
 
-    Animal(String animalName, int numVisits, int rarity, long persistence) {
+    Animal(String animalName, int numVisits, int rarity, long persistence, int present) {
         this.animalName = animalName;
         this.numVisits = numVisits;
         this.rarity = rarity;
         this.persistence = persistence;
+        this.present = present;
     }
 
     public String getAnimalName() {
@@ -63,5 +65,13 @@ public class Animal implements Serializable {
 
     public void setPersistence(long persistence) {
         this.persistence = persistence;
+    }
+
+    public int getPresent() {
+        return present;
+    }
+
+    public void setPresent(int present) {
+        this.present = present;
     }
 }

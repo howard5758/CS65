@@ -7,15 +7,16 @@ package cs65.edu.dartmouth.cs.gifto;
  */
 
 public class Friend {
-    private String name;
+    private String email;
     private String nickname;
+    private String firebaseId;
 
     // if you want to just make an empty friend
     Friend(){}
 
     // to initialize with name and nickname, if known
-    Friend(String name, String nickname) {
-        this.name = name;
+    Friend(String email, String nickname) {
+        this.email = email;
         this.nickname = nickname;
     }
 
@@ -27,11 +28,19 @@ public class Friend {
         this.nickname = nickname;
     }
 
-    public String getName() {
-        return name;
+    public String getEmail() {
+        return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String name) {
+        this.email = name;
+    }
+
+    public String getFirebaseId() {
+        return firebaseId;
+    }
+
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
     }
 }

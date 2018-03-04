@@ -12,11 +12,13 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class Gift {
+    private String id;
     private String giftName;
     private boolean sent;
     private String friendName;
     private long time;
     private cs65.edu.dartmouth.cs.gifto.LatLng location;
+    private int giftBox;
 
     Gift(){}
 
@@ -66,5 +68,21 @@ public class Gift {
 
     public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getGiftBox() {
+        return giftBox;
+    }
+
+    public void setGiftBox(int giftBox) {
+        this.giftBox = giftBox;
     }
 }
