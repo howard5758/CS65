@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Oliver on 2/19/2018.
@@ -21,14 +22,16 @@ import java.util.ArrayList;
 
 public class Collection extends ListActivity {
 
-    TextView title;
-    ArrayList<String> pngList;
-    collection_adapter collection_adapter;
+    public static TextView title;
+    item_adapter item_adapter;
+    pet_adapter pet_adapter;
 
-    Boolean goodies, gifts, pets;
+    Boolean goodies, gifts, pets, selection;
 
     public ArrayList<InventoryItem> goodiesCollection;
     public ArrayList<Animal> petCollection;
+
+    MySQLiteHelper helper;
 
 
     @Override
@@ -36,47 +39,56 @@ public class Collection extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collection);
 
-        goodiesCollection =  new ArrayList<InventoryItem>();
-        petCollection = new ArrayList<Animal>();
-
+        helper = new MySQLiteHelper(this);
+        petCollection = new ArrayList<>();
+        goodiesCollection = new ArrayList<>();
         listInit();
+
 
         goodies = getIntent().getBooleanExtra("goodies", false);
         gifts = getIntent().getBooleanExtra("gifts", false);
         pets = getIntent().getBooleanExtra("pets", false);
+        selection = getIntent().getBooleanExtra("selection", false);
 
-        pngList = new ArrayList<>();
         title = (TextView) findViewById(R.id.list_title);
 
         if (goodies) {
+            InventoryItem moneyy = helper.fetchinventoryItemByName("money");
+            if (moneyy.getItemAmount() == -1){
+                moneyy.setItemName("money");
+                moneyy.setItemAmount(300);
+                helper.insertInventory(moneyy);
+            }
+            title.setText("GOODIES" + String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount()));
+            item_adapter = new item_adapter(this, R.layout.list_collection, goodiesCollection);
+            setListAdapter(item_adapter);
 
-            title.setText("GOODIES");
-            pngList.add("banana");
-            pngList.add("tuna");
-            pngList.add("pool");
-            pngList.add("tree");
-            pngList.add("tennis ball");
 
         } else if (gifts) {
 
             title.setText("GIFTS");
 
 
-        } else {
+        } else if (pets){
 
             title.setText("PETS");
-            pngList.add("alligator");
-            pngList.add("cat");
-            pngList.add("dog");
-            pngList.add("kangaroo");
-            pngList.add("monkey");
-            pngList.add("owl");
-            pngList.add("squirrel");
-
+            pet_adapter = new pet_adapter(this, R.layout.list_collection, petCollection);
+            setListAdapter(pet_adapter);
+        } else if(selection){
+            title.setText("Choose an item to place!");
+            int loc_type = getIntent().getIntExtra("loc_type", 0);
+            ArrayList<InventoryItem> selection_list = helper.fetchAllInventoryItems();
+//            Iterator<InventoryItem> iter = selection_list.iterator();
+//
+//            while(iter.hasNext()) {
+//                InventoryItem i = iter.next();
+//                //if(i.getItemType() != loc_type){
+//                    //iter.remove();
+//                //}
+//            }
+            item_adapter = new item_adapter(this, R.layout.list_collection, selection_list);
+            setListAdapter(item_adapter);
         }
-
-        collection_adapter = new collection_adapter(this, R.layout.list_collection, pngList);
-        setListAdapter(collection_adapter);
 
     }
 
@@ -84,15 +96,30 @@ public class Collection extends ListActivity {
     public void onListItemClick(ListView parent, View v, int position, long id) {
         super.onListItemClick(parent, v, position, id);
 
+        if(selection){
+            finish();
+        }
+        else {
+            Intent intent = new Intent(this, purchase_screen.class);
+            if (goodies) {
+                intent.putExtra("name", goodiesCollection.get(position).getItemName());
+                intent.putExtra("type", "goodies");
+                intent.putExtra("actual_object", goodiesCollection.get(position));
+            } else if (pets) {
+                intent.putExtra("name", petCollection.get(position).getAnimalName());
+                intent.putExtra("type", "pets");
+                intent.putExtra("actual_object", petCollection.get(position));
+            }
 
-        Intent intent = new Intent(this, purchase_screen.class);
-        intent.putExtra("object", pngList.get(position));
-        startActivity(intent);
+            startActivity(intent);
+        }
     }
 
-    public class collection_adapter extends ArrayAdapter<String>{
+    public class item_adapter extends ArrayAdapter<InventoryItem>{
 
-        public collection_adapter(Context context, int textViewResourceId, ArrayList<String> objects) {
+        LayoutInflater inflater;
+
+        public item_adapter(Context context, int textViewResourceId, ArrayList<InventoryItem> objects) {
             super(context, textViewResourceId, objects);
         }
 
@@ -107,10 +134,69 @@ public class Collection extends ListActivity {
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
-            image.setImageResource(Util.getImageIdFromName(getItem(position)));
+            image.setImageResource(Util.getImageIdFromName(getItem(position).getItemName()));
+            if(selection) {
+                namee.setText(getItem(position).getItemName() + " amount: " + getItem(position).getItemAmount());
+            } else {
+                namee.setText(getItem(position).getItemName());
+            }
+
+            return view;
+        }
 
 
-            namee.setText(getItem(position));
+    }
+
+
+    public class gift_adapter extends ArrayAdapter<Gift>{
+
+        LayoutInflater inflater;
+
+        public gift_adapter(Context context, int textViewResourceId, ArrayList<Gift> objects) {
+            super(context, textViewResourceId, objects);
+        }
+
+        public View getView(int position, View view, ViewGroup parent) {
+
+            // make sure view is never null
+            if (view == null) {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.list_collection, parent, false);
+            }
+
+
+            TextView namee = (TextView) view.findViewById(R.id.first_line);
+            ImageView image = (ImageView) view.findViewById(R.id.small_image);
+
+            image.setImageResource(Util.getImageIdFromName(getItem(position).getGiftName()));
+
+            namee.setText(getItem(position).getGiftName());
+
+            return view;
+        }
+    }
+
+    public class pet_adapter extends ArrayAdapter<Animal>{
+
+        LayoutInflater inflater;
+
+        public pet_adapter(Context context, int textViewResourceId, ArrayList<Animal> objects) {
+            super(context, textViewResourceId, objects);
+        }
+
+        public View getView(int position, View view, ViewGroup parent) {
+
+            // make sure view is never null
+            if (view == null) {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.list_collection, parent, false);
+            }
+
+
+            TextView namee = (TextView) view.findViewById(R.id.first_line);
+            ImageView image = (ImageView) view.findViewById(R.id.small_image);
+
+            image.setImageResource(Util.getImageIdFromName(getItem(position).getAnimalName()));
+
+            namee.setText(getItem(position).getAnimalName());
 
             return view;
         }

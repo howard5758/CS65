@@ -1,12 +1,14 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import java.io.Serializable;
+
 /**
  * Created by Oliver on 2/25/2018.
  *
  * Another simple class to keep track of an inventory item
  */
 
-public class InventoryItem {
+public class InventoryItem implements Serializable {
     private String itemName;
     private int itemAmount;
 

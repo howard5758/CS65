@@ -443,7 +443,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 }
             };
 
-            Util.databaseReference.child("gifts").addValueEventListener(listener);
+            Util.databaseReference.child("gifts").addListenerForSingleValueEvent(listener);
         }
 
         return gifts;
@@ -554,7 +554,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
+            Log.d("master", "find money");
             item = cursorToInventoryItem(cursor);
+        }
+        else{
+            item.setItemAmount(-1);
         }
 
         cursor.close();
