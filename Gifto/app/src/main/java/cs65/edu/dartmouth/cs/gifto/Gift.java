@@ -18,6 +18,7 @@ public class Gift {
     private String friendName;
     private long time;
     private cs65.edu.dartmouth.cs.gifto.LatLng location;
+    private int giftBox;
 
     Gift(){}
 
@@ -75,5 +76,13 @@ public class Gift {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getGiftBox() {
+        return giftBox;
+    }
+
+    public void setGiftBox(int giftBox) {
+        this.giftBox = giftBox;
     }
 }

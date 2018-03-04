@@ -15,11 +15,14 @@ public class MapGift {
     private String animalName;
     private cs65.edu.dartmouth.cs.gifto.LatLng location;
     private long timePlaced;
+    private String sendTo;          // email address!!
+    private int giftBox;
 
     public MapGift(){}
 
     public MapGift(String giftName, String userName, String userNickname, String message,
-                   String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location, long timePlaced) {
+                   String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location,
+                   long timePlaced, String sendTo) {
         this.giftName = giftName;
         this.userName = userName;
         this.userNickname = userNickname;
@@ -27,6 +30,7 @@ public class MapGift {
         this.animalName = animalName;
         this.location = location;
         this.timePlaced = timePlaced;
+        this.sendTo = sendTo;
     }
 
     public String getGiftName() {
@@ -91,5 +95,21 @@ public class MapGift {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSendTo() {
+        return sendTo;
+    }
+
+    public void setSendTo(String sendTo) {
+        this.sendTo = sendTo;
+    }
+
+    public int getGiftBox() {
+        return giftBox;
+    }
+
+    public void setGiftBox(int giftBox) {
+        this.giftBox = giftBox;
     }
 }
