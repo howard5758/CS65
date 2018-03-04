@@ -56,12 +56,12 @@ public class purchase_screen extends AppCompatActivity {
                     temp.setItemName(object);
                     temp.setItemAmount(prev + 1);
                     helper.removeInventoryItem(object);
-                    helper.insertInventory(temp);
+                    helper.insertInventory(temp, true);
 
                     prev = money.getItemAmount();
                     money.setItemAmount(prev - 30);
                     helper.removeInventoryItem("money");
-                    helper.insertInventory(money);
+                    helper.insertInventory(money, true);
                 }
                 else{
                     Toast.makeText(getBaseContext(), "Not Enough Money", Toast.LENGTH_SHORT).show();
