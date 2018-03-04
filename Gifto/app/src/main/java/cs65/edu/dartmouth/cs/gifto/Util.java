@@ -3,6 +3,7 @@ package cs65.edu.dartmouth.cs.gifto;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +28,7 @@ class Util {
     static String userID;
     static String name;
     static String email;
+    static Uri photo;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

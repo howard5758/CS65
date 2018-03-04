@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.zip.Inflater;
 
 /**
  * Created by Oliver on 2/25/2018.
@@ -286,6 +287,8 @@ public class UserProfile extends AppCompatActivity {
             profileUpdates = new UserProfileChangeRequest.Builder()
                     .setPhotoUri(mImageCaptureUri)
                     .setDisplayName(editText.getText().toString()).build();
+
+            Util.photo = mImageCaptureUri;
         } else {
             profileUpdates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(editText.getText().toString()).build();

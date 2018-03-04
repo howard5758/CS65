@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
                                         .valueOf(animalData.child("numVisits").getValue())));
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
-                                animal.setPersistence((Long) animalData.child("persistence").getValue());
+                                animal.setPersistence(Long.parseLong(String.valueOf(animalData.child("persistence").getValue())));
                                 datasource.insertAnimal(animal);
                             }
                         }
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                                 Friend friend = new Friend();
                                 friend.setEmail((String) friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
-                                //datasource.insertFriend(friend);
+                                datasource.insertFriend(friend);
                             }
                         }
 
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
                                 // try to insert it
                                 // TODO: this is causing tons and tons of things to be added to the firebase
-                                //datasource.insertGift(gift);
+                                datasource.insertGift(gift);
                             }
                         }
 
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity
                                         valueOf(itemData.child("itemAmount").getValue())));
                                 if(String.valueOf(itemData.child("present").getValue()) != null) item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
                                 else item.setPresent(-1);
-                                //datasource.insertInventory(item);
+                                datasource.insertInventory(item);
 
                             }
 
@@ -255,16 +255,23 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
+            View headerView = navigationView.getHeaderView(0);
             for (UserInfo profile : user.getProviderData()) {
-                View headerView = navigationView.getHeaderView(0);
                 if (profile.getDisplayName() != null && !profile.getDisplayName().equals("")) {
                     TextView tv = headerView.findViewById(R.id.nav_header_text);
                     tv.setText(profile.getDisplayName());
+                } else {
+                    TextView tv = headerView.findViewById(R.id.nav_header_text);
+                    tv.setText(profile.getEmail());
                 }
                 if (profile.getPhotoUrl() != null) {
                     ImageView navImage = headerView.findViewById(R.id.nav_image);
                     navImage.setImageURI(profile.getPhotoUrl());
                 }
+            }
+            if (Util.photo != null) {
+                ImageView navImage = headerView.findViewById(R.id.nav_image);
+                navImage.setImageURI(Util.photo);
             }
         }
         // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
