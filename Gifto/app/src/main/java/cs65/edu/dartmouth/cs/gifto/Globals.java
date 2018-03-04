@@ -18,13 +18,14 @@ public class Globals {
     // list of animals, animal size and items, gifts, and gift size and money hashmap
     public static final Map<String, Integer> ANIMAL_TO_TYPE = new HashMap<String, Integer>();
     public static final Map<String, Integer> ITEM_TO_TYPE = new HashMap<String, Integer>();
-    public static final Map<String, Integer> GIFT_TO_TYPE = new HashMap<String, Integer>();
+    public static final Map<String, Integer> BOX_TO_TYPE = new HashMap<String, Integer>();
 
     public static final Map<String, Double> ANIMAL_TO_PROB = new HashMap<String, Double>();
     public static final Map<String, String> ANIMAL_TO_GIFT = new HashMap<String, String>();
     public static final Map<String, ArrayList<String>> ITEM_TO_ANIMAL_LIST =
             new HashMap<String, ArrayList<String>>();
-
+    public static final Map<String, ArrayList<String>> ANIMAL_TO_BOX_LIST =
+            new HashMap<String, ArrayList<String>>();
 
     static {
         /** animals: 0: small, can only carry messages
@@ -108,23 +109,24 @@ public class Globals {
          * 1: medium, can carry messages and small items
          * 2: large, can carry messages and small item or large items
          */
-        GIFT_TO_TYPE.put("blue bag",1);
-        GIFT_TO_TYPE.put("green bag",1);
-        GIFT_TO_TYPE.put("pink bag",1);
-        GIFT_TO_TYPE.put("red bag",1);
-        GIFT_TO_TYPE.put("watermelon bag",1);
-        GIFT_TO_TYPE.put("blue box",1);
-        GIFT_TO_TYPE.put("green box",1);
-        GIFT_TO_TYPE.put("purple box",1);
-        GIFT_TO_TYPE.put("red box",1);
-        GIFT_TO_TYPE.put("yellow box",1);
-        GIFT_TO_TYPE.put("black mole bag",1);
-        GIFT_TO_TYPE.put("blue mole bag",1);
-        GIFT_TO_TYPE.put("green mole bag",1);
-        GIFT_TO_TYPE.put("purple mole bag",1);
-        GIFT_TO_TYPE.put("tiffany box",1);
-        GIFT_TO_TYPE.put("god food bag",1);
-        GIFT_TO_TYPE.put("lucky bag",1);
+        BOX_TO_TYPE.put("blue bag",2);
+        BOX_TO_TYPE.put("green bag",2);
+        BOX_TO_TYPE.put("pink bag",2);
+        BOX_TO_TYPE.put("red bag",2);
+        BOX_TO_TYPE.put("watermelon bag",1);
+        BOX_TO_TYPE.put("blue box",1);
+        BOX_TO_TYPE.put("green box",1);
+        BOX_TO_TYPE.put("purple box",1);
+        BOX_TO_TYPE.put("red box",1);
+        BOX_TO_TYPE.put("yellow box",1);
+        BOX_TO_TYPE.put("black mole bag",2);
+        BOX_TO_TYPE.put("blue mole bag",2);
+        BOX_TO_TYPE.put("green mole bag",2);
+        BOX_TO_TYPE.put("purple mole bag",2);
+        BOX_TO_TYPE.put("tiffany box",0);
+        BOX_TO_TYPE.put("dog food bag",0);
+        BOX_TO_TYPE.put("lucky bag",0);
+        BOX_TO_TYPE.put("envelope",0);
 
         // probability for an animal to visit
         ANIMAL_TO_PROB.put("sleeping alligator", .2);
@@ -212,6 +214,43 @@ public class Globals {
         ITEM_TO_ANIMAL_LIST.put("pile of leaves", new ArrayList<String> (Arrays.asList("sleeping American Shorthair","sleeping cat","sleeping American Shorthair","Corgi's back")));
         ITEM_TO_ANIMAL_LIST.put("tree", new ArrayList<String> (Arrays.asList("monkey", "monkey on tree with banana", "monkey on tree","pink squirrel", "squirrel","owl")));
 
+        
+        // boxes an animal can bring
+        ANIMAL_TO_BOX_LIST.put("sleeping alligator",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag")));
+        ANIMAL_TO_BOX_LIST.put("alligator",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag")));
+        ANIMAL_TO_BOX_LIST.put("sleeping bat",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("bat",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("cat's head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("kangaroo",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag", "watermelon bag","lucky bag","black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
+        ANIMAL_TO_BOX_LIST.put("sleeping kangaroo",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag", "watermelon bag","lucky bag","black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
+        ANIMAL_TO_BOX_LIST.put("monkey",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("monkey's head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping monkey",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("monkey on tree with banana",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("monkey on tree",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("owl",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping owl",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("American Shorthair's head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping American Shorthair",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("American Shorthair",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping Siamese Cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("Siamese Cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("Siamese Cat's head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping pink squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("pink squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("sleeping squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
+        ANIMAL_TO_BOX_LIST.put("unicorn with grass",new ArrayList<String> (Arrays.asList("tiffany box", "lucky bag","watermelon bag","blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
+        ANIMAL_TO_BOX_LIST.put("sleeping unicorn",new ArrayList<String> (Arrays.asList("tiffany box", "lucky bag","watermelon bag","blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
+        ANIMAL_TO_BOX_LIST.put("giggling unicorn",new ArrayList<String> (Arrays.asList("tiffany box", "lucky bag","watermelon bag","blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
+        ANIMAL_TO_BOX_LIST.put("unicorn",new ArrayList<String> (Arrays.asList("tiffany box", "lucky bag","watermelon bag","blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
+        ANIMAL_TO_BOX_LIST.put("Corgi's back",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
+        ANIMAL_TO_BOX_LIST.put("Corgi",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
+        ANIMAL_TO_BOX_LIST.put("sleeping Corgi",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
+        ANIMAL_TO_BOX_LIST.put("Corgi's side",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
+        ANIMAL_TO_BOX_LIST.put("Corgi's head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
     }
 
 

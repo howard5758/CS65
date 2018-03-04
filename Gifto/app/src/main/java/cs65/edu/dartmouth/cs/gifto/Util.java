@@ -236,6 +236,10 @@ class Util {
                 return R.drawable.unicorn_sleep;
             case "giggling unicorn":
                 return R.drawable.unicorn_smile;
+            case "envelope":
+                return R.drawable.envelope;
+            case "dog food bag":
+                return R.drawable.dog_food_bag;
 
             default:
                 return (R.drawable.tiffany_box);
