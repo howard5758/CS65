@@ -38,7 +38,12 @@ public class purchase_screen extends AppCompatActivity {
         switch (type) {
             case "gifts":
                 image.setImageResource(Util.getImageIdFromName(object));
-                description.setText("Received a " + object);
+                if(object.equals(" ")){
+                    description.setText("Received NOTHING!!!");
+                }
+                else{
+                    description.setText("Received a " + object);
+                }
                 buy.setVisibility(View.GONE);
                 break;
             case "goodies":

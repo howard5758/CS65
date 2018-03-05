@@ -32,7 +32,7 @@ class Util {
     static boolean completed = false;
     static boolean nightTime = false;
     static double angle = 0;
-    static boolean shaking = false;
+    static boolean shaking;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
