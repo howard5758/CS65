@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -287,7 +288,12 @@ public class MainActivity extends AppCompatActivity
             transaction.addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_map) {
-            startActivity(new Intent(this, MapsActivity.class));
+            if (Util.isOnline()) {
+                startActivity(new Intent(this, MapsActivity.class));
+            } else {
+                Toast.makeText(this, "You are not online!", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
