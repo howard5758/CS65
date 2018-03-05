@@ -182,7 +182,7 @@ public class Globals {
         ANIMAL_TO_PROB.put("giggling unicorn", .1);
         ANIMAL_TO_PROB.put("unicorn", .1);
         ANIMAL_TO_PROB.put("Corgi back", .3);
-        ANIMAL_TO_PROB.put("Corgi", .9);
+        ANIMAL_TO_PROB.put("Corgi", .5);
         ANIMAL_TO_PROB.put("sleeping Corgi", .3);
         ANIMAL_TO_PROB.put("Corgi side", .2);
         ANIMAL_TO_PROB.put("Corgi head", .2);
@@ -224,6 +224,7 @@ public class Globals {
         ITEM_TO_ANIMAL_LIST.put("brown pot",new ArrayList<String> (Arrays.asList("cat","American Shorthair","Siamese Cat","Corgi","monkey","pink squirrel", "squirrel")));
         ITEM_TO_ANIMAL_LIST.put("green pot",new ArrayList<String> (Arrays.asList("cat","American Shorthair","Siamese Cat","Corgi","monkey","pink squirrel", "squirrel")));
         ITEM_TO_ANIMAL_LIST.put("salad",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair", "Corgi back", "Corgi", "Corgi side","kangaroo","pink squirrel", "squirrel", "unicorn with grass")));
+//        ITEM_TO_ANIMAL_LIST.put("salad",new ArrayList<String> (Arrays.asList( "Corgi")));
         ITEM_TO_ANIMAL_LIST.put("yellow cushion",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair","Corgi back", "Corgi", "Corgi side","monkey", "pink squirrel", "squirrel")));
         ITEM_TO_ANIMAL_LIST.put("blue toy fish",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair", "Corgi back", "Corgi", "Corgi side")));
         ITEM_TO_ANIMAL_LIST.put("yellow toy fish",new ArrayList<String> (Arrays.asList("cat", "Siamese Cat", "American Shorthair", "Corgi back", "Corgi", "Corgi side")));
