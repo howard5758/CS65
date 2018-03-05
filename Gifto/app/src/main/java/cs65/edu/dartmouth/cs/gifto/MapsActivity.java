@@ -234,7 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             double lng = snapshot.child("location").child("longitude").getValue(Double.class);
                                             if (lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
                                                 String giftName = snapshot.child("giftName").getValue(String.class);
-                                                String friendName = snapshot.child("userName").getValue(String.class);
+                                                String friendName = snapshot.child("userNickname").getValue(String.class);
                                                 long time = snapshot.child("timePlaced").getValue(Long.TYPE);
                                                 cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
                                                 Gift gift = new Gift(giftName, true, friendName, time, location);
@@ -423,7 +423,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String receiver;
                 if(sendTo == null || sendTo.equals(""))  receiver = null;
                 else receiver = sendTo;
-                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), receiver, giftbox);
+                MapGift gift = new MapGift(giftName, Util.email, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), receiver, giftbox);
                 String key = giftsData.push().getKey();
                 gift.setId(key);
                 giftsData.child(key).setValue(gift);

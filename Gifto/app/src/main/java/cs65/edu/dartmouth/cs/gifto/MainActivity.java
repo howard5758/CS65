@@ -10,7 +10,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -38,11 +37,12 @@ public class MainActivity extends AppCompatActivity
     private SensorManager mSensorManager;
     private Sensor mLight;
     private Sensor mGravity;
+    private Sensor mAccel;
 
     double gSum;
     double dgX;
     double last_roll;
-    double last_pitch;
+    long lastUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +58,15 @@ public class MainActivity extends AppCompatActivity
         assert mSensorManager != null;
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        mAccel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 
         //navigation view
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -105,13 +106,16 @@ public class MainActivity extends AppCompatActivity
                         if (userSnapshot.getKey().equals("animals")) {
                             for (DataSnapshot animalData : userSnapshot.getChildren()) {
                                 Animal animal = new Animal();
-                                animal.setPresent(Integer.parseInt(String.valueOf(animalData.child("present").getValue())));
-                                animal.setAnimalName((String) animalData.child("animalName").getValue());
+                                animal.setPresent(Integer.parseInt(String.valueOf(
+                                        animalData.child("present").getValue())));
+                                animal.setAnimalName((String)
+                                        animalData.child("animalName").getValue());
                                 animal.setNumVisits(Integer.parseInt(String
                                         .valueOf(animalData.child("numVisits").getValue())));
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
-                                animal.setPersistence(Long.parseLong(String.valueOf(animalData.child("persistence").getValue())));
+                                animal.setPersistence(Long.parseLong(String.valueOf(
+                                        animalData.child("persistence").getValue())));
                                 datasource.insertAnimal(animal, false);
                             }
                         }
@@ -120,7 +124,7 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("friends")) {
                             for (DataSnapshot friendData : userSnapshot.getChildren()) {
                                 Friend friend = new Friend();
-                                friend.setEmail((String) friendData.child("friendEmail").getValue());
+                                friend.setEmail((String)friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
                                 datasource.insertFriend(friend, false);
                             }
@@ -131,16 +135,21 @@ public class MainActivity extends AppCompatActivity
                             for (DataSnapshot giftData : userSnapshot.getChildren()) {
                                 Gift gift = new Gift();
                                 gift.setGiftName((String)giftData.child("giftName").getValue());
-                                if(Long.getLong(String.valueOf(giftData.child("timePlaced").getValue())) != null) gift.setTime((Long.getLong(String.valueOf(giftData.child("time").getValue()))));
+                                if(Long.getLong(String.valueOf(giftData.child("timePlaced")
+                                        .getValue())) != null) gift.setTime((Long.getLong(String
+                                        .valueOf(giftData.child("time").getValue()))));
                                 else gift.setTime(0);
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
                                 gift.setSent((boolean) giftData.child("sent").getValue());
-                                gift.setGiftBox(Integer.parseInt(String.valueOf(giftData.child("giftBox").getValue())));
+                                gift.setGiftBox(Integer.parseInt(String.valueOf(
+                                        giftData.child("giftBox").getValue())));
                                 gift.setLocation(new cs65.edu.dartmouth.cs.gifto.LatLng(
-                                        (Double.parseDouble(String.valueOf(giftData.child("location").child("latitude")
+                                        (Double.parseDouble(String.valueOf(
+                                                giftData.child("location").child("latitude")
                                                 .getValue()))),
-                                        (Double.parseDouble(String.valueOf(giftData.child("location").child("longitude")
-                                                .getValue())))));
+                                        (Double.parseDouble(String.valueOf(
+                                                giftData.child("location")
+                                                        .child("longitude").getValue())))));
 
                                 // try to insert it
                                 datasource.insertGift(gift, false);
@@ -155,7 +164,9 @@ public class MainActivity extends AppCompatActivity
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
-                                if(String.valueOf(itemData.child("present").getValue()) != null) item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
+                                if(String.valueOf(itemData.child("present").getValue()) != null)
+                                    item.setPresent(Integer.parseInt(String.valueOf(
+                                            itemData.child("present").getValue())));
                                 else item.setPresent(-1);
                                 datasource.insertInventory(item, false);
 
@@ -175,7 +186,8 @@ public class MainActivity extends AppCompatActivity
 
                 }
             };
-            Util.databaseReference.child("users").child(Util.userID).addValueEventListener(listener);
+            Util.databaseReference.child("users")
+                    .child(Util.userID).addValueEventListener(listener);
         }
     }
 
@@ -186,6 +198,7 @@ public class MainActivity extends AppCompatActivity
         // make sure the sensor is running
         mSensorManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mGravity, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mAccel, SensorManager.SENSOR_DELAY_NORMAL);
 
         // populate the navigation drawer with user information
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -217,8 +230,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         // unregister sensor when app ends. Still want it to run in background throughout app though
         mSensorManager.unregisterListener(this);
     }
@@ -300,9 +313,8 @@ public class MainActivity extends AppCompatActivity
             double gY = sensorEvent.values[1];
             double gZ = sensorEvent.values[2];
             double roll = Math.atan2(gZ, gZ) * 180 / Math.PI;
-            double pitch = Math.sqrt((gX*gX) + (gZ*gZ));
-
             gSum = Math.sqrt((gX*gX) + (gY*gY) + (gZ*gZ));
+
             if (gSum != 0) {
                 gX /= gSum;
                 gY /= gSum;
@@ -313,13 +325,9 @@ public class MainActivity extends AppCompatActivity
                 roll = Math.atan2(gX, gZ) * 180 / Math.PI;
             }
 
-            if (pitch != 0) {
-                pitch = Math.atan2(gY, pitch) * 180 / Math.PI;
-            }
-
             dgX = (roll - last_roll);
 
-            // if device orientation is close to vertical – rotation around x is almost undefined – skip!
+            // if device orientation is close to vertical then don't log it because weird values
             if (gY > 0.99) dgX = 0;
 
             // if rotation was too intensive – more than 180 degrees – skip it
@@ -327,10 +335,27 @@ public class MainActivity extends AppCompatActivity
             if (dgX < -180) dgX = 0;
 
             Util.angle += dgX;
-            Log.d("angle", String.valueOf(Util.angle));
 
             last_roll = roll;
-            last_pitch = pitch;
+        }
+
+        else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // check if the phone was shaken
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
+
+            float accelationSquareRoot = (x * x + y * y + z * z)
+                    / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
+            long actualTime = System.currentTimeMillis();
+            if (accelationSquareRoot >= 5) //
+            {
+                if (actualTime - lastUpdate < 200) {
+                    return;
+                }
+                lastUpdate = actualTime;
+                Util.shaking = true;
+            }
         }
     }
 
