@@ -65,6 +65,8 @@
     <string name="gifto">Gifto</string>
     <string name="profile_picture">Profile Picture</string>
     <string name="add_a_friend">Add a Friend</string>
+    <string name="friend_email">Friend Email</string>
+    <string name="friend_nickname">Friend nickname</string>
 
     <string-array name="camera_options">
         <item>Open Camera</item>
