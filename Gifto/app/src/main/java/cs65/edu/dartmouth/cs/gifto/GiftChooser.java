@@ -96,7 +96,8 @@ public class GiftChooser extends AppCompatActivity {
                                     for(DataSnapshot snapShot : dataSnapshot.getChildren()){
                                         String gift_type = snapShot.child("itemName").getValue(String.class);
                                         if(Globals.ITEM_TO_TYPE.get(gift_type) != null){
-                                            if(Globals.ITEM_TO_TYPE.get(gift_type) <= animal_type){
+                                            InventoryItem temp = helper.fetchinventoryItemByName(gift_type);
+                                            if(Globals.ITEM_TO_TYPE.get(gift_type) <= animal_type && temp.getItemAmount() > 0){
                                                 spinnergift_array.add(gift_type);
                                             }
                                         }
@@ -139,6 +140,18 @@ public class GiftChooser extends AppCompatActivity {
             if(present == 1) {
                 Garden.pet1.setImageDrawable(null);
                 Garden.animal1_name.setText("");
+                Garden.item1_name.setText("");
+                Garden.loc1.setImageDrawable(null);
+                ArrayList<InventoryItem> food = new ArrayList<>();
+                food = helper.fetchAllInventoryItems();
+                for(InventoryItem i: food){
+                    if(i.getPresent() == 1){
+                        i.setPresent(-1);
+                        helper.removeInventoryItem(i.getItemName());
+                        helper.insertInventory(i, true);
+                        break;
+                    }
+                }
             }
             else if(present == 2){
                 Garden.pet2.setImageDrawable(null);

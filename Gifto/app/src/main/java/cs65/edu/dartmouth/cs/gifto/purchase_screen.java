@@ -34,14 +34,22 @@ public class purchase_screen extends AppCompatActivity {
         String type = getIntent().getStringExtra("type");
         image = (ImageView) findViewById(R.id.item_picture);
 
-        description.setText("Would you like an interesting "+object+"?");
-        price.setText(Globals.ITEM_TO_PRICE.get(object) + " coins each!");
+
         switch (type) {
             case "goodies":
+                description.setText("Would you like an interesting "+object+"?");
+                price.setText(Globals.ITEM_TO_PRICE.get(object) + " coins each!");
                 break;
             case "pets":
-
+                Animal pet = helper.fetchAnimalByName(object);
                 buy.setVisibility(View.GONE);
+                description.setText(object + " has visited you " + String.valueOf(pet.getNumVisits()) + " times. ");
+                if(pet.getNumVisits() >= Globals.ANIMAL_TO_PROB.get(pet.getAnimalName()) * 10) {
+                    price.setText(object + " sent you a " + Globals.ANIMAL_TO_GIFT.get(object));
+                }
+                else{
+                    price.setText(object + " has not sent you anything T_T");
+                }
 
                 break;
         }
@@ -55,7 +63,7 @@ public class purchase_screen extends AppCompatActivity {
             public void onClick(View view) {
 
                 InventoryItem money = helper.fetchinventoryItemByName("money");
-                if (money.getItemAmount() >= 30) {
+                if (money.getItemAmount() >= Globals.ITEM_TO_PRICE.get(object)) {
 
                     InventoryItem temp = helper.fetchinventoryItemByName(object);
                     int prev = temp.getItemAmount();
@@ -66,7 +74,7 @@ public class purchase_screen extends AppCompatActivity {
                     helper.insertInventory(temp, true);
 
                     prev = money.getItemAmount();
-                    money.setItemAmount(prev - 30);
+                    money.setItemAmount(prev - Globals.ITEM_TO_PRICE.get(object));
                     helper.removeInventoryItem("money");
                     helper.insertInventory(money, true);
                 }
