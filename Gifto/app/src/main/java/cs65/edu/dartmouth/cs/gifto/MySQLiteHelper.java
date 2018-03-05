@@ -7,11 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayInputStream;
@@ -182,7 +180,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
         int flagged = 0;
-        String key = "";
+        String key;
         if (insert_firebase) {
             flagged = 1;
             if (Util.isOnline()) {
@@ -589,7 +587,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             item = cursorToInventoryItem(cursor);
         }
         else{
-            if(name == "money") {
+            if(name.equals("money")) {
                 item.setItemAmount(-1);
             }
             else{
