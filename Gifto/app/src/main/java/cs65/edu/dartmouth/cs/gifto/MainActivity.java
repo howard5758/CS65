@@ -363,12 +363,4 @@ public class MainActivity extends AppCompatActivity
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
-
-//    public static void show_dialogue(String target){
-//        Bundle args = new Bundle();
-//        args.putString("ANIMAL_KEY", target);
-//        MyDialogFragment myDialog = new MyDialogFragment();
-//        myDialog.setArguments(args);
-//        myDialog.show();
-//    }
 }

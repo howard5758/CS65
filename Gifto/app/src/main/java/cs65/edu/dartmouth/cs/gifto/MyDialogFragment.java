@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-
-import java.util.Calendar;
 /**
  * Created by kiron on 3/5/18.
  */
