@@ -10,7 +10,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,8 +65,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -108,13 +106,16 @@ public class MainActivity extends AppCompatActivity
                         if (userSnapshot.getKey().equals("animals")) {
                             for (DataSnapshot animalData : userSnapshot.getChildren()) {
                                 Animal animal = new Animal();
-                                animal.setPresent(Integer.parseInt(String.valueOf(animalData.child("present").getValue())));
-                                animal.setAnimalName((String) animalData.child("animalName").getValue());
+                                animal.setPresent(Integer.parseInt(String.valueOf(
+                                        animalData.child("present").getValue())));
+                                animal.setAnimalName((String)
+                                        animalData.child("animalName").getValue());
                                 animal.setNumVisits(Integer.parseInt(String
                                         .valueOf(animalData.child("numVisits").getValue())));
                                 animal.setRarity(Integer.parseInt(String
                                         .valueOf(animalData.child("rarity").getValue())));
-                                animal.setPersistence(Long.parseLong(String.valueOf(animalData.child("persistence").getValue())));
+                                animal.setPersistence(Long.parseLong(String.valueOf(
+                                        animalData.child("persistence").getValue())));
                                 datasource.insertAnimal(animal, false);
                             }
                         }
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("friends")) {
                             for (DataSnapshot friendData : userSnapshot.getChildren()) {
                                 Friend friend = new Friend();
-                                friend.setEmail((String) friendData.child("friendEmail").getValue());
+                                friend.setEmail((String)friendData.child("friendEmail").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
                                 datasource.insertFriend(friend, false);
                             }
@@ -134,16 +135,21 @@ public class MainActivity extends AppCompatActivity
                             for (DataSnapshot giftData : userSnapshot.getChildren()) {
                                 Gift gift = new Gift();
                                 gift.setGiftName((String)giftData.child("giftName").getValue());
-                                if(Long.getLong(String.valueOf(giftData.child("timePlaced").getValue())) != null) gift.setTime((Long.getLong(String.valueOf(giftData.child("time").getValue()))));
+                                if(Long.getLong(String.valueOf(giftData.child("timePlaced")
+                                        .getValue())) != null) gift.setTime((Long.getLong(String
+                                        .valueOf(giftData.child("time").getValue()))));
                                 else gift.setTime(0);
                                 gift.setFriendName((String)giftData.child("friendName").getValue());
                                 gift.setSent((boolean) giftData.child("sent").getValue());
-                                gift.setGiftBox(Integer.parseInt(String.valueOf(giftData.child("giftBox").getValue())));
+                                gift.setGiftBox(Integer.parseInt(String.valueOf(
+                                        giftData.child("giftBox").getValue())));
                                 gift.setLocation(new cs65.edu.dartmouth.cs.gifto.LatLng(
-                                        (Double.parseDouble(String.valueOf(giftData.child("location").child("latitude")
+                                        (Double.parseDouble(String.valueOf(
+                                                giftData.child("location").child("latitude")
                                                 .getValue()))),
-                                        (Double.parseDouble(String.valueOf(giftData.child("location").child("longitude")
-                                                .getValue())))));
+                                        (Double.parseDouble(String.valueOf(
+                                                giftData.child("location")
+                                                        .child("longitude").getValue())))));
 
                                 // try to insert it
                                 datasource.insertGift(gift, false);
@@ -158,7 +164,9 @@ public class MainActivity extends AppCompatActivity
                                 item.setItemName((String) itemData.child("itemName").getValue());
                                 item.setItemAmount(Integer.parseInt(String.
                                         valueOf(itemData.child("itemAmount").getValue())));
-                                if(String.valueOf(itemData.child("present").getValue()) != null) item.setPresent(Integer.parseInt(String.valueOf(itemData.child("present").getValue())));
+                                if(String.valueOf(itemData.child("present").getValue()) != null)
+                                    item.setPresent(Integer.parseInt(String.valueOf(
+                                            itemData.child("present").getValue())));
                                 else item.setPresent(-1);
                                 datasource.insertInventory(item, false);
 
@@ -178,7 +186,8 @@ public class MainActivity extends AppCompatActivity
 
                 }
             };
-            Util.databaseReference.child("users").child(Util.userID).addValueEventListener(listener);
+            Util.databaseReference.child("users")
+                    .child(Util.userID).addValueEventListener(listener);
         }
     }
 
@@ -318,7 +327,7 @@ public class MainActivity extends AppCompatActivity
 
             dgX = (roll - last_roll);
 
-            // if device orientation is close to vertical – rotation around x is almost undefined – skip!
+            // if device orientation is close to vertical then don't log it because weird values
             if (gY > 0.99) dgX = 0;
 
             // if rotation was too intensive – more than 180 degrees – skip it

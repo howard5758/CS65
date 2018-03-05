@@ -67,8 +67,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private String[] friends_columns = { COLUMN_ID, COLUMN_FRIEND_EMAIL,
             COLUMN_FRIEND_NICKNAME, COLUMN_FIREBASE_ID, COLUMN_FIREBASE_FLAG };
 
-    private String[] gifts_columns = { COLUMN_ID, COLUMN_FIREBASE_ID, COLUMN_GIFT, COLUMN_SENT, COLUMN_TOFROM,
-            COLUMN_TIME, COLUMN_GIFT_BOX, COLUMN_LOCATION, COLUMN_FIREBASE_FLAG };
+    private String[] gifts_columns = { COLUMN_ID, COLUMN_FIREBASE_ID, COLUMN_GIFT, COLUMN_SENT,
+            COLUMN_TOFROM, COLUMN_TIME, COLUMN_GIFT_BOX, COLUMN_LOCATION, COLUMN_FIREBASE_FLAG };
 
     private String [] animals_columns = { COLUMN_ID, COLUMN_ANIMAL_NAME, COLUMN_RARITY,
             COLUMN_VISITS, COLUMN_PERSISTENCE, COLUMN_FIREBASE_FLAG, COLUMN_PRESENT };
@@ -76,7 +76,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private String[] inventory_columns = { COLUMN_ID, COLUMN_INVENTORY_NAME,
             COLUMN_AMOUNT, COLUMN_PRESENT, COLUMN_FIREBASE_FLAG };
 
-    private String[] titles = {FRIEND_TITLE, GIFT_TITLE, ANIMAL_TITLE, INVENTORY_TITLE, MAP_GIFT_TITLE};
+    private String[] titles = {FRIEND_TITLE, GIFT_TITLE, ANIMAL_TITLE,
+            INVENTORY_TITLE, MAP_GIFT_TITLE};
 
     private ArrayList<String[]> columns = new ArrayList<>(0);
 
@@ -146,7 +147,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             flagged = 1;
             if (Util.isOnline()) {
                 Log.d("if", "online");
-                String key = Util.databaseReference.child("users").child(Util.userID).child("friends").push().getKey();
+                String key = Util.databaseReference.child("users").child(Util.userID)
+                        .child("friends").push().getKey();
                 friend.setFirebaseId(key);
                 Util.databaseReference.child("users").
                         child(Util.userID).child("friends").child(key).setValue(friend);
@@ -185,7 +187,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             flagged = 1;
             if (Util.isOnline()) {
                 Log.d("if", "online");
-                key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
+                key = Util.databaseReference.child("users").child(Util.userID)
+                        .child("gifts").push().getKey();
                 gift.setId(key);
                 Util.databaseReference.child("users").
                         child(Util.userID).child("gifts").child(key).setValue(gift);
@@ -211,7 +214,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TIME, gift.getTime());
         values.put(COLUMN_GIFT_BOX, gift.getGiftBox());
         try {
-            values.put(COLUMN_LOCATION, toByte(gift.getLocation()));        // converting to byte throws IOException
+            values.put(COLUMN_LOCATION, toByte(gift.getLocation()));        // throws IOException
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,8 +235,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             flagged = 1;
             if (Util.isOnline()) {
                 Log.d("if", "online");
-                Util.databaseReference.child("users").
-                        child(Util.userID).child("animals").child(animal.getAnimalName()).setValue(animal);
+                Util.databaseReference.child("users").child(Util.userID).child("animals")
+                        .child(animal.getAnimalName()).setValue(animal);
                 flagged = 0;
                 if (failed_insert) {
                     insertFlagged();
@@ -327,7 +330,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.delete(ANIMAL_TITLE, whereClause, null);
         database.close();
 
-        Util.databaseReference.child("users").child(Util.userID).child("animals").child(name).removeValue();
+        Util.databaseReference.child("users").child(Util.userID)
+                .child("animals").child(name).removeValue();
     }
 
     /* remove friend by Firebase ID
@@ -339,7 +343,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.delete(FRIEND_TITLE, whereClause, null);
         database.close();
 
-        Util.databaseReference.child("users").child(Util.userID).child("friends").child(id).removeValue();
+        Util.databaseReference.child("users").child(Util.userID)
+                .child("friends").child(id).removeValue();
     }
 
     /* remove gift by name
@@ -350,7 +355,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.delete(GIFT_TITLE, whereClause, null);
         database.close();
 
-        Util.databaseReference.child("users").child(Util.userID).child("gifts").child(id).removeValue();
+        Util.databaseReference.child("users").child(Util.userID)
+                .child("gifts").child(id).removeValue();
     }
 
     /* remove inventory item by name
@@ -361,7 +367,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.delete(INVENTORY_TITLE, whereClause, null);
         database.close();
 
-        Util.databaseReference.child("users").child(Util.userID).child("items").child(name).removeValue();
+        Util.databaseReference.child("users").child(Util.userID)
+                .child("items").child(name).removeValue();
     }
 
     /* removes a mapgift from firebase (not stored in SQL anyway)
@@ -399,6 +406,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return animals;
     }
 
+    /* Method to fetch all the gifts currently stored in SQLite
+     * returns ArrayList with gift objects
+     * returns empty ArrayList if table is empty */
     ArrayList<Gift> fetchAllGifts() {
         ArrayList<Gift> gifts = new ArrayList<>(0);
         SQLiteDatabase database = getReadableDatabase();
@@ -432,15 +442,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         MapGift gift = new MapGift();
 
-                        gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
-                        gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
-                        gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
-                        gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
-                        gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_EMAIL).getValue()));
-                        gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                        gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot.child(COLUMN_GIFT_BOX).getValue())));
+                        gift.setId(String.valueOf(snapshot
+                                .child(COLUMN_FIREBASE_ID).getValue()));
+                        gift.setGiftName(String.valueOf(snapshot
+                                .child(COLUMN_GIFT).getValue()));
+                        gift.setAnimalName(String.valueOf(snapshot
+                                .child(COLUMN_ANIMAL_NAME).getValue()));
+                        gift.setMessage(String.valueOf(snapshot
+                                .child(COLUMN_MESSAGE).getValue()));
+                        gift.setUserName(String.valueOf(snapshot
+                                .child(COLUMN_FRIEND_EMAIL).getValue()));
+                        gift.setUserNickname(String.valueOf(snapshot
+                                .child(COLUMN_FRIEND_NICKNAME).getValue()));
+                        gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot
+                                .child(COLUMN_GIFT_BOX).getValue())));
                         if (snapshot.child("timePlaced").getValue() != null) {
-                            gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot.child("timePlaced").getValue())));
+                            gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot
+                                    .child("timePlaced").getValue())));
                         }
                         gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
                                 child(COLUMN_LOCATION).child("latitude").getValue())),
@@ -618,20 +636,28 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         if (snapshot.getKey().equals(id)) {
-                            gift.setId(String.valueOf(snapshot.child(COLUMN_FIREBASE_ID).getValue()));
-                            gift.setGiftName(String.valueOf(snapshot.child(COLUMN_GIFT).getValue()));
-                            gift.setAnimalName(String.valueOf(snapshot.child(COLUMN_ANIMAL_NAME).getValue()));
-                            gift.setMessage(String.valueOf(snapshot.child(COLUMN_MESSAGE).getValue()));
-                            gift.setUserName(String.valueOf(snapshot.child(COLUMN_FRIEND_EMAIL).getValue()));
-                            gift.setUserNickname(String.valueOf(snapshot.child(COLUMN_FRIEND_NICKNAME).getValue()));
-                            gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot.child(COLUMN_GIFT_BOX).getValue())));
+                            gift.setId(String.valueOf(snapshot
+                                    .child(COLUMN_FIREBASE_ID).getValue()));
+                            gift.setGiftName(String.valueOf(snapshot
+                                    .child(COLUMN_GIFT).getValue()));
+                            gift.setAnimalName(String.valueOf(snapshot
+                                    .child(COLUMN_ANIMAL_NAME).getValue()));
+                            gift.setMessage(String.valueOf(snapshot
+                                    .child(COLUMN_MESSAGE).getValue()));
+                            gift.setUserName(String.valueOf(snapshot
+                                    .child(COLUMN_FRIEND_EMAIL).getValue()));
+                            gift.setUserNickname(String.valueOf(snapshot
+                                    .child(COLUMN_FRIEND_NICKNAME).getValue()));
+                            gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot
+                                    .child(COLUMN_GIFT_BOX).getValue())));
                             if (snapshot.child("timePlaced").getValue() != null) {
-                                gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot.child("timePlaced").getValue())));
+                                gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot
+                                        .child("timePlaced").getValue())));
                             }
                             gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
-                                    child(COLUMN_LOCATION).child("latitude").getValue())),
-                                    Double.parseDouble(String.valueOf(snapshot.
-                                            child(COLUMN_LOCATION).child("longitude").getValue()))));
+                                    child(COLUMN_LOCATION).child("latitude").getValue())), Double
+                                    .parseDouble(String.valueOf(snapshot.child(COLUMN_LOCATION)
+                                            .child("longitude").getValue()))));
                         }
                     }
                 }
@@ -668,37 +694,45 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             while (cursor.getCount() > 0 && !cursor.isAfterLast()) {
                 if (i == 0) {
                     Friend friend = cursorToFriend(cursor);
-                    String key = Util.databaseReference.child("users").child(Util.userID).child("friends").push().getKey();
+                    String key = Util.databaseReference.child("users")
+                            .child(Util.userID).child("friends").push().getKey();
                     Util.databaseReference.child("users").
                             child(Util.userID).child("friends").child(key).setValue(friend);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(FRIEND_TITLE, values, COLUMN_FRIEND_EMAIL + "='" + friend.getEmail() + "'", null);
+                    database.update(FRIEND_TITLE, values, COLUMN_FRIEND_EMAIL +
+                            "='" + friend.getEmail() + "'", null);
                     ContentValues id = new ContentValues();
                     id.put(COLUMN_FIREBASE_ID, key);
-                    database.update(FRIEND_TITLE, id, COLUMN_FRIEND_EMAIL + "='" + friend.getEmail() + "'", null);
+                    database.update(FRIEND_TITLE, id, COLUMN_FRIEND_EMAIL + "='"
+                            + friend.getEmail() + "'", null);
                 } else if (i == 1) {
                     Gift gift = cursorToGift(cursor);
-                    String key = Util.databaseReference.child("users").child(Util.userID).child("gifts").push().getKey();
+                    String key = Util.databaseReference.child("users")
+                            .child(Util.userID).child("gifts").push().getKey();
                     Util.databaseReference.child("users").
                             child(Util.userID).child("gifts").child(key).setValue(gift);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(GIFT_TITLE, values, COLUMN_GIFT + "='" + gift.getGiftName() + "'", null);
+                    database.update(GIFT_TITLE, values, COLUMN_GIFT + "='" +
+                            gift.getGiftName() + "'", null);
                 } else if (i == 2) {
                     Animal animal = cursorToAnimal(cursor);
                     Util.databaseReference.child("users").
-                            child(Util.userID).child("animals").child(animal.getAnimalName()).setValue(animal);
+                            child(Util.userID).child("animals").child(animal
+                            .getAnimalName()).setValue(animal);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(ANIMAL_TITLE, values, COLUMN_ANIMAL_NAME + "='" + animal.getAnimalName() + "'", null);
+                    database.update(ANIMAL_TITLE, values, COLUMN_ANIMAL_NAME + "='" +
+                            animal.getAnimalName() + "'", null);
                 } else if (i == 3) {
                     InventoryItem item = cursorToInventoryItem(cursor);
-                    Util.databaseReference.child("users").
-                            child(Util.userID).child("items").child(item.getItemName()).setValue(item);
+                    Util.databaseReference.child("users").child(Util.userID)
+                            .child("items").child(item.getItemName()).setValue(item);
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(INVENTORY_TITLE, values, COLUMN_INVENTORY_NAME + "='" + item.getItemName() + "'", null);
+                    database.update(INVENTORY_TITLE, values, COLUMN_INVENTORY_NAME +
+                            "='" + item.getItemName() + "'", null);
                 }
             }
         }
