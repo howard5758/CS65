@@ -1,10 +1,13 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import android.content.Context;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,8 @@ import java.util.TimerTask;
  */
 
 public class Garden extends Fragment {
+//    private static Context context = null;
+    private static FragmentManager fm;
     String background;
     String place1, place2, place3, place4;
     public static ImageView loc1, loc2, loc3, loc4;
@@ -37,6 +42,8 @@ public class Garden extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        fm = getActivity().getFragmentManager();
         background = Globals.DEFAULT_BACKGROUND;
         place1 = Globals.EMPTY;
         place2 = Globals.EMPTY;
@@ -190,14 +197,6 @@ public class Garden extends Fragment {
             ImageView bg = (ImageView) view.findViewById(R.id.bg);
             bg.setImageResource(R.drawable.bg_plain);
         }
-//        if (place2 == Globals.DEFAULT_PLACE2){
-//            ImageView p2 = (ImageView) view.findViewById(R.id.place2);
-//            p2.setImageResource(R.drawable.tree);
-//        }
-//        if (place3 == Globals.DEFAULT_PLACE3){
-//            ImageView p3 = (ImageView) view.findViewById(R.id.place3);
-//            p3.setImageResource(R.drawable.pile_leaves);
-//        }
 
         return view;
     }
@@ -239,6 +238,8 @@ public class Garden extends Fragment {
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
+
+
                         if(tempp.getPresent()==-1){
                             tempp.setAnimalName(target);
                             tempp.setPresent(1);
@@ -248,10 +249,19 @@ public class Garden extends Fragment {
                             Garden.pet1.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal1_name.setText(target);
 
+                            int animal_money = (int)Math.floor(Math.random()*30);
                             InventoryItem temp_money = helper.fetchinventoryItemByName("money");
-                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            temp_money.setItemAmount(temp_money.getItemAmount() + animal_money);
                             helper.removeInventoryItem("money");
                             helper.insertInventory(temp_money, true);
+
+                            Bundle args = new Bundle();
+                            args.putString("animal_key", target);
+                            args.putInt("money_key", animal_money);
+                            fm.beginTransaction();
+                            MyDialogFragment myDialogFragment = new MyDialogFragment();
+                            myDialogFragment.setArguments(args);
+                            myDialogFragment.show(fm, "animal");
 
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
@@ -288,10 +298,20 @@ public class Garden extends Fragment {
                             Garden.pet2.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal2_name.setText(target);
 
+                            int animal_money = (int)Math.floor(Math.random()*30);
                             InventoryItem temp_money = helper.fetchinventoryItemByName("money");
-                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            temp_money.setItemAmount(temp_money.getItemAmount() + animal_money);
                             helper.removeInventoryItem("money");
                             helper.insertInventory(temp_money, true);
+
+                            Bundle args = new Bundle();
+                            args.putString("animal_key", target);
+                            args.putInt("money_key", animal_money);
+                            fm.beginTransaction();
+                            MyDialogFragment myDialogFragment = new MyDialogFragment();
+                            myDialogFragment.setArguments(args);
+                            myDialogFragment.show(fm, "animal");
+
 
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
@@ -328,10 +348,20 @@ public class Garden extends Fragment {
                             Garden.pet3.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal3_name.setText(target);
 
+                            int animal_money = (int)Math.floor(Math.random()*30);
                             InventoryItem temp_money = helper.fetchinventoryItemByName("money");
-                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            temp_money.setItemAmount(temp_money.getItemAmount() + animal_money);
                             helper.removeInventoryItem("money");
                             helper.insertInventory(temp_money, true);
+
+                            Bundle args = new Bundle();
+                            args.putString("animal_key", target);
+                            args.putInt("money_key", animal_money);
+                            fm.beginTransaction();
+                            MyDialogFragment myDialogFragment = new MyDialogFragment();
+                            myDialogFragment.setArguments(args);
+                            myDialogFragment.show(fm, "animal");
+
 
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
@@ -369,10 +399,20 @@ public class Garden extends Fragment {
                             Garden.pet4.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal4_name.setText(target);
 
+                            int animal_money = (int)Math.floor(Math.random()*30);
                             InventoryItem temp_money = helper.fetchinventoryItemByName("money");
-                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            temp_money.setItemAmount(temp_money.getItemAmount() + animal_money);
                             helper.removeInventoryItem("money");
                             helper.insertInventory(temp_money, true);
+
+                            Bundle args = new Bundle();
+                            args.putString("animal_key", target);
+                            args.putInt("money_key", animal_money);
+                            fm.beginTransaction();
+                            MyDialogFragment myDialogFragment = new MyDialogFragment();
+                            myDialogFragment.setArguments(args);
+                            myDialogFragment.show(fm, "animal");
+
 
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
