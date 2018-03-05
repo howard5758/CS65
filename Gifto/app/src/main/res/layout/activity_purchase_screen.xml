@@ -27,14 +27,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
-        android:layout_marginTop="380dp"
+        android:layout_marginTop="400dp"
         android:layout_marginLeft="50dp" />
 
     <Button
         android:id="@+id/buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="430dp"
+        android:layout_marginTop="480dp"
         android:layout_marginLeft="50dp"
         android:text="BUY" />
 
@@ -42,7 +42,7 @@
         android:id="@+id/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="430dp"
+        android:layout_marginTop="480dp"
         android:layout_marginLeft="240dp"
         android:text="CANCEL" />
 </RelativeLayout>
