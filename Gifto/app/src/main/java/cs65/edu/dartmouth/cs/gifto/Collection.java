@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 public class Collection extends ListActivity {
 
-    public static TextView title;
+    public static TextView title, money;
     item_adapter item_adapter;
     pet_adapter pet_adapter;
     gift_adapter gift_adapter;
@@ -65,7 +65,7 @@ public class Collection extends ListActivity {
         selection = getIntent().getBooleanExtra("selection", false);
 
         title = (TextView) findViewById(R.id.list_title);
-
+        money = (TextView) findViewById(R.id.money);
         if (goodies) {
             InventoryItem moneyy = helper.fetchinventoryItemByName("money");
             if (moneyy.getItemAmount() == -1){
@@ -73,8 +73,9 @@ public class Collection extends ListActivity {
                 moneyy.setItemAmount(300);
                 helper.insertInventory(moneyy, true);
             }
-            title.setText("GOODIES" + String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount()));
+            title.setText("SHOP");
 
+            money.setText("You have "+ String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount())+" coins");
             for(String i: shopCollection){
                 if(Globals.ITEM_TO_PRICE.containsKey(i)){
                     goodiesCollection.add(i);
