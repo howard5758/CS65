@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,10 +39,12 @@ public class MainActivity extends AppCompatActivity
     private SensorManager mSensorManager;
     private Sensor mLight;
     private Sensor mGravity;
+    private Sensor mAccel;
 
     double gSum;
     double dgX;
     double last_roll;
+    long lastUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         assert mSensorManager != null;
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        mAccel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 
         //navigation view
@@ -185,6 +189,7 @@ public class MainActivity extends AppCompatActivity
         // make sure the sensor is running
         mSensorManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mGravity, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mAccel, SensorManager.SENSOR_DELAY_NORMAL);
 
         // populate the navigation drawer with user information
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -216,8 +221,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         // unregister sensor when app ends. Still want it to run in background throughout app though
         mSensorManager.unregisterListener(this);
     }
@@ -299,8 +304,8 @@ public class MainActivity extends AppCompatActivity
             double gY = sensorEvent.values[1];
             double gZ = sensorEvent.values[2];
             double roll = Math.atan2(gZ, gZ) * 180 / Math.PI;
-
             gSum = Math.sqrt((gX*gX) + (gY*gY) + (gZ*gZ));
+
             if (gSum != 0) {
                 gX /= gSum;
                 gY /= gSum;
@@ -321,9 +326,27 @@ public class MainActivity extends AppCompatActivity
             if (dgX < -180) dgX = 0;
 
             Util.angle += dgX;
-            Log.d("angle", String.valueOf(Util.angle));
 
             last_roll = roll;
+        }
+
+        else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // check if the phone was shaken
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
+
+            float accelationSquareRoot = (x * x + y * y + z * z)
+                    / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
+            long actualTime = System.currentTimeMillis();
+            if (accelationSquareRoot >= 5) //
+            {
+                if (actualTime - lastUpdate < 200) {
+                    return;
+                }
+                lastUpdate = actualTime;
+                Util.shaking = true;
+            }
         }
     }
 
