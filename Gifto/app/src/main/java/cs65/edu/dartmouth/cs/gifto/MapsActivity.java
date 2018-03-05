@@ -61,7 +61,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager lm;                 // finds last known location
     private String provider;                    // also used to find last known location
     private ArrayList<Marker> gifts;
-    //private ArrayList<MapGift> giftList;
+    private ArrayList<MapGift> giftList;
     private DatabaseReference giftsData;
     private LatLng savedLatLng;
     //private MySQLiteHelper helper;
@@ -129,6 +129,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Add a marker in Hanover if no last location found
             firstMarker = new LatLng(43.7022, -72.2896);
         }
+
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        giftList = db.fetchAllMapGifts();
 
         // allow users to place gift anywhere
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
