@@ -50,7 +50,7 @@ public class Collection extends ListActivity {
         goodiesCollection.addAll(Globals.ITEM_TO_TYPE.keySet());
         Log.d("master", goodiesCollection.get(5));
         selection_list.addAll(Globals.ITEM_TO_TYPE.keySet());
-        listInit();
+        //listInit();
 
 
         goodies = getIntent().getBooleanExtra("goodies", false);
@@ -80,8 +80,12 @@ public class Collection extends ListActivity {
         } else if (pets){
 
             title.setText("PETS");
+            petCollection = helper.fetchAllAnimals();
             pet_adapter = new pet_adapter(this, R.layout.list_collection, petCollection);
             setListAdapter(pet_adapter);
+
+
+
         } else if(selection){
             title.setText("Choose an item to place!");
             loc_type = getIntent().getIntExtra("loc_type", 0);
@@ -125,23 +129,79 @@ public class Collection extends ListActivity {
 
 
             if (loc_type == 1){
+                if(!Garden.item1_name.getText().equals("")){
+                    InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item1_name.getText());
+                    prev_item.setPresent(-1);
+                    helper.removeInventoryItem(prev_item.getItemName());
+                    helper.insertInventory(prev_item, true);
+                }
+                if(!Garden.animal1_name.getText().equals("")){
+                    Animal prev_animal = helper.fetchAnimalByName((String)Garden.animal1_name.getText());
+                    prev_animal.setPresent(-1);
+                    helper.removeAnimal(prev_animal.getAnimalName());
+                    helper.insertAnimal(prev_animal, true);
+                    Garden.animal1_name.setText("");
+                    Garden.pet1.setImageDrawable(null);
+                }
                 Garden.loc1.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
-                Garden.place1_name.setText(selection_list.get(position));
+                Garden.item1_name.setText(selection_list.get(position));
                 temp.setPresent(1);
             }
             else if(loc_type == 2){
+                if(!Garden.item2_name.getText().equals("")){
+                    InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item2_name.getText());
+                    prev_item.setPresent(-1);
+                    helper.removeInventoryItem(prev_item.getItemName());
+                    helper.insertInventory(prev_item, true);
+                }
+                if(!Garden.animal2_name.getText().equals("")){
+                    Animal prev_animal = helper.fetchAnimalByName((String)Garden.animal2_name.getText());
+                    prev_animal.setPresent(-1);
+                    helper.removeAnimal(prev_animal.getAnimalName());
+                    helper.insertAnimal(prev_animal, true);
+                    Garden.animal2_name.setText("");
+                    Garden.pet2.setImageDrawable(null);
+                }
                 Garden.loc2.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
-                Garden.place2_name.setText(selection_list.get(position));
+                Garden.item2_name.setText(selection_list.get(position));
                 temp.setPresent(2);
             }
             else if(loc_type == 3){
+                if(!Garden.item3_name.getText().equals("")){
+                    InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item3_name.getText());
+                    prev_item.setPresent(-1);
+                    helper.removeInventoryItem(prev_item.getItemName());
+                    helper.insertInventory(prev_item, true);
+                }
+                if(!Garden.animal3_name.getText().equals("")){
+                    Animal prev_animal = helper.fetchAnimalByName((String)Garden.animal3_name.getText());
+                    prev_animal.setPresent(-1);
+                    helper.removeAnimal(prev_animal.getAnimalName());
+                    helper.insertAnimal(prev_animal, true);
+                    Garden.animal3_name.setText("");
+                    Garden.pet3.setImageDrawable(null);
+                }
                 Garden.loc3.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
-                Garden.place3_name.setText(selection_list.get(position));
+                Garden.item3_name.setText(selection_list.get(position));
                 temp.setPresent(3);
             }
             else if(loc_type == 4) {
+                if(!Garden.item4_name.getText().equals("")){
+                    InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item4_name.getText());
+                    prev_item.setPresent(-1);
+                    helper.removeInventoryItem(prev_item.getItemName());
+                    helper.insertInventory(prev_item, true);
+                }
+                if(!Garden.animal4_name.getText().equals("")){
+                    Animal prev_animal = helper.fetchAnimalByName((String)Garden.animal4_name.getText());
+                    prev_animal.setPresent(-1);
+                    helper.removeAnimal(prev_animal.getAnimalName());
+                    helper.insertAnimal(prev_animal, true);
+                    Garden.animal4_name.setText("");
+                    Garden.pet4.setImageDrawable(null);
+                }
                 Garden.loc4.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
-                Garden.place4_name.setText(selection_list.get(position));
+                Garden.item4_name.setText(selection_list.get(position));
                 temp.setPresent(4);
             }
             helper.removeInventoryItem(selection_list.get(position));
@@ -245,7 +305,7 @@ public class Collection extends ListActivity {
 
             image.setImageResource(Util.getImageIdFromName(getItem(position).getAnimalName()));
 
-            namee.setText(getItem(position).getAnimalName());
+            namee.setText(getItem(position).getAnimalName() + "   At " + String.valueOf(getItem(position).getPresent()));
 
             return view;
         }

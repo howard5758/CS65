@@ -31,7 +31,7 @@ public class Garden extends Fragment {
     public static ImageView loc1, loc2, loc3, loc4;
     public static ImageView pet1, pet2, pet3, pet4;
     public static MySQLiteHelper helper;
-    public static TextView place1_name, place2_name, place3_name, place4_name;
+    public static TextView item1_name, item2_name, item3_name, item4_name, animal1_name, animal2_name, animal3_name, animal4_name;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -61,10 +61,14 @@ public class Garden extends Fragment {
         pet2 = (ImageView)view.findViewById(R.id.animal2);
         pet3 = (ImageView)view.findViewById(R.id.animal3);
         pet4 = (ImageView)view.findViewById(R.id.animal4);
-        place1_name = (TextView)view.findViewById(R.id.place1_name);
-        place2_name = (TextView)view.findViewById(R.id.place2_name);
-        place3_name = (TextView)view.findViewById(R.id.place3_name);
-        place4_name = (TextView)view.findViewById(R.id.place4_name);
+        item1_name = (TextView)view.findViewById(R.id.item1_name);
+        item2_name = (TextView)view.findViewById(R.id.item2_name);
+        item3_name = (TextView)view.findViewById(R.id.item3_name);
+        item4_name = (TextView)view.findViewById(R.id.item4_name);
+        animal1_name = (TextView)view.findViewById(R.id.animal1_name);
+        animal2_name = (TextView)view.findViewById(R.id.animal2_name);
+        animal3_name = (TextView)view.findViewById(R.id.animal3_name);
+        animal4_name = (TextView)view.findViewById(R.id.animal4_name);
 
         Button button_food = view.findViewById(R.id.button_food);
         Button button_gifts = view.findViewById(R.id.button_gift_collections);
@@ -208,7 +212,19 @@ public class Garden extends Fragment {
         for(Animal a : animals){
             if(a.getPresent() == 1){
                 Garden.pet1.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
-                Garden.place1_name.setText(a.getAnimalName());
+                Garden.animal1_name.setText(a.getAnimalName());
+            }
+            else if(a.getPresent() == 2){
+                Garden.pet2.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                Garden.animal2_name.setText(a.getAnimalName());
+            }
+            else if(a.getPresent() == 3){
+                Garden.pet3.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                Garden.animal3_name.setText(a.getAnimalName());
+            }
+            else if(a.getPresent() == 4){
+                Garden.pet4.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                Garden.animal4_name.setText(a.getAnimalName());
             }
         }
         for(InventoryItem i : items){
@@ -216,7 +232,8 @@ public class Garden extends Fragment {
             if(i.getPresent() == 1){
                 Log.d("master", "present!!");
                 loc1.setImageResource(Util.getImageIdFromName(i.getItemName()));
-                if(Garden.place1_name.getText() == "") {
+                Garden.item1_name.setText(i.getItemName());
+                if(Garden.animal1_name.getText().equals("")) {
                     ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
                     Random random = new Random();
                     String target = related_animals.get(random.nextInt(related_animals.size()));
@@ -230,17 +247,76 @@ public class Garden extends Fragment {
                         helper.removeAnimal(target);
                         helper.insertAnimal(pet, true);
                         Garden.pet1.setImageResource(Util.getImageIdFromName(target));
+                        Garden.animal1_name.setText(target);
                     }
                 }
             }
             else if(i.getPresent() == 2){
+                Log.d("master", "present!!");
                 loc2.setImageResource(Util.getImageIdFromName(i.getItemName()));
+                Garden.item2_name.setText(i.getItemName());
+                if(Garden.animal2_name.getText().equals("")) {
+                    ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
+                    Random random = new Random();
+                    String target = related_animals.get(random.nextInt(related_animals.size()));
+                    double prob = Globals.ANIMAL_TO_PROB.get(target);
+                    Log.d("master", String.valueOf(prob));
+                    if (Math.random() <= prob) {
+                        Log.d("master", "animal!!");
+                        Animal pet = new Animal();
+                        pet.setAnimalName(target);
+                        pet.setPresent(2);
+                        helper.removeAnimal(target);
+                        helper.insertAnimal(pet, true);
+                        Garden.pet2.setImageResource(Util.getImageIdFromName(target));
+                        Garden.animal2_name.setText(target);
+                    }
+                }
             }
             else if(i.getPresent() == 3){
+                Log.d("master", "present!!");
                 loc3.setImageResource(Util.getImageIdFromName(i.getItemName()));
+                Garden.item3_name.setText(i.getItemName());
+                if(Garden.animal3_name.getText().equals("")) {
+                    ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
+                    Random random = new Random();
+                    String target = related_animals.get(random.nextInt(related_animals.size()));
+                    double prob = Globals.ANIMAL_TO_PROB.get(target);
+                    Log.d("master", String.valueOf(prob));
+                    if (Math.random() <= prob) {
+                        Log.d("master", "animal!!");
+                        Animal pet = new Animal();
+                        pet.setAnimalName(target);
+                        pet.setPresent(3);
+                        helper.removeAnimal(target);
+                        helper.insertAnimal(pet, true);
+                        Garden.pet3.setImageResource(Util.getImageIdFromName(target));
+                        Garden.animal3_name.setText(target);
+                    }
+                }
             }
             else if(i.getPresent() == 4){
+                Log.d("master", "present!!");
                 loc4.setImageResource(Util.getImageIdFromName(i.getItemName()));
+                Garden.item4_name.setText(i.getItemName());
+                if(Garden.animal4_name.getText().equals("")) {
+                    ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
+                    Random random = new Random();
+                    String target = related_animals.get(random.nextInt(related_animals.size()));
+                    Log.d("master", "hi"+target);
+                    double prob = Globals.ANIMAL_TO_PROB.get(target);
+                    Log.d("master", String.valueOf(prob));
+                    if (Math.random() <= prob) {
+                        Log.d("master", "animal!!");
+                        Animal pet = new Animal();
+                        pet.setAnimalName(target);
+                        pet.setPresent(4);
+                        helper.removeAnimal(target);
+                        helper.insertAnimal(pet, true);
+                        Garden.pet4.setImageResource(Util.getImageIdFromName(target));
+                        Garden.animal4_name.setText(target);
+                    }
+                }
             }
         }
     }

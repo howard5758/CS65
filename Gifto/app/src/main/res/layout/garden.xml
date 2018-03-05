@@ -148,31 +148,58 @@
         android:text="@string/pet_collection" />
 
     <TextView
-        android:id="@+id/place1_name"
+        android:id="@+id/item1_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:text="TextView" />
+        android:text="" />
 
     <TextView
-        android:id="@+id/place2_name"
+        android:id="@+id/item2_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:text="TextView" />
+        android:text="" />
 
     <TextView
-        android:id="@+id/place3_name"
+        android:id="@+id/item3_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:text="TextView" />
+        android:text="" />
 
     <TextView
-        android:id="@+id/place4_name"
+        android:id="@+id/item4_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:text="TextView" />
+        android:text="" />
+    <TextView
+        android:id="@+id/animal1_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/animal2_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/animal3_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/animal4_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="" />
 </RelativeLayout>
 
