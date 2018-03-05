@@ -53,6 +53,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.microedition.khronos.opengles.GL;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;                     // google map
@@ -241,13 +243,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 // delete from public database
                                                 MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
                                                 helper.insertGift(gift, false);
-                                                helper.close();
                                                 giftsData.child(snapshot.getKey()).removeValue();
                                                 if (marker != null) {
                                                     marker.remove();
                                                     gifts.remove(marker);
                                                 }
-                                                // TODO: put inventory object in sql and firebase
+                                                // put inventory object in sql and firebase
+                                                if(Globals.ITEM_TO_TYPE.get(giftName) != null){
+                                                    InventoryItem item = helper.fetchinventoryItemByName(giftName);
+                                                    if(item == null) item = new InventoryItem(giftName, 0);
+                                                    //item.setItemAmount(item.getItemAmount()+1);
+                                                    helper.insertInventory(item, true);
+                                                    //helper.close();
+                                                }
                                             }
                                         }
                                     }
@@ -353,7 +361,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Gift gift = snapshot.getValue(Gift.class);
-                    // TODO: different gift packages? Need some way to determine which image to use
+                    // determine which image to use
                     int id;
                     if(snapshot.child("giftBox").getValue(Integer.class) != null){
                         if((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(snapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
@@ -411,7 +419,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String key = giftsData.push().getKey();
                 gift.setId(key);
                 giftsData.child(key).setValue(gift);
-                // TODO: remove animal and inventory object from sql and from firebase
+                // remove inventory object from sql and from firebase
+                MySQLiteHelper helper = new MySQLiteHelper(this);
+                if(Globals.ITEM_TO_TYPE.get(giftName) != null) {
+                    InventoryItem item = helper.fetchinventoryItemByName(giftName);
+                    item.setItemAmount(item.getItemAmount()-1);
+                    helper.insertInventory(item, true);
+                }
                 //Util.databaseReference.child("users").child(Util.userID).removeValue();
                 //String id = helper.insertMapGift(gift);
 //                MySQLiteHelper helper = new MySQLiteHelper(this);

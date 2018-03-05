@@ -55,9 +55,10 @@ public class GiftChooser extends AppCompatActivity {
                 }
                 if(spinnerArray.size() == 0) {
                     Intent returnIntent = new Intent();
-                    Toast.makeText(getBaseContext(), "Need an animal to deliver gift", Toast.LENGTH_SHORT);
+                    Toast.makeText(getBaseContext(), "Need an animal to deliver gift", Toast.LENGTH_SHORT).show();
                     setResult(Activity.RESULT_CANCELED, returnIntent);
                     finish();
+                    return;
                 } else {
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                             getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray);
@@ -66,7 +67,7 @@ public class GiftChooser extends AppCompatActivity {
 
                     // which items the user can send in the gift
                     final List<String> spinnergift_array =  new ArrayList<String>();
-                    spinnergift_array.add(" ");
+                    spinnergift_array.add("");
                     int animal_type;
                     if(Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(0)) == null) animal_type = 0;
                     else animal_type = Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(0));
@@ -80,36 +81,46 @@ public class GiftChooser extends AppCompatActivity {
                             getBaseContext(), android.R.layout.simple_spinner_item, spinnergift_array);
                     adapter_gift.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner_gift.setAdapter(adapter_gift);
+                    spinner_gift.setEnabled(true);
 
                     spinner_animal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                             spinnergift_array.clear();
-                            spinnergift_array.add(" ");
                             final int animal_type;
                             if(Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(position)) == null) animal_type = 0;
                             else animal_type = Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(position));
-                            DatabaseReference ref2 = Util.databaseReference.child("users").child(Util.userID).child("items");
-                            ref2.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for(DataSnapshot snapShot : dataSnapshot.getChildren()){
-                                        String gift_type = snapShot.child("itemName").getValue(String.class);
-                                        if(Globals.ITEM_TO_TYPE.get(gift_type) != null){
-                                            InventoryItem temp = helper.fetchinventoryItemByName(gift_type);
-                                            if(Globals.ITEM_TO_TYPE.get(gift_type) <= animal_type && temp.getItemAmount() > 0){
-                                                spinnergift_array.add(gift_type);
+                            if(animal_type == 0) {
+                                Toast.makeText(getBaseContext(), "Need bigger animal to send item with message", Toast.LENGTH_SHORT).show();
+                                spinner_gift.setEnabled(false);
+                            } else {
+                                spinner_gift.setEnabled(true);
+                                spinnergift_array.add("");
+                                DatabaseReference ref2 = Util.databaseReference.child("users").child(Util.userID).child("items");
+                                ref2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot snapShot : dataSnapshot.getChildren()){
+                                            String gift_type = snapShot.child("itemName").getValue(String.class);
+                                            int item_amount;
+                                            if(snapShot.child("itemAmount").getValue() == null) item_amount = 0;
+                                            else item_amount = snapShot.child("itemAmount").getValue(Integer.class);
+                                            if(Globals.ITEM_TO_TYPE.get(gift_type) != null){
+                                                int item_type = Globals.ITEM_TO_TYPE.get(gift_type);
+                                                if(item_type > 0 && item_type <= animal_type && item_amount > 0){
+                                                    spinnergift_array.add(gift_type);
+                                                }
                                             }
                                         }
+                                        ((BaseAdapter) spinner_gift.getAdapter()).notifyDataSetChanged();
                                     }
-                                    ((BaseAdapter) spinner_gift.getAdapter()).notifyDataSetChanged();
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
 
                         @Override
@@ -170,7 +181,8 @@ public class GiftChooser extends AppCompatActivity {
             helper.insertAnimal(onMission, true);
             //
 
-            returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
+            if(!spinner_gift.isEnabled()) returnIntent.putExtra("giftName", "");
+            else returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());
             returnIntent.putExtra("message", editText_message.getText().toString());
             setResult(Activity.RESULT_OK, returnIntent);
@@ -179,9 +191,5 @@ public class GiftChooser extends AppCompatActivity {
             setResult(Activity.RESULT_CANCELED, returnIntent);
             finish();
         }
-    }
-
-    public void populate_itemarray(int type){
-
     }
 }
