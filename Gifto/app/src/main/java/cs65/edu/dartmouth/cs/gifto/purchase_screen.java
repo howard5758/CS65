@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class purchase_screen extends AppCompatActivity {
 
     Button buy, cancel;
     ImageView image;
+    TextView description, price;
     MySQLiteHelper helper;
     InventoryItem item;
     Animal pet;
@@ -25,10 +27,15 @@ public class purchase_screen extends AppCompatActivity {
         buy = (Button) findViewById(R.id.buy);
         cancel = (Button) findViewById(R.id.cancel);
         helper = new MySQLiteHelper(this);
+        description = (TextView) findViewById(R.id.description);
+        price = (TextView) findViewById(R.id.price);
+
         final String object = getIntent().getStringExtra("name");
         String type = getIntent().getStringExtra("type");
         image = (ImageView) findViewById(R.id.item_picture);
 
+        description.setText("Would you like an interesting "+object+"?");
+        price.setText(Globals.ITEM_TO_PRICE.get(object) + " coins each!");
         switch (type) {
             case "goodies":
                 break;
@@ -68,7 +75,7 @@ public class purchase_screen extends AppCompatActivity {
                 }
 
                 //Garden.money_text.setText(String.valueOf(money.getItemAmount()));
-                Collection.title.setText("GOODIES" + String.valueOf(money.getItemAmount()));
+                Collection.title.setText("GOODIES, coins: " + String.valueOf(money.getItemAmount()));
 
 
                 finish();

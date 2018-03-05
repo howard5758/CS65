@@ -16,15 +16,12 @@ import com.google.firebase.database.DatabaseReference;
  */
 
 public class GiftFrag extends Activity {
-    private DatabaseReference giftsHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("collection", "onCreate");
         setContentView(R.layout.collection);
-
-//        giftsHistory = Util.databaseReference.child("users").child(Util.userID).child("gifts");
 
     }
 

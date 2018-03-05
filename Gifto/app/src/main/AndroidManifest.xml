@@ -52,12 +52,16 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        <activity android:name=".Preferences" />
-        <activity android:name=".Collection" />
-        <activity android:name=".purchase_screen" />
+        <activity android:name=".Preferences"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Collection"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".purchase_screen"
+            android:screenOrientation="portrait"/>
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity" />
         <activity
@@ -68,7 +72,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
-        <activity android:name=".GiftChooser"></activity>
+        <activity android:name=".GiftChooser"
+            android:screenOrientation="portrait"></activity>
 
 
     </application>

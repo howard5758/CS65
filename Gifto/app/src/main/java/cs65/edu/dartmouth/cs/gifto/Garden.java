@@ -44,9 +44,6 @@ public class Garden extends Fragment {
         place4 = Globals.EMPTY;
         helper = new MySQLiteHelper(getActivity());
 
-        Log.d("hello?", "hi");
-
-
 
     }
     @Override
@@ -81,8 +78,6 @@ public class Garden extends Fragment {
         Button button_place4 = view.findViewById(R.id.button_place4);
         Button button_expand_left = view.findViewById(R.id.expand_left);
         Button button_expand_right = view.findViewById(R.id.expand_right);
-
-
 
 
 

@@ -6,46 +6,43 @@
     android:layout_height="match_parent"
     >
 
-
-    <TextView
-        android:id="@+id/item_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/item_picture"
-        android:layout_alignStart="@+id/item_picture"
-        android:layout_below="@+id/item_picture"
-        android:layout_marginTop="11dp"
-        android:text="description:" />
-
     <ImageView
         android:id="@+id/item_picture"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp" />
+        android:layout_marginTop="36dp" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginTop="350dp"
+        android:layout_marginLeft="50dp" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="50dp" />
 
     <Button
         android:id="@+id/buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/item_description"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/item_description"
-        android:layout_marginBottom="59dp"
-        android:layout_marginLeft="49dp"
-        android:layout_marginStart="49dp"
+        android:layout_marginTop="430dp"
+        android:layout_marginLeft="50dp"
         android:text="BUY" />
 
     <Button
         android:id="@+id/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/buy"
-        android:layout_alignBottom="@+id/buy"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_toEndOf="@+id/buy"
-        android:layout_toRightOf="@+id/buy"
+        android:layout_marginTop="430dp"
+        android:layout_marginLeft="240dp"
         android:text="CANCEL" />
 </RelativeLayout>

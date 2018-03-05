@@ -13,11 +13,11 @@ public class Globals {
 
     public static final String DEFAULT_BACKGROUND = "default_bg";
     public static final String EMPTY = "empty";
-    public static final String DEFAULT_PLACE2 = "pile_of_leaves";
-    public static final String DEFAULT_PLACE3 = "trunk";
+
     // list of animals, animal size and items, gifts, and gift size and money hashmap
     public static final Map<String, Integer> ANIMAL_TO_TYPE = new HashMap<String, Integer>();
     public static final Map<String, Integer> ITEM_TO_TYPE = new HashMap<String, Integer>();
+    public static final Map<String, Integer> ITEM_TO_PRICE = new HashMap<String, Integer>();
     public static final Map<String, Integer> BOX_TO_TYPE = new HashMap<String, Integer>();
 
     public static final Map<String, Double> ANIMAL_TO_PROB = new HashMap<String, Double>();
@@ -94,9 +94,8 @@ public class Globals {
         ITEM_TO_TYPE.put("brown pot",1);
         ITEM_TO_TYPE.put("green pot",1);
         ITEM_TO_TYPE.put("salad",0);
-        ITEM_TO_TYPE.put("yellow cushion",1);
-        ITEM_TO_TYPE.put("blue toy fish",1);
         ITEM_TO_TYPE.put("yellow toy fish",1);
+        ITEM_TO_TYPE.put("blue toy fish",1);
         ITEM_TO_TYPE.put("toy reindeer",1);
         ITEM_TO_TYPE.put("banana",0);
         ITEM_TO_TYPE.put("pool",2);
@@ -105,6 +104,28 @@ public class Globals {
         ITEM_TO_TYPE.put("tree",2);
         ITEM_TO_TYPE.put("tuna",0);
         ITEM_TO_TYPE.put("pile of leaves", 1);
+
+        // price of each item in shop
+        ITEM_TO_PRICE.put("white cushion",30);
+        ITEM_TO_PRICE.put("blue cloud cushion",30);
+        ITEM_TO_PRICE.put("pink cushion",30);
+        ITEM_TO_PRICE.put("purple cushion",30);
+        ITEM_TO_PRICE.put("yellow cushion",30);
+        ITEM_TO_PRICE.put("flower pot 1",40);
+        ITEM_TO_PRICE.put("flower pot 2",40);
+        ITEM_TO_PRICE.put("flower pot 3",40);
+        ITEM_TO_PRICE.put("grapes",15);
+        ITEM_TO_PRICE.put("hotdog",15);
+        ITEM_TO_PRICE.put("green pot",50);
+        ITEM_TO_PRICE.put("salad",15);
+        ITEM_TO_PRICE.put("blue toy fish",55);
+        ITEM_TO_PRICE.put("banana",10);
+        ITEM_TO_PRICE.put("pool",100);
+        ITEM_TO_PRICE.put("tennis ball",20);
+        ITEM_TO_PRICE.put("trunk",80);
+        ITEM_TO_PRICE.put("tree",100);
+        ITEM_TO_PRICE.put("tuna",20);
+        ITEM_TO_PRICE.put("pile of leaves", 10);
 
         /** gifts: 0: small, can only carry messages
          * 1: medium, can carry messages and small items
@@ -172,7 +193,7 @@ public class Globals {
         ANIMAL_TO_GIFT.put("cat", "blue mitten");
         ANIMAL_TO_GIFT.put("kangaroo", "orange cloud cushion");
         ANIMAL_TO_GIFT.put("monkey", "yellow mitten");
-        ANIMAL_TO_GIFT.put("owl", "yellow fish toy");
+        ANIMAL_TO_GIFT.put("owl", "yellow toy fish");
         ANIMAL_TO_GIFT.put("American Shorthair", "toy reindeer");
         ANIMAL_TO_GIFT.put("Siamese Cat", "green cushion");
         ANIMAL_TO_GIFT.put("pink squirrel", "boxing glove");
@@ -253,6 +274,5 @@ public class Globals {
         ANIMAL_TO_BOX_LIST.put("Corgi side",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
         ANIMAL_TO_BOX_LIST.put("Corgi head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
     }
-
 
 }
