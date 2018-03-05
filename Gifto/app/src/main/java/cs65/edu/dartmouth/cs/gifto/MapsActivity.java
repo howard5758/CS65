@@ -240,7 +240,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 String friendName = snapshot.child("userNickname").getValue(String.class);
                                                 //
                                                 int giftBox = snapshot.child("giftBox").getValue(int.class);
-                                                //
+                                                ///
                                                 long time = snapshot.child("timePlaced").getValue(Long.TYPE);
                                                 cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
                                                 Gift gift = new Gift(giftName, true, friendName, time, location);
