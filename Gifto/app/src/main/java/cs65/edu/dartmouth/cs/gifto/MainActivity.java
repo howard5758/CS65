@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity
     double gSum;
     double dgX;
     double last_roll;
-    double last_pitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,7 +299,6 @@ public class MainActivity extends AppCompatActivity
             double gY = sensorEvent.values[1];
             double gZ = sensorEvent.values[2];
             double roll = Math.atan2(gZ, gZ) * 180 / Math.PI;
-            double pitch = Math.sqrt((gX*gX) + (gZ*gZ));
 
             gSum = Math.sqrt((gX*gX) + (gY*gY) + (gZ*gZ));
             if (gSum != 0) {
@@ -311,10 +309,6 @@ public class MainActivity extends AppCompatActivity
 
             if (gZ != 0) {
                 roll = Math.atan2(gX, gZ) * 180 / Math.PI;
-            }
-
-            if (pitch != 0) {
-                pitch = Math.atan2(gY, pitch) * 180 / Math.PI;
             }
 
             dgX = (roll - last_roll);
@@ -330,7 +324,6 @@ public class MainActivity extends AppCompatActivity
             Log.d("angle", String.valueOf(Util.angle));
 
             last_roll = roll;
-            last_pitch = pitch;
         }
     }
 
