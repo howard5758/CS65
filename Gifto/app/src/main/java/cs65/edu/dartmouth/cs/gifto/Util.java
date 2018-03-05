@@ -107,7 +107,7 @@ class Util {
                 return R.drawable.butterfly_teaser;
             case "cat":
                 return (R.drawable.cat);
-            case "cat's head":
+            case "cat head":
                 return (R.drawable.cat_head);
             case "sleeping cat":
                 return (R.drawable.cat_sleep);
@@ -127,13 +127,13 @@ class Util {
                 return (R.drawable.cusion_yellow);
             case "Corgi":
                 return (R.drawable.dog);
-            case "Corgi's back":
+            case "Corgi back":
                 return (R.drawable.dog_back);
             case "sleeping Corgi":
                 return (R.drawable.dog_sleep);
-            case "Corgi's side":
+            case "Corgi side":
                 return (R.drawable.dog_side);
-            case "Corgi's head":
+            case "Corgi head":
                 return (R.drawable.dog_head);
             case "flower pot 1":
                 return (R.drawable.flower_pot1);
@@ -173,7 +173,7 @@ class Util {
                 return (R.drawable.mole_purple);
             case "monkey":
                 return (R.drawable.monkey);
-            case "monkey's head":
+            case "monkey head":
                 return (R.drawable.monkey_head);
             case "sleeping monkey":
                 return (R.drawable.monkey_sleep);
@@ -195,7 +195,7 @@ class Util {
                 return (R.drawable.pot_green);
             case "salad":
                 return (R.drawable.salad);
-            case "American Shorthair's head":
+            case "American Shorthair head":
                 return (R.drawable.shorthair_head);
             case "sleeping American Shorthair":
                 return (R.drawable.shorthair_sleep);
@@ -205,7 +205,7 @@ class Util {
                 return (R.drawable.siamese);
             case "sleeping Siamese Cat":
                 return (R.drawable.siamese_sleep);
-            case "Siamese Cat's head":
+            case "Siamese Cat head":
                 return (R.drawable.siamese_head);
             case "squirrel":
                 return (R.drawable.squirrel);
