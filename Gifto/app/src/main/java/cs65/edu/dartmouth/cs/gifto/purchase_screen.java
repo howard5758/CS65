@@ -36,6 +36,11 @@ public class purchase_screen extends AppCompatActivity {
 
 
         switch (type) {
+            case "gifts":
+                image.setImageResource(Util.getImageIdFromName(object));
+                description.setText("Received a " + object);
+                buy.setVisibility(View.GONE);
+                break;
             case "goodies":
                 description.setText("Would you like an interesting "+object+"?");
                 price.setText(Globals.ITEM_TO_PRICE.get(object) + " coins each!");
