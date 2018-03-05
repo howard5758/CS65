@@ -2,12 +2,14 @@ package cs65.edu.dartmouth.cs.gifto;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,7 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,23 +28,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
 
-    ValueEventListener listener;
-    Animal animal;
+    private ValueEventListener listener;
+    private SensorManager mSensorManager;
+    private Sensor mLight;
+    private Sensor mGravity;
+
+    double gSum;
+    double dgX;
+    double last_roll;
+    double last_pitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +53,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // sensors
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        assert mSensorManager != null;
+        mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+
+
         //navigation view
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -137,7 +143,6 @@ public class MainActivity extends AppCompatActivity
                                                 .getValue())))));
 
                                 // try to insert it
-                                // TODO: this is causing tons and tons of things to be added to the firebase
                                 datasource.insertGift(gift, false);
                             }
                         }
@@ -172,89 +177,17 @@ public class MainActivity extends AppCompatActivity
             };
             Util.databaseReference.child("users").child(Util.userID).addValueEventListener(listener);
         }
-
-        // test code for inserting data
-        ArrayList<Animal> animals;
-        if (Util.userID != null) {
-//            MySQLiteHelper db = new MySQLiteHelper(this);
-//            Animal a1 = new Animal("pink squirrel", 15, 2, 12000, 1);
-//            Animal a2 = new Animal("kangaroo", 16, 3, 12001, 2);
-//            Animal a3 = new Animal("owl",1,3,12000,-1);
-//            Animal a4 = new Animal("cat",1,3,12000,0);
-//            Gift g1 = new Gift("fish1", false, "john1", 10000, new cs65.edu.dartmouth.cs.gifto.LatLng(12, 15));
-//            Gift g2 = new Gift("fish2", true, "john2", 10001, new cs65.edu.dartmouth.cs.gifto.LatLng(13, 16));
-//            InventoryItem i1 = new InventoryItem("money", 300);
-//            InventoryItem i2 = new InventoryItem("boxing glove", 3);
-//            InventoryItem i3 = new InventoryItem("grapes", 1);
-//            InventoryItem i4 = new InventoryItem("blue mitten", 5);
-//            InventoryItem i5 = new InventoryItem("trunk", 2);
-//            //InventoryItem i2 = new InventoryItem("money2", 5);
-//            Friend f1 = new Friend("john1", "johnny1");
-//            Friend f2 = new Friend("john2", "johnny2");
-////            MapGift mg1 = new MapGift("watermelon bag", "username1", "usernickname1", "message1", "animalname1", g1.getLocation(), 12000, "john1");
-////            MapGift mg2 = new MapGift("red box", "username2", "usernickname2", "message2", "animalname2", g2.getLocation(), 12001, "john2");
-////
-//            db.insertAnimal(a1, true);
-//            db.insertAnimal(a2, true);
-//            db.insertAnimal(a3, true);
-//            db.insertAnimal(a4, true);
-////            db.insertGift(g1);
-////            db.insertGift(g2);
-//            db.insertInventory(i1, true);
-//            db.insertInventory(i2, true);
-//            db.insertInventory(i3, true);
-//            db.insertInventory(i4, true);
-//            db.insertInventory(i5, true);
-////            db.insertInventory(i2);
-////            db.insertMapGift(mg1);
-////            db.insertMapGift(mg2);
-//            db.insertFriend(f1, true);
-//            db.insertFriend(f2, true);
-//
-//            Animal animal1 = db.fetchAnimalByName("cat1");
-//            Animal animal2 = db.fetchAnimalByName("cat2");
-//            ArrayList<Animal> animall = db.fetchAllAnimals();
-//
-//            Gift gift1 = db.fetchGiftByName(g1.getGiftName());
-//            Gift gift2 = db.fetchGiftByName(g2.getGiftName());
-//            ArrayList<Gift> giftl = db.fetchAllGifts();
-//
-//            InventoryItem item1 = db.fetchinventoryItemByName("money1");
-//            InventoryItem item2 = db.fetchinventoryItemByName("money2");
-//            ArrayList<InventoryItem> iteml = db.fetchAllInventoryItems();
-//
-//            Friend friend1 = db.fetchFriendByEmail("john1");
-//            Friend friend2 = db.fetchFriendByEmail("john2");
-//            ArrayList<Friend> friendl = db.fetchAllFriends();
-//
-//            MapGift mapGift1 = db.fetchMapGiftByName(mg1.getId());
-//            MapGift mapGift2 = db.fetchMapGiftByName(mg2.getId());
-//            ArrayList<MapGift> mapGiftl = db.fetchAllMapGifts();
-//
-//            Log.d("olivermct", "insert and fetch completed");
-//
-//            db.removeAnimal(a1.getAnimalName());
-//            db.removeGift(g1.getId());
-//            db.removeFriend(f1.getFirebaseId());
-//            db.removeInventoryItem(i1.getItemName());
-//            db.removeMapGift(mg1.getId());
-//
-//            animall = db.fetchAllAnimals();
-//            giftl = db.fetchAllGifts();
-//            iteml = db.fetchAllInventoryItems();
-//            friendl = db.fetchAllFriends();
-//            mapGiftl = db.fetchAllMapGifts();
-//
-//            animal1 = db.fetchAnimalByName("cat1");
-//
-//            Log.d("olivermct", "remove completed");
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        // make sure the sensor is running
+        mSensorManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mGravity, SensorManager.SENSOR_DELAY_NORMAL);
+
+        // populate the navigation drawer with user information
         NavigationView navigationView = findViewById(R.id.nav_view);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -284,9 +217,15 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+        // unregister sensor when app ends. Still want it to run in background throughout app though
+        mSensorManager.unregisterListener(this);
+    }
+
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -346,5 +285,57 @@ public class MainActivity extends AppCompatActivity
     // helper function, since a listener can't end itself directly
     private void endListener() {
         Util.databaseReference.child("users").child(Util.userID).removeEventListener(listener);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        Sensor sensor = sensorEvent.sensor;
+        if (sensor.getType() == Sensor.TYPE_LIGHT) {
+            float light = sensorEvent.values[0];
+            Util.nightTime = light < 5;
+        }
+
+        else if (sensor.getType() == Sensor.TYPE_GRAVITY) {
+            double gX = sensorEvent.values[0];
+            double gY = sensorEvent.values[1];
+            double gZ = sensorEvent.values[2];
+            double roll = Math.atan2(gZ, gZ) * 180 / Math.PI;
+            double pitch = Math.sqrt((gX*gX) + (gZ*gZ));
+
+            gSum = Math.sqrt((gX*gX) + (gY*gY) + (gZ*gZ));
+            if (gSum != 0) {
+                gX /= gSum;
+                gY /= gSum;
+                gZ /= gSum;
+            }
+
+            if (gZ != 0) {
+                roll = Math.atan2(gX, gZ) * 180 / Math.PI;
+            }
+
+            if (pitch != 0) {
+                pitch = Math.atan2(gY, pitch) * 180 / Math.PI;
+            }
+
+            dgX = (roll - last_roll);
+
+            // if device orientation is close to vertical – rotation around x is almost undefined – skip!
+            if (gY > 0.99) dgX = 0;
+
+            // if rotation was too intensive – more than 180 degrees – skip it
+            if (dgX > 180) dgX = 0;
+            if (dgX < -180) dgX = 0;
+
+            Util.angle += dgX;
+            Log.d("angle", String.valueOf(Util.angle));
+
+            last_roll = roll;
+            last_pitch = pitch;
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 }

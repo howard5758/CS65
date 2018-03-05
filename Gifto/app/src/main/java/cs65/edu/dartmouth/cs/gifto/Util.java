@@ -30,6 +30,8 @@ class Util {
     static String email;
     static Uri photo;
     static boolean completed = false;
+    static boolean nightTime = false;
+    static double angle = 0;
 
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
