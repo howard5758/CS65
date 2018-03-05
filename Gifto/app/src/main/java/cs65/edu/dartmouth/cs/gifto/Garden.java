@@ -240,13 +240,27 @@ public class Garden extends Fragment {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
                         if(tempp.getPresent()==-1){
-                            Animal pet = new Animal();
-                            pet.setAnimalName(target);
-                            pet.setPresent(1);
+                            tempp.setAnimalName(target);
+                            tempp.setPresent(1);
+                            tempp.setNumVisits(tempp.getNumVisits() + 1);
                             helper.removeAnimal(target);
-                            helper.insertAnimal(pet, true);
+                            helper.insertAnimal(tempp, true);
                             Garden.pet1.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal1_name.setText(target);
+
+                            InventoryItem temp_money = helper.fetchinventoryItemByName("money");
+                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            helper.removeInventoryItem("money");
+                            helper.insertInventory(temp_money, true);
+
+                            if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
+                                String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
+                                InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                gift_item.setItemName(gift_name);
+                                gift_item.setItemAmount(gift_item.getItemAmount() + 1);
+                                helper.removeInventoryItem(gift_name);
+                                helper.insertInventory(gift_item, true);
+                            }
                         }
                     }
                 }
@@ -265,13 +279,28 @@ public class Garden extends Fragment {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
                         if(tempp.getPresent()==-1){
-                            Animal pet = new Animal();
-                            pet.setAnimalName(target);
-                            pet.setPresent(2);
+                            tempp.setAnimalName(target);
+                            tempp.setPresent(2);
+                            tempp.setNumVisits(tempp.getNumVisits() + 1);
                             helper.removeAnimal(target);
-                            helper.insertAnimal(pet, true);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(tempp, true);
                             Garden.pet2.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal2_name.setText(target);
+
+                            InventoryItem temp_money = helper.fetchinventoryItemByName("money");
+                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            helper.removeInventoryItem("money");
+                            helper.insertInventory(temp_money, true);
+
+                            if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
+                                String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
+                                InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                gift_item.setItemName(gift_name);
+                                gift_item.setItemAmount(gift_item.getItemAmount() + 1);
+                                helper.removeInventoryItem(gift_name);
+                                helper.insertInventory(gift_item, true);
+                            }
                         }
                     }
                 }
@@ -290,13 +319,28 @@ public class Garden extends Fragment {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
                         if(tempp.getPresent()==-1){
-                            Animal pet = new Animal();
-                            pet.setAnimalName(target);
-                            pet.setPresent(3);
+                            tempp.setAnimalName(target);
+                            tempp.setPresent(3);
+                            tempp.setNumVisits(tempp.getNumVisits() + 1);
                             helper.removeAnimal(target);
-                            helper.insertAnimal(pet, true);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(tempp, true);
                             Garden.pet3.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal3_name.setText(target);
+
+                            InventoryItem temp_money = helper.fetchinventoryItemByName("money");
+                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            helper.removeInventoryItem("money");
+                            helper.insertInventory(temp_money, true);
+
+                            if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
+                                String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
+                                InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                gift_item.setItemName(gift_name);
+                                gift_item.setItemAmount(gift_item.getItemAmount() + 1);
+                                helper.removeInventoryItem(gift_name);
+                                helper.insertInventory(gift_item, true);
+                            }
                         }
                     }
                 }
@@ -316,13 +360,28 @@ public class Garden extends Fragment {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
                         if(tempp.getPresent()==-1){
-                            Animal pet = new Animal();
-                            pet.setAnimalName(target);
-                            pet.setPresent(4);
+                            tempp.setAnimalName(target);
+                            tempp.setPresent(4);
+                            tempp.setNumVisits(tempp.getNumVisits() + 1);
                             helper.removeAnimal(target);
-                            helper.insertAnimal(pet, true);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(tempp, true);
                             Garden.pet4.setImageResource(Util.getImageIdFromName(target));
                             Garden.animal4_name.setText(target);
+
+                            InventoryItem temp_money = helper.fetchinventoryItemByName("money");
+                            temp_money.setItemAmount(temp_money.getItemAmount() + (int)Math.floor(Math.random()*30));
+                            helper.removeInventoryItem("money");
+                            helper.insertInventory(temp_money, true);
+
+                            if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
+                                String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
+                                InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                gift_item.setItemName(gift_name);
+                                gift_item.setItemAmount(gift_item.getItemAmount() + 1);
+                                helper.removeInventoryItem(gift_name);
+                                helper.insertInventory(gift_item, true);
+                            }
                         }
                     }
                 }

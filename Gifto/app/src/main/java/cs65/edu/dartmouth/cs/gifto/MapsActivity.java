@@ -406,7 +406,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Calendar c = Calendar.getInstance();
                 Random rand = new Random();
-                int randomNum = rand.nextInt((Globals.ANIMAL_TO_BOX_LIST.get(animalName).size() - 1) + 1) + 1;
+                int randomNum = rand.nextInt((Globals.ANIMAL_TO_BOX_LIST.get(animalName).size() - 1) + 1);
                 String giftbox_name = Globals.ANIMAL_TO_BOX_LIST.get(animalName).get(randomNum);
                 int giftbox = 0;
                 for(int i=0; i<Globals.INT_TO_BOX.size(); i++) {
