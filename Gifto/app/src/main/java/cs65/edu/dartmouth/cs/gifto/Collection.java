@@ -125,14 +125,14 @@ public class Collection extends ListActivity {
         if(selection){
             InventoryItem temp = helper.fetchinventoryItemByName(selection_list.get(position));
             int prev = temp.getItemAmount();
-            temp.setItemAmount(prev);
+            temp.setItemAmount(prev-1);
 
 
             if (loc_type == 1){
                 if(!Garden.item1_name.getText().equals("")){
-                    temp.setItemAmount(prev - 1);
                     InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item1_name.getText());
                     prev_item.setPresent(-1);
+                    prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                     helper.removeInventoryItem(prev_item.getItemName());
                     helper.insertInventory(prev_item, true);
                 }
@@ -152,6 +152,7 @@ public class Collection extends ListActivity {
                 if(!Garden.item2_name.getText().equals("")){
                     InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item2_name.getText());
                     prev_item.setPresent(-1);
+                    prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                     helper.removeInventoryItem(prev_item.getItemName());
                     helper.insertInventory(prev_item, true);
                 }
@@ -171,6 +172,7 @@ public class Collection extends ListActivity {
                 if(!Garden.item3_name.getText().equals("")){
                     InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item3_name.getText());
                     prev_item.setPresent(-1);
+                    prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                     helper.removeInventoryItem(prev_item.getItemName());
                     helper.insertInventory(prev_item, true);
                 }
@@ -190,6 +192,7 @@ public class Collection extends ListActivity {
                 if(!Garden.item4_name.getText().equals("")){
                     InventoryItem prev_item = helper.fetchinventoryItemByName((String)Garden.item4_name.getText());
                     prev_item.setPresent(-1);
+                    prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                     helper.removeInventoryItem(prev_item.getItemName());
                     helper.insertInventory(prev_item, true);
                 }

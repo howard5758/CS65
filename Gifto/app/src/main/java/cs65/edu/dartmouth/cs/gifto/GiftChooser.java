@@ -26,11 +26,14 @@ public class GiftChooser extends AppCompatActivity {
     Spinner spinner_gift;
     EditText editText_message;
 
+    MySQLiteHelper helper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gift_chooser);
 
+        helper = new MySQLiteHelper(this);
         spinner_animal = findViewById(R.id.spinner_animal);
         spinner_gift = findViewById(R.id.spinner_gift);
         editText_message = findViewById(R.id.editText_message);
@@ -129,6 +132,31 @@ public class GiftChooser extends AppCompatActivity {
 
         // send gift info to mapview, so it can put the new gift on the map and in the database
         if(view == findViewById(R.id.button_send)) {
+
+            // make sure animal left the garden
+            Animal onMission = helper.fetchAnimalByName((String)spinner_animal.getSelectedItem());
+            int present = onMission.getPresent();
+            if(present == 1) {
+                Garden.pet1.setImageDrawable(null);
+                Garden.animal1_name.setText("");
+            }
+            else if(present == 2){
+                Garden.pet2.setImageDrawable(null);
+                Garden.animal2_name.setText("");
+            }
+            else if(present == 3){
+                Garden.pet3.setImageDrawable(null);
+                Garden.animal3_name.setText("");
+            }
+            else if(present == 4){
+                Garden.pet4.setImageDrawable(null);
+                Garden.animal4_name.setText("");
+            }
+            helper.removeAnimal(onMission.getAnimalName());
+            onMission.setPresent(-1);
+            helper.insertAnimal(onMission, true);
+            //
+
             returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());
             returnIntent.putExtra("message", editText_message.getText().toString());

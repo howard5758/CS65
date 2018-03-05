@@ -16,6 +16,7 @@ import android.widget.Toast;
 import android.os.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -228,6 +229,7 @@ public class Garden extends Fragment {
             }
         }
         for(InventoryItem i : items){
+
             Log.d("master", i.getItemName());
             if(i.getPresent() == 1){
                 Log.d("master", "present!!");
@@ -241,13 +243,16 @@ public class Garden extends Fragment {
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
-                        Animal pet = new Animal();
-                        pet.setAnimalName(target);
-                        pet.setPresent(1);
-                        helper.removeAnimal(target);
-                        helper.insertAnimal(pet, true);
-                        Garden.pet1.setImageResource(Util.getImageIdFromName(target));
-                        Garden.animal1_name.setText(target);
+                        Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp.getPresent()==-1){
+                            Animal pet = new Animal();
+                            pet.setAnimalName(target);
+                            pet.setPresent(1);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(pet, true);
+                            Garden.pet1.setImageResource(Util.getImageIdFromName(target));
+                            Garden.animal1_name.setText(target);
+                        }
                     }
                 }
             }
@@ -263,13 +268,16 @@ public class Garden extends Fragment {
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
-                        Animal pet = new Animal();
-                        pet.setAnimalName(target);
-                        pet.setPresent(2);
-                        helper.removeAnimal(target);
-                        helper.insertAnimal(pet, true);
-                        Garden.pet2.setImageResource(Util.getImageIdFromName(target));
-                        Garden.animal2_name.setText(target);
+                        Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp.getPresent()==-1){
+                            Animal pet = new Animal();
+                            pet.setAnimalName(target);
+                            pet.setPresent(2);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(pet, true);
+                            Garden.pet2.setImageResource(Util.getImageIdFromName(target));
+                            Garden.animal2_name.setText(target);
+                        }
                     }
                 }
             }
@@ -285,13 +293,16 @@ public class Garden extends Fragment {
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
-                        Animal pet = new Animal();
-                        pet.setAnimalName(target);
-                        pet.setPresent(3);
-                        helper.removeAnimal(target);
-                        helper.insertAnimal(pet, true);
-                        Garden.pet3.setImageResource(Util.getImageIdFromName(target));
-                        Garden.animal3_name.setText(target);
+                        Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp.getPresent()==-1){
+                            Animal pet = new Animal();
+                            pet.setAnimalName(target);
+                            pet.setPresent(3);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(pet, true);
+                            Garden.pet3.setImageResource(Util.getImageIdFromName(target));
+                            Garden.animal3_name.setText(target);
+                        }
                     }
                 }
             }
@@ -308,16 +319,32 @@ public class Garden extends Fragment {
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
-                        Animal pet = new Animal();
-                        pet.setAnimalName(target);
-                        pet.setPresent(4);
-                        helper.removeAnimal(target);
-                        helper.insertAnimal(pet, true);
-                        Garden.pet4.setImageResource(Util.getImageIdFromName(target));
-                        Garden.animal4_name.setText(target);
+                        Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp.getPresent()==-1){
+                            Animal pet = new Animal();
+                            pet.setAnimalName(target);
+                            pet.setPresent(4);
+                            helper.removeAnimal(target);
+                            helper.insertAnimal(pet, true);
+                            Garden.pet4.setImageResource(Util.getImageIdFromName(target));
+                            Garden.animal4_name.setText(target);
+                        }
                     }
                 }
             }
+        }
+        Iterator<InventoryItem> iter = items.iterator();
+
+        while (iter.hasNext()) {
+            InventoryItem i = iter.next();
+
+            if (i.getItemAmount()<0 && !i.getItemName().equals("money")){
+
+                i.setItemAmount(0);
+                helper.insertInventory(i, true);
+                helper.removeInventoryItem(i.getItemName());
+            }
+
         }
     }
 }
