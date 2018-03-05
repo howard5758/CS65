@@ -25,16 +25,14 @@ import java.util.Iterator;
 
 public class Collection extends ListActivity {
 
-    public static TextView title;
+    public static TextView title, money;
     item_adapter item_adapter;
     pet_adapter pet_adapter;
-    gift_adapter gift_adapter;
 
     Boolean goodies, gifts, pets, selection;
 
     public ArrayList<String> goodiesCollection, shopCollection;
     public ArrayList<Animal> petCollection;
-    public ArrayList<Gift> giftCollection;
     ArrayList<String> selection_list;
 
     int loc_type;
@@ -53,7 +51,6 @@ public class Collection extends ListActivity {
         shopCollection = new ArrayList<>();
         selection_list = new ArrayList<>();
         shopCollection.addAll(Globals.ITEM_TO_TYPE.keySet());
-        giftCollection = new ArrayList<>();
 
         selection_list.addAll(Globals.ITEM_TO_TYPE.keySet());
         //listInit();
@@ -65,7 +62,7 @@ public class Collection extends ListActivity {
         selection = getIntent().getBooleanExtra("selection", false);
 
         title = (TextView) findViewById(R.id.list_title);
-
+        money = (TextView) findViewById(R.id.money);
         if (goodies) {
             InventoryItem moneyy = helper.fetchinventoryItemByName("money");
             if (moneyy.getItemAmount() == -1){
@@ -73,8 +70,9 @@ public class Collection extends ListActivity {
                 moneyy.setItemAmount(300);
                 helper.insertInventory(moneyy, true);
             }
-            title.setText("GOODIES" + String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount()));
+            title.setText("SHOP");
 
+            money.setText("You have "+ String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount())+" coins");
             for(String i: shopCollection){
                 if(Globals.ITEM_TO_PRICE.containsKey(i)){
                     goodiesCollection.add(i);
@@ -87,9 +85,6 @@ public class Collection extends ListActivity {
         } else if (gifts) {
 
             title.setText("GIFTS");
-            giftCollection = helper.fetchAllGifts();
-            gift_adapter = new gift_adapter(this, R.layout.list_collection, giftCollection);
-            setListAdapter(gift_adapter);
 
 
         } else if (pets){
@@ -239,10 +234,7 @@ public class Collection extends ListActivity {
             } else if (pets) {
                 intent.putExtra("name", petCollection.get(position).getAnimalName());
                 intent.putExtra("type", "pets");
-            }
-            else if(gifts){
-                intent.putExtra("name", giftCollection.get(position).getGiftName());
-                intent.putExtra("type", "gifts");
+
             }
 
             startActivity(intent);
@@ -301,9 +293,9 @@ public class Collection extends ListActivity {
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
-            image.setImageResource(Util.getImageIdFromName(Globals.INT_TO_BOX.get(getItem(position).getGiftBox())));
+            image.setImageResource(Util.getImageIdFromName(getItem(position).getGiftName()));
 
-            namee.setText(getItem(position).getFriendName());
+            namee.setText(getItem(position).getGiftName());
 
             return view;
         }

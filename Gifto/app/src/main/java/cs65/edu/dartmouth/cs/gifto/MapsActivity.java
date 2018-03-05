@@ -300,14 +300,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         giftsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
-                int id;
-                if(dataSnapshot.child("giftBox").getValue(Integer.class) != null) {
-                    if ((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(dataSnapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName(""))
-                        id = R.drawable.gift_icon;
-                } else id = R.drawable.gift_icon;
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id)));
-                gifts.add(marker);
+                if(dataSnapshot.child("sendTo").getValue() == null || Util.email.equals(dataSnapshot.child("sendTo").getValue(String.class))){
+                    cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
+                    int id;
+                    if(dataSnapshot.child("giftBox").getValue(Integer.class) != null) {
+                        if ((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(dataSnapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName(""))
+                            id = R.drawable.gift_icon;
+                    } else id = R.drawable.gift_icon;
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id)));
+                    gifts.add(marker);
+                }
             }
 
             @Override
@@ -360,15 +362,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Gift gift = snapshot.getValue(Gift.class);
-                    // determine which image to use
-                    int id;
-                    if(snapshot.child("giftBox").getValue(Integer.class) != null){
-                        if((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(snapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
-                    } else id = R.drawable.gift_icon;
-                    MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id));
-                    Marker marker = mMap.addMarker(markerOptions);
-                    gifts.add(marker);
+                    MapGift gift = snapshot.getValue(MapGift.class);
+                    if(gift.getSendTo() == null || Util.email.equals(gift.getSendTo())){
+                        // determine which image to use
+                        int id;
+                        if(snapshot.child("giftBox").getValue(Integer.class) != null){
+                            if((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(snapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                        } else id = R.drawable.gift_icon;
+                        MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id));
+                        Marker marker = mMap.addMarker(markerOptions);
+                        gifts.add(marker);
+                    }
                 }
             }
             @Override
@@ -402,6 +406,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String giftName = data.getStringExtra("giftName");
                 String animalName =data.getStringExtra("animalName");
                 String message = data.getStringExtra("message");
+                String sendTo = data.getStringExtra("sendTo");
                 LatLng latLng = savedLatLng;
 
                 Calendar c = Calendar.getInstance();
@@ -415,7 +420,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         break;
                     }
                 }
-                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), null, giftbox);
+                String receiver;
+                if(sendTo == null || sendTo.equals(""))  receiver = null;
+                else receiver = sendTo;
+                MapGift gift = new MapGift(giftName, Util.userID, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), receiver, giftbox);
                 String key = giftsData.push().getKey();
                 gift.setId(key);
                 giftsData.child(key).setValue(gift);

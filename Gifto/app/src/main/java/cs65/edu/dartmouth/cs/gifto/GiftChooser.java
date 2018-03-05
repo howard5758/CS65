@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -18,13 +19,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GiftChooser extends AppCompatActivity {
 
     Spinner spinner_animal;
     Spinner spinner_gift;
+    Spinner spinner_friends;
     EditText editText_message;
+    TextView price_text;
 
     MySQLiteHelper helper;
 
@@ -36,7 +40,9 @@ public class GiftChooser extends AppCompatActivity {
         helper = new MySQLiteHelper(this);
         spinner_animal = findViewById(R.id.spinner_animal);
         spinner_gift = findViewById(R.id.spinner_gift);
+        spinner_friends = findViewById(R.id.spinner_friends);
         editText_message = findViewById(R.id.editText_message);
+        price_text = findViewById(R.id.text_price);
 
         final Globals Globals = new Globals();
 
@@ -92,7 +98,9 @@ public class GiftChooser extends AppCompatActivity {
                             else animal_type = Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(position));
                             if(animal_type == 0) {
                                 Toast.makeText(getBaseContext(), "Need bigger animal to send item with message", Toast.LENGTH_SHORT).show();
+                                spinnergift_array.add("");
                                 spinner_gift.setEnabled(false);
+                                ((BaseAdapter) spinner_gift.getAdapter()).notifyDataSetChanged();
                             } else {
                                 spinner_gift.setEnabled(true);
                                 spinnergift_array.add("");
@@ -129,6 +137,29 @@ public class GiftChooser extends AppCompatActivity {
                         }
 
                     });
+
+                    spinner_gift.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            String gift_name = spinnergift_array.get(i);
+                            int item_type;
+                            if(Globals.ITEM_TO_TYPE.get(gift_name) != null){
+                                item_type = Globals.ITEM_TO_TYPE.get(gift_name);
+                            } else {
+                                item_type = 0;
+                            }
+                            ArrayList<String> size_strings = new ArrayList<String> (Arrays.asList("message", "small gift", "large gift"));
+                            ArrayList<Integer> cost_strings = new ArrayList<Integer> (Arrays.asList(5, 20, 50));
+                            String size = size_strings.get(item_type);
+                            int cost = cost_strings.get(item_type);
+                            price_text.setText("Price to send " + size + ": " + cost + " coins");
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
                 }
             }
 
@@ -137,6 +168,16 @@ public class GiftChooser extends AppCompatActivity {
 
             }
         });
+
+        final List<String> spinnerArray_friends =  new ArrayList<String>();
+        ArrayAdapter<String> adapter_friends = new ArrayAdapter<String>(
+                getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray);
+        adapter_friends.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerArray_friends.add("");
+        for(Friend friend : helper.fetchAllFriends()){
+            spinnerArray_friends.add(friend.getEmail());
+        }
+        spinner_animal.setAdapter(adapter_friends);
     }
 
     public void onClick(View view) {
@@ -185,6 +226,7 @@ public class GiftChooser extends AppCompatActivity {
             else returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());
             returnIntent.putExtra("message", editText_message.getText().toString());
+            returnIntent.putExtra("sendTo", (String)spinner_friends.getSelectedItem());
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         } else {
