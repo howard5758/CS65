@@ -88,7 +88,7 @@ public class purchase_screen extends AppCompatActivity {
                 }
 
                 //Garden.money_text.setText(String.valueOf(money.getItemAmount()));
-                Collection.title.setText("GOODIES, coins: " + String.valueOf(money.getItemAmount()));
+                Collection.money.setText("You have "+ String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount())+" coins");
 
 
                 finish();
