@@ -136,8 +136,6 @@ class Util {
                 return (R.drawable.dog_sleep);
             case "Corgi side":
                 return (R.drawable.dog_side);
-            case "Corgi head":
-                return (R.drawable.dog_head);
             case "flower pot 1":
                 return (R.drawable.flower_pot1);
             case "flower pot 2":
