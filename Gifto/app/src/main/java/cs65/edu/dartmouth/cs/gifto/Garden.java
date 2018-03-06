@@ -238,7 +238,9 @@ public class Garden extends Fragment {
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
-
+                        if(tempp == null){
+                            tempp = new Animal();
+                        }
 
                         if(tempp.getPresent()==-1){
                             tempp.setAnimalName(target);
@@ -266,6 +268,10 @@ public class Garden extends Fragment {
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
                                 InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                if(gift_item == null) {
+                                    gift_item = new InventoryItem();
+                                    gift_item.setItemName(gift_name);
+                                }
                                 gift_item.setItemName(gift_name);
                                 gift_item.setItemAmount(gift_item.getItemAmount() + 1);
                                 helper.removeInventoryItem(gift_name);
@@ -288,6 +294,9 @@ public class Garden extends Fragment {
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp == null){
+                            tempp = new Animal();
+                        }
                         if(tempp.getPresent()==-1){
                             tempp.setAnimalName(target);
                             tempp.setPresent(2);
@@ -316,6 +325,10 @@ public class Garden extends Fragment {
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
                                 InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                if(gift_item == null) {
+                                    gift_item = new InventoryItem();
+                                    gift_item.setItemName(gift_name);
+                                }
                                 gift_item.setItemName(gift_name);
                                 gift_item.setItemAmount(gift_item.getItemAmount() + 1);
                                 helper.removeInventoryItem(gift_name);
@@ -338,6 +351,9 @@ public class Garden extends Fragment {
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp == null){
+                            tempp = new Animal();
+                        }
                         if(tempp.getPresent()==-1){
                             tempp.setAnimalName(target);
                             tempp.setPresent(3);
@@ -366,6 +382,10 @@ public class Garden extends Fragment {
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
                                 InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                if(gift_item == null) {
+                                    gift_item = new InventoryItem();
+                                    gift_item.setItemName(gift_name);
+                                }
                                 gift_item.setItemName(gift_name);
                                 gift_item.setItemAmount(gift_item.getItemAmount() + 1);
                                 helper.removeInventoryItem(gift_name);
@@ -389,6 +409,9 @@ public class Garden extends Fragment {
                     if (Math.random() <= prob) {
                         Log.d("master", "animal!!");
                         Animal tempp = helper.fetchAnimalByName(target);
+                        if(tempp == null){
+                            tempp = new Animal();
+                        }
                         if(tempp.getPresent()==-1){
                             tempp.setAnimalName(target);
                             tempp.setPresent(4);
@@ -417,6 +440,10 @@ public class Garden extends Fragment {
                             if(tempp.getNumVisits() == Globals.ANIMAL_TO_PROB.get(target)*10){
                                 String gift_name = Globals.ANIMAL_TO_GIFT.get(target);
                                 InventoryItem gift_item = helper.fetchinventoryItemByName(gift_name);
+                                if(gift_item == null) {
+                                    gift_item = new InventoryItem();
+                                    gift_item.setItemName(gift_name);
+                                }
                                 gift_item.setItemName(gift_name);
                                 gift_item.setItemAmount(gift_item.getItemAmount() + 1);
                                 helper.removeInventoryItem(gift_name);

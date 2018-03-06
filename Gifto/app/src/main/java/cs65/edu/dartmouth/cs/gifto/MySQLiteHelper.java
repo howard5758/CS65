@@ -706,7 +706,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        return animals.get(0);
+        // add animal to user's database if it's new to user
+        if(animals.size() > 0) return animals.get(0);
+        else return null;
     }
 
     /* Method to return a single Gift specified by the name
@@ -742,7 +744,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        return gifts.get(0);
+        if(gifts.size() > 0) return gifts.get(0);
+        else return null;
     }
 
     /* Method to return a single inventory item specified by the name
@@ -787,8 +790,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return items.get(0);
-
+        if(items.size() > 0) return items.get(0);
+        else return null;
     }
 
     /* Method to return a single Friend specified by the name (not nickname)
@@ -824,7 +827,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        return friends.get(0);
+        if(friends.size() > 0) return friends.get(0);
+        else return null;
     }
 
     /* Method to return a single map gift specified by the name

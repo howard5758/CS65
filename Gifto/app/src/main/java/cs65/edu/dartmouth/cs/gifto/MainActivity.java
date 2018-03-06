@@ -291,6 +291,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment newFragment;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        // TODO: the commented out line below fixed the bug where it occassionally crashed on startup
+        // but this seems like a hack, so I'm looking into a proper solution
+        //transaction.commitAllowingStateLoss();
         int id = item.getItemId();
 
         if (id == R.id.nav_garden) {
