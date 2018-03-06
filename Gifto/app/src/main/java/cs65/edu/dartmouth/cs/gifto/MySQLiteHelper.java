@@ -165,7 +165,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
                 // now insert into SQL
-                SQLiteDatabase database = getReadableDatabase();
+                SQLiteDatabase database = getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_FRIEND_EMAIL, friend.getEmail());
                 values.put(COLUMN_FRIEND_NICKNAME, friend.getNickname());

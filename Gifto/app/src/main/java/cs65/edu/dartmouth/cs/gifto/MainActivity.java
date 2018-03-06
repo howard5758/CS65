@@ -132,8 +132,10 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("friends")) {
                             for (DataSnapshot friendData : userSnapshot.getChildren()) {
                                 Friend friend = new Friend();
-                                friend.setEmail((String)friendData.child("friendEmail").getValue());
+                                friend.setEmail((String)friendData.child("email").getValue());
                                 friend.setNickname((String)friendData.child("nickname").getValue());
+                                friend.setFirebaseId((String) friendData
+                                        .child("firebaseId").getValue());
                                 datasource.insertFriend(friend, false);
                             }
                         }
@@ -387,7 +389,7 @@ public class MainActivity extends AppCompatActivity
     public void doPositiveClick(String email, String nickname) {
         Friend friend = new Friend();
         friend.setEmail(email);
-        friend.setNickname(email);
+        friend.setNickname(nickname);
 
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.insertFriend(friend, true);
@@ -418,20 +420,16 @@ public class MainActivity extends AppCompatActivity
             return alert.setView(view).setTitle(title)
                     .setPositiveButton("Okay",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
+                                public void onClick(DialogInterface dialog, int whichButton) {
                                     String email = emaile.getText().toString();
                                     String nickname = nicknamee.getText().toString();
-                                    ((MainActivity) getActivity())
-                                            .doPositiveClick(email, nickname);
+                                    ((MainActivity) getActivity()).doPositiveClick(email, nickname);
                                 }
                             })
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                    ((MainActivity) getActivity())
-                                            .doNegativeClick();
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((MainActivity) getActivity()).doNegativeClick();
                                 }
                             }).create();
         }
