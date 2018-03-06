@@ -165,7 +165,7 @@ public class GiftChooser extends AppCompatActivity {
                             ArrayList<Integer> cost_strings = new ArrayList<Integer> (Arrays.asList(1, 5, 15));
                             String size = size_strings.get(item_type);
                             cost = cost_strings.get(item_type);
-                            price_text.setText("Price to send " + size + ": " + cost + " coins");
+                            price_text.setText("Price to send " + size + " to a specific person: " + cost + " coins");
                         }
 
                         @Override
