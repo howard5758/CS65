@@ -49,6 +49,18 @@ public class GiftChooser extends AppCompatActivity {
 
         final List<String> spinnerArray =  new ArrayList<String>();
 
+
+        final List<String> spinnerArray_friends =  new ArrayList<String>();
+        ArrayAdapter<String> adapter_friends = new ArrayAdapter<String>(
+                getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray_friends);
+        adapter_friends.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerArray_friends.add("");
+        ArrayList<Friend> friends = helper.fetchAllFriends();
+        for(Friend friend : friends){
+            if(friend.getEmail() != null) spinnerArray_friends.add(friend.getEmail());
+        }
+        spinner_friends.setAdapter(adapter_friends);
+
         // figure out which animals user can use to deliver gift
         // uses "animals" info from firebase
         DatabaseReference ref = Util.databaseReference.child("users").child(Util.userID).child("animals");
@@ -169,16 +181,6 @@ public class GiftChooser extends AppCompatActivity {
 
             }
         });
-
-        final List<String> spinnerArray_friends =  new ArrayList<String>();
-        ArrayAdapter<String> adapter_friends = new ArrayAdapter<String>(
-                getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray);
-        adapter_friends.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerArray_friends.add("");
-        for(Friend friend : helper.fetchAllFriends()){
-            spinnerArray_friends.add(friend.getEmail());
-        }
-        spinner_animal.setAdapter(adapter_friends);
     }
 
     public void onClick(View view) {
