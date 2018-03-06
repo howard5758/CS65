@@ -312,24 +312,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void run() {
                 if (!isFinishing()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                     if (value.getGiftName() == null || value.getGiftName().equals(""))
                         builder.setTitle("You've received a message!");
                     else {
-                        builder.setTitle("You've received a gift!");
+                        builder.setTitle("You've received a " + value.getGiftName());
                         builder.setIcon(Util.getImageIdFromName(value.getGiftName()));
                         MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
                         if (Globals.ITEM_TO_TYPE.get(value.getGiftName()) != null) {
                             InventoryItem item = helper.fetchinventoryItemByName(value.getGiftName());
+                            if(item.getItemName() == null || item.getItemName().equals("")) {
+                                item = new InventoryItem();
+                                item.setItemName(value.getGiftName());
+                                item.setItemAmount(1);
+                                item.setPresent(-1);
+                            }
                             helper.insertInventory(item, true);
                         }
                     }
                     builder.setMessage(value.getUserName() + ": " + value.getMessage())
                             .setPositiveButton("OK!", null);
-                    // TODO: actually figure out why this builder isn't working
-                    try {
-                        builder.show();
-                    } catch(Exception e) {}
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                     helper.removeMapGift(value.getId());
                     Gift gift = new Gift(value.getGiftName(), true, value.getSendTo(), value.getTimePlaced(), value.getLocation());
                     gift.setGiftBox(value.getGiftBox());
