@@ -244,6 +244,8 @@ class Util {
                 return R.drawable.envelope;
             case "dog food bag":
                 return R.drawable.dog_food_bag;
+            case "load_page":
+                return R.drawable.load_page;
 
             default:
                 return (R.drawable.tiffany_box);
