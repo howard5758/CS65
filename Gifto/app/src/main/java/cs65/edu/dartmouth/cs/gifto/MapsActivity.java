@@ -16,6 +16,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -64,11 +66,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<MapGift> giftList;
     private DatabaseReference giftsData;
     private LatLng savedLatLng;
-    //private MySQLiteHelper helper;
+    private Location location;
+    private MySQLiteHelper helper;
+    public MapGift gift;
 
-    SharedPreferences pref;     // stores units_int and other things
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -79,15 +80,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // save things during orientation change
         mapFragment.setRetainInstance(true);
 
-        //helper = new MySQLiteHelper(this);
+        helper = new MySQLiteHelper(this);
 
         gifts = new ArrayList<>();
         giftsData = Util.databaseReference.child("gifts");
+        giftList = helper.fetchAllMapGifts();
 
         // see which units to use
-        pref = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-
-        initLocationManager();  // get last known location
+        //pref = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 
         mapFragment.setRetainInstance(true);
 
@@ -104,6 +104,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        checkpermissions();
+    }
+
+    public void checkpermissions(){
+        if(Build.VERSION.SDK_INT < 23)
+            return;
+        if (Build.VERSION.SDK_INT > 23) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was not granted
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        initLocationManager();  // get last known location
+                        location = lm.getLastKnownLocation(provider);    // so you have default location
+                        mMap.setMyLocationEnabled(true);
+                    }
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_DENIED) {
+                    }
+                }
+            break;
+            }
+        }
     }
 
     /**
@@ -113,15 +152,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        if (Build.VERSION.SDK_INT > 23 && android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            return;
-        }
-        Location location = lm.getLastKnownLocation(provider);    // so you have default location
         LatLng firstMarker;
         if (location != null) {
             firstMarker = new LatLng(location.getLatitude(), location.getLongitude());
@@ -130,8 +162,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             firstMarker = new LatLng(43.7022, -72.2896);
         }
 
-        MySQLiteHelper db = new MySQLiteHelper(this);
-        giftList = db.fetchAllMapGifts();
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            initLocationManager();  // get last known location
+            location = lm.getLastKnownLocation(provider);    // so you have default location
+            mMap.setMyLocationEnabled(true);
+        }
 
         // allow users to place gift anywhere
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -170,185 +206,85 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 float results[] = new float[1];
                 // compare gift's location to user's location
                 // user has to be within certain distance of gift to pick it up
-                if(mMap.getMyLocation() != null) {
+                if(ContextCompat.checkSelfPermission(getBaseContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_DENIED || !mMap.isMyLocationEnabled()){
+                    Toast.makeText(getBaseContext(), "You must enable location tracking to pick up gifts", Toast.LENGTH_SHORT).show();
+                } else if(mMap.getMyLocation() != null) {
                     Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(), results);
                     if (results[0] < 50) {
                         // user is close enough to pick up gift
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                         // store as array because we need the listener to be able to access/change it
-                        final String[] nickname = {"null"};
-                        final String[] message = {"no message"};
-                        final String[] username = {Util.userID};
-//                    for(MapGift gift: giftList){
-//                        if(gift.getLocation().latitude == marker.getPosition().latitude && gift.getLocation().longitude == marker.getPosition().longitude){
-//                            nickname = gift.getUserNickname();
-//                            message = gift.getMessage();
-//                            builder.setMessage(nickname + ": " + message);
-//                        }
-//                    }
-                        // determine which gift they're picking up
-                        giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    double lat = snapshot.child("location").child("latitude").getValue(Double.class);
-                                    double lng = snapshot.child("location").child("longitude").getValue(Double.class);
-                                    if (lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
-                                        // display sender and message that come with the gift
-                                        nickname[0] = snapshot.child("userNickname").getValue(String.class);
-                                        message[0] = snapshot.child("message").getValue(String.class);
-                                        username[0] = snapshot.child("userName").getValue(String.class);
-                                        if (username[0].equals(Util.userID)) {
-                                            builder.setTitle("Remove your gift?");
-                                        } else {
-                                            builder.setTitle("Pick up gift?");
-                                        }
-                                        builder.setMessage(nickname[0] + ": " + message[0]);
-                                        int id;
-                                        int box_num;
-                                        if((snapshot.child("giftBox").getValue()) == null) box_num = 0;
-                                        else box_num = snapshot.child("giftBox").getValue(Integer.class);
-                                        String box = Globals.INT_TO_BOX.get(box_num);
-                                        if((id = Util.getImageIdFromName(box)) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
-                                        builder.setIcon(id);
-                                        AlertDialog dialog = builder.create();
-                                        dialog.show();
-                                    }
+                        String nickname;
+                        String message;
+                        String username = Util.userID;
+                        for(MapGift gift_i: giftList){
+                            if(gift_i.getLocation().latitude == marker.getPosition().latitude && gift_i.getLocation().longitude == marker.getPosition().longitude){
+                                nickname = gift_i.getUserNickname();
+                                message = gift_i.getMessage();
+                                gift = gift_i;
+                                if (username.equals(Util.userID)) {
+                                    builder.setTitle("Remove your gift?");
+                                } else {
+                                    builder.setTitle("Pick up gift?");
                                 }
+                                builder.setMessage(nickname + ": " + message);
+                                int box_num = gift.getGiftBox();
+                                String box = Globals.INT_TO_BOX.get(box_num);
+                                int id;
+                                if((id = Util.getImageIdFromName(box)) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                                builder.setIcon(id);
+                                break;
                             }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
+                        }
                         // user decided to pick up gift
                         builder.setPositiveButton("YES!", new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                // remove gift from database everyone can see,
-                                // and into your personal database
-                                giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            double lat = snapshot.child("location").child("latitude").getValue(Double.class);
-                                            double lng = snapshot.child("location").child("longitude").getValue(Double.class);
-                                            if (lat == marker.getPosition().latitude && lng == marker.getPosition().longitude) {
-                                                String giftName = snapshot.child("giftName").getValue(String.class);
-                                                String friendName = snapshot.child("userNickname").getValue(String.class);
-                                                //
-                                                int giftBox = snapshot.child("giftBox").getValue(int.class);
-                                                ///
-                                                //
-                                                int giftBox = snapshot.child("giftBox").getValue(int.class);
-                                                //
-                                                long time = snapshot.child("timePlaced").getValue(Long.TYPE);
-                                                cs65.edu.dartmouth.cs.gifto.LatLng location = new cs65.edu.dartmouth.cs.gifto.LatLng(lat, lng);
-                                                Gift gift = new Gift(giftName, true, friendName, time, location);
-                                                //
-                                                gift.setGiftBox(giftBox);
-                                                //
-                                                // move to user's database
-                                                Util.databaseReference.child("users").child(Util.userID).child("gifts").push().setValue(gift);
-                                                // delete from public database
-                                                MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
-                                                helper.insertGift(gift, false);
-                                                giftsData.child(snapshot.getKey()).removeValue();
-                                                if (marker != null) {
-                                                    marker.remove();
-                                                    gifts.remove(marker);
-                                                }
-                                                // put inventory object in sql and firebase
-                                                if(Globals.ITEM_TO_TYPE.get(giftName) != null){
-                                                    InventoryItem item = helper.fetchinventoryItemByName(giftName);
-                                                    if(item == null) item = new InventoryItem(giftName, 0);
-                                                    //item.setItemAmount(item.getItemAmount()+1);
-                                                    helper.insertInventory(item, true);
-                                                    //helper.close();
-                                                }
-                                            }
-                                        }
+                                    String giftName = gift.getGiftName();
+                                    String friendName = gift.getUserNickname();
+                                    long time = gift.getTimePlaced();
+                                    Gift gift_new = new Gift(giftName, true, friendName, time, gift.getLocation());
+                                    gift.setGiftBox(gift.getGiftBox());
+                                    helper.insertGift(gift_new, true);
+                                    helper.removeMapGift(gift.getId());
+                                    if(Globals.ITEM_TO_TYPE.get(giftName) != null){
+                                            InventoryItem item = helper.fetchinventoryItemByName(giftName);
+                                            if(item == null) item = new InventoryItem(giftName, 0);
+                                            //item.setItemAmount(item.getItemAmount()+1);
+                                            helper.insertInventory(item, true);
+                                            //helper.close();
                                     }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                                    if(giftName != null && !giftName.equals("")){
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                                            builder.setTitle("Congratulations!")
+                                                    .setMessage("You received a " + giftName)
+                                                    .setPositiveButton("Yay!", null)
+                                                    .setIcon(Util.getImageIdFromName(giftName));
+                                            builder.show();
                                     }
-                                });
-//                                    for (MapGift gift : giftList) {
-//                                        cs65.edu.dartmouth.cs.gifto.LatLng latLng = gift.getLocation();
-//                                        if (latLng.latitude == marker.getPosition().latitude && latLng.longitude == marker.getPosition().longitude) {
-//                                            String giftName = gift.getGiftName();
-//                                            String friendName = gift.getUserNickname();
-//                                            long time = gift.getTimePlaced();
-//                                            Gift gift_new = new Gift(giftName, true, friendName, time, latLng);
-//                                            helper.insertGift(gift_new);
-//                                            helper.removeMapGift(gift.getId());
-//                                        }
-//                                        // remove gift from your map
-//                                        marker.remove();
-//                                    }
+                                    giftList.remove(gift);
+                                // remove gift from your map
+                                marker.remove();
                             }
-                        })
-                                // user decides to not pick up this gift
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        // do nothing other than closing the alert dialog
-                                    }
-                                });
-//                    AlertDialog dialog = builder.create();
-//                    dialog.show();
-                        // user is not close enough to pick up gift
+                        });
+                        // user decides to not pick up this gift
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // do nothing other than closing the alert dialog
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
                     } else {
                         Toast.makeText(getApplicationContext(), "You are too far away to pick up this gift", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return false;
-            }
-        });
-
-        giftsData.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.child("sendTo").getValue() == null || Util.email.equals(dataSnapshot.child("sendTo").getValue(String.class))){
-                    cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
-                    int id;
-                    if(dataSnapshot.child("giftBox").getValue(Integer.class) != null) {
-                        if ((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(dataSnapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName(""))
-                            id = R.drawable.gift_icon;
-                    } else id = R.drawable.gift_icon;
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id)));
-                    gifts.add(marker);
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
-                Marker marker_found = null;
-                for(Marker marker : gifts){
-                    if(marker.getPosition().latitude == latLng.latitude && marker.getPosition().longitude == latLng.longitude){
-                        marker_found = marker;
-                        marker.remove();
-                    }
-                }
-                if(marker_found != null) gifts.remove(marker_found);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
@@ -368,35 +304,43 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // zoom in on user's current location
         mMap.moveCamera(CameraUpdateFactory.newLatLng(firstMarker));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstMarker, 17));
+    }
 
-        // display pre-existing gifts on the map
-        giftsData.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void personal_gift_popup(MapGift value1) {
+        final MapGift value = value1;
+        runOnUiThread(new Runnable() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    MapGift gift = snapshot.getValue(MapGift.class);
-                    if(gift.getSendTo() == null || Util.email.equals(gift.getSendTo())){
-                        // determine which image to use
-                        int id;
-                        if(snapshot.child("giftBox").getValue(Integer.class) != null){
-                            if((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(snapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
-                        } else id = R.drawable.gift_icon;
-                        MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id));
-                        Marker marker = mMap.addMarker(markerOptions);
-                        gifts.add(marker);
+            public void run() {
+                if (!isFinishing()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    if (value.getGiftName() == null || value.getGiftName().equals(""))
+                        builder.setTitle("You've received a message!");
+                    else {
+                        builder.setTitle("You've received a " + value.getGiftName());
+                        builder.setIcon(Util.getImageIdFromName(value.getGiftName()));
+                        MySQLiteHelper helper = new MySQLiteHelper(getBaseContext());
+                        if (Globals.ITEM_TO_TYPE.get(value.getGiftName()) != null) {
+                            InventoryItem item = helper.fetchinventoryItemByName(value.getGiftName());
+                            if(item.getItemName() == null || item.getItemName().equals("")) {
+                                item = new InventoryItem();
+                                item.setItemName(value.getGiftName());
+                                item.setItemAmount(1);
+                                item.setPresent(-1);
+                            }
+                            helper.insertInventory(item, true);
+                        }
                     }
+                    builder.setMessage(value.getUserName() + ": " + value.getMessage())
+                            .setPositiveButton("OK!", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    helper.removeMapGift(value.getId());
+                    Gift gift = new Gift(value.getGiftName(), true, value.getSendTo(), value.getTimePlaced(), value.getLocation());
+                    gift.setGiftBox(value.getGiftBox());
+                    helper.insertGift(gift, true);
                 }
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
         });
-//        giftList = helper.fetchAllMapGifts();
-//        for(MapGift gift: giftList){
-//                MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon));
-//                Marker marker = mMap.addMarker(markerOptions);
-//                gifts.add(marker);
-//        }
     }
 
     // use this to get last known location of user (to improve UX)
@@ -434,25 +378,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 String receiver;
                 if(sendTo == null || sendTo.equals(""))  receiver = null;
-                else receiver = sendTo;
+                else {
+                    receiver = sendTo;
+                    Toast.makeText(getBaseContext(), "Gift sent to " + receiver, Toast.LENGTH_SHORT).show();
+                }
                 MapGift gift = new MapGift(giftName, Util.email, Util.name, message, animalName, new cs65.edu.dartmouth.cs.gifto.LatLng(latLng.latitude, latLng.longitude), c.getTimeInMillis(), receiver, giftbox);
-                String key = giftsData.push().getKey();
-                gift.setId(key);
-                giftsData.child(key).setValue(gift);
+                helper.insertMapGift(gift);
+                giftList.add(gift);
                 // remove inventory object from sql and from firebase
                 MySQLiteHelper helper = new MySQLiteHelper(this);
                 if(Globals.ITEM_TO_TYPE.get(giftName) != null) {
                     InventoryItem item = helper.fetchinventoryItemByName(giftName);
-                    item.setItemAmount(item.getItemAmount()-1);
+                    item.setItemAmount(item.getItemAmount() - 1);
                     helper.insertInventory(item, true);
                 }
-                //Util.databaseReference.child("users").child(Util.userID).removeValue();
-                //String id = helper.insertMapGift(gift);
-//                MySQLiteHelper helper = new MySQLiteHelper(this);
-//                helper.insertGift(gift);
-                //giftList.add(gift);
-                // add gift to your map
-                //mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gift_icon)));
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 // don't add anything to the map
@@ -502,6 +441,69 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // map must be the item selected if you are in this navbar
         // see "MainActivity" comments for more details
         navigationView.getMenu().getItem(1).setChecked(true);
+    }
+
+    public void onAttachedToWindow(){
+        giftsData.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.child("sendTo").getValue() == null){
+                    cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
+                    int id;
+                    if(dataSnapshot.child("giftBox").getValue(Integer.class) != null) {
+                        if ((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(dataSnapshot.child("giftBox").getValue(Integer.class)))) == Util.getImageIdFromName(""))
+                            id = R.drawable.gift_icon;
+                    } else id = R.drawable.gift_icon;
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(latLng.toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id)));
+                    gifts.add(marker);
+                    giftList.add(dataSnapshot.getValue(MapGift.class));
+                } else if(Util.email.equals(dataSnapshot.child("sendTo").getValue(String.class))){
+                    personal_gift_popup(dataSnapshot.getValue(MapGift.class));
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                cs65.edu.dartmouth.cs.gifto.LatLng latLng = dataSnapshot.child("location").getValue(cs65.edu.dartmouth.cs.gifto.LatLng.class);
+                Marker marker_found = null;
+                for(Marker marker : gifts){
+                    if(marker.getPosition().latitude == latLng.latitude && marker.getPosition().longitude == latLng.longitude){
+                        marker_found = marker;
+                        marker.remove();
+                    }
+                }
+                if(marker_found != null) gifts.remove(marker_found);
+                giftList.remove(dataSnapshot.getValue(MapGift.class));
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        // display pre-existing gifts on the map
+        giftList = helper.fetchAllMapGifts();
+        for(MapGift gift: giftList){
+            if(gift.getSendTo() == null) {
+                int id;
+                if((id = Util.getImageIdFromName(Globals.INT_TO_BOX.get(gift.getGiftBox()))) == Util.getImageIdFromName("")) id = R.drawable.gift_icon;
+                MarkerOptions markerOptions = new MarkerOptions().position(gift.getLocation().toGoogleLatLng()).icon(BitmapDescriptorFactory.fromResource(id));
+                Marker marker = mMap.addMarker(markerOptions);
+                gifts.add(marker);
+            }else if(Util.email.equals(gift.getSendTo())){
+                personal_gift_popup(gift);
+            }
+        }
     }
 
     // allow user to access settings and logout from map

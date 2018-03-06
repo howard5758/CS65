@@ -1,8 +1,13 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -263,7 +270,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add_friend) {
+            DialogFragment newFragment = MainActivity.MyAlertDialogFragment.newInstance();
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+        else if (id == R.id.action_settings) {
             startActivity(new Intent(this, UserProfile.class));
             return true;
         } else if (id == R.id.action_logout) {
@@ -280,6 +291,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment newFragment;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        // TODO: the commented out line below fixed the bug where it occassionally crashed on startup
+        // but this seems like a hack, so I'm looking into a proper solution
+        //transaction.commitAllowingStateLoss();
         int id = item.getItemId();
 
         if (id == R.id.nav_garden) {
@@ -368,5 +382,58 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    public void doPositiveClick(String email, String nickname) {
+        Friend friend = new Friend();
+        friend.setEmail(email);
+        friend.setNickname(email);
+
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.insertFriend(friend, true);
+    }
+
+    public void doNegativeClick() {
+    }
+
+    public static class MyAlertDialogFragment extends DialogFragment {
+        public static MyAlertDialogFragment newInstance() {
+            MyAlertDialogFragment frag = new MyAlertDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("title", "Add a Friend");
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @SuppressLint("InflateParams")
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final String title = getArguments().getString("title");
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View view = inflater.inflate(R.layout.friend_dialog, null);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder((getActivity()));
+            final EditText emaile = view.findViewById(R.id.dialog_email);
+            final EditText nicknamee = view.findViewById(R.id.dialog_nickname);
+            return alert.setView(view).setTitle(title)
+                    .setPositiveButton("Okay",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    String email = emaile.getText().toString();
+                                    String nickname = nicknamee.getText().toString();
+                                    ((MainActivity) getActivity())
+                                            .doPositiveClick(email, nickname);
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    ((MainActivity) getActivity())
+                                            .doNegativeClick();
+                                }
+                            }).create();
+        }
     }
 }

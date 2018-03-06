@@ -120,38 +120,37 @@
         android:text="@string/expand_right"
         android:background="@android:color/transparent"/>
 
-    <Button
-        android:id="@+id/button_food"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button_gift_collections"
-        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
         android:layout_alignParentRight="true"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="#E1BEE7"
-        android:text="SHOP" />
+        android:layout_alignParentBottom="true">
 
-    <Button
-        android:id="@+id/button_gift_collections"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_pet_collections"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="#CE93D8"
-        android:text="@string/gift_collections" />
+        <Button
+            android:id="@+id/button_food"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:background="#E1BEE7"
+            android:text="SHOP" />
 
-    <Button
-        android:id="@+id/button_pet_collections"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="#BA68C8"
-        android:text="@string/pet_collection" />
+        <Button
+            android:id="@+id/button_gift_collections"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:background="#CE93D8"
+            android:text="@string/gift_collections" />
+
+        <Button
+            android:id="@+id/button_pet_collections"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:background="#BA68C8"
+            android:text="@string/pet_collection" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/item1_name"

@@ -29,6 +29,7 @@ public class GiftChooser extends AppCompatActivity {
     Spinner spinner_friends;
     EditText editText_message;
     TextView price_text;
+    int cost;
 
     MySQLiteHelper helper;
 
@@ -47,6 +48,18 @@ public class GiftChooser extends AppCompatActivity {
         final Globals Globals = new Globals();
 
         final List<String> spinnerArray =  new ArrayList<String>();
+
+
+        final List<String> spinnerArray_friends =  new ArrayList<String>();
+        ArrayAdapter<String> adapter_friends = new ArrayAdapter<String>(
+                getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray_friends);
+        adapter_friends.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerArray_friends.add("");
+        ArrayList<Friend> friends = helper.fetchAllFriends();
+        for(Friend friend : friends){
+            if(friend.getEmail() != null) spinnerArray_friends.add(friend.getEmail());
+        }
+        spinner_friends.setAdapter(adapter_friends);
 
         // figure out which animals user can use to deliver gift
         // uses "animals" info from firebase
@@ -149,10 +162,10 @@ public class GiftChooser extends AppCompatActivity {
                                 item_type = 0;
                             }
                             ArrayList<String> size_strings = new ArrayList<String> (Arrays.asList("message", "small gift", "large gift"));
-                            ArrayList<Integer> cost_strings = new ArrayList<Integer> (Arrays.asList(5, 20, 50));
+                            ArrayList<Integer> cost_strings = new ArrayList<Integer> (Arrays.asList(1, 5, 15));
                             String size = size_strings.get(item_type);
-                            int cost = cost_strings.get(item_type);
-                            price_text.setText("Price to send " + size + ": " + cost + " coins");
+                            cost = cost_strings.get(item_type);
+                            price_text.setText("Price to send " + size + " to a specific person: " + cost + " coins");
                         }
 
                         @Override
@@ -168,16 +181,6 @@ public class GiftChooser extends AppCompatActivity {
 
             }
         });
-
-        final List<String> spinnerArray_friends =  new ArrayList<String>();
-        ArrayAdapter<String> adapter_friends = new ArrayAdapter<String>(
-                getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray);
-        adapter_friends.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerArray_friends.add("");
-        for(Friend friend : helper.fetchAllFriends()){
-            spinnerArray_friends.add(friend.getEmail());
-        }
-        spinner_animal.setAdapter(adapter_friends);
     }
 
     public void onClick(View view) {
@@ -227,6 +230,11 @@ public class GiftChooser extends AppCompatActivity {
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());
             returnIntent.putExtra("message", editText_message.getText().toString());
             returnIntent.putExtra("sendTo", (String)spinner_friends.getSelectedItem());
+            if(spinner_friends.getSelectedItemPosition() > 0){
+                InventoryItem money = helper.fetchinventoryItemByName("money");
+                money.setItemAmount(money.getItemAmount()-cost);
+                helper.insertInventory(money, true);
+            }
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         } else {

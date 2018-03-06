@@ -18,37 +18,44 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Choose animal:"/>
+                android:text="Choose animal:"
+                android:padding="@dimen/fab_margin"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_animal"></Spinner>
+                android:id="@+id/spinner_animal"
+                android:padding="@dimen/fab_margin"></Spinner>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Choose Gift Type:"/>
+                android:text="Choose Gift Type:"
+                android:padding="@dimen/fab_margin"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_gift"></Spinner>
+                android:id="@+id/spinner_gift"
+                android:padding="@dimen/fab_margin"></Spinner>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(Optional) Premium Delivery Service: Send a gift to a specific person?"/>
+                android:text="(Optional) Premium Delivery Service: Send a gift to a specific person?"
+                android:padding="@dimen/fab_margin"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_price"/>
+                android:id="@+id/text_price"
+                android:padding="@dimen/fab_margin"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_friends"></Spinner>
+                android:id="@+id/spinner_friends"
+                android:padding="@dimen/fab_margin"></Spinner>
 
             <TextView
                 android:layout_width="match_parent"

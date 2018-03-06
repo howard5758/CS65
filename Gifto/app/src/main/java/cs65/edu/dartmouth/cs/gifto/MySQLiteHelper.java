@@ -18,6 +18,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by Oliver on 2/24/2018.
@@ -125,7 +126,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Create table schema if not exists
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(final SQLiteDatabase db) {
         db.execSQL(CREATE_FRIENDS_TABLE);
         db.execSQL(CREATE_GIFTS_TABLE);
         db.execSQL(CREATE_ANIMAL_TABLE);
@@ -136,200 +137,270 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * when this is called you do not need to know the FirebaseId of the friend
      * the method will automatically create and set an Id for the given friend
      * so, after this method is called, the friend object will have an id inside it */
-    void insertFriend(Friend friend, boolean insert_firebase) {
+    void insertFriend(final Friend friend, final boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 0;
-        if (insert_firebase) {
-            flagged = 1;
-            if (Util.isOnline()) {
-                Log.d("if", "online");
-                String key = Util.databaseReference.child("users").child(Util.userID)
-                        .child("friends").push().getKey();
-                friend.setFirebaseId(key);
-                Util.databaseReference.child("users").
-                        child(Util.userID).child("friends").child(key).setValue(friend);
-                flagged = 0;
-                if (failed_insert) {
-                    insertFlagged();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                int flagged = 0;
+                if (insert_firebase) {
+                    flagged = 1;
+                    if (Util.isOnline()) {
+                        Log.d("if", "online");
+                        String key = Util.databaseReference.child("users").child(Util.userID)
+                                .child("friends").push().getKey();
+                        friend.setFirebaseId(key);
+                        Util.databaseReference.child("users").
+                                child(Util.userID).child("friends").child(key).setValue(friend);
+                        flagged = 0;
+                        if (failed_insert) {
+                            insertFlagged();
+                        }
+                    } else {
+                        Log.d("if", "not connected");
+                        failed_insert = true;
+                    }
                 }
-            } else {
-                Log.d("if", "not connected");
-                failed_insert = true;
+
+
+                // now insert into SQL
+                SQLiteDatabase database = getReadableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_FRIEND_EMAIL, friend.getEmail());
+                values.put(COLUMN_FRIEND_NICKNAME, friend.getNickname());
+                values.put(COLUMN_FIREBASE_ID, friend.getFirebaseId());
+                values.put(COLUMN_FIREBASE_FLAG, flagged);
+
+                database.insert(FRIEND_TITLE, null, values);
+                database.close();
             }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-
-        // now insert into SQL
-        SQLiteDatabase database = getReadableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_FRIEND_EMAIL, friend.getEmail());
-        values.put(COLUMN_FRIEND_NICKNAME, friend.getNickname());
-        values.put(COLUMN_FIREBASE_ID, friend.getFirebaseId());
-        values.put(COLUMN_FIREBASE_FLAG, flagged);
-
-        database.insert(FRIEND_TITLE, null, values);
-        database.close();
     }
 
     /* insert a gift
      * does the same thing as a friend when you insert with setting the firebase Id */
-    void insertGift(Gift gift, boolean insert_firebase) {
+    void insertGift(final Gift gift, final boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 0;
-        String key;
-        if (insert_firebase) {
-            flagged = 1;
-            if (Util.isOnline()) {
-                Log.d("if", "online");
-                key = Util.databaseReference.child("users").child(Util.userID)
-                        .child("gifts").push().getKey();
-                gift.setId(key);
-                Util.databaseReference.child("users").
-                        child(Util.userID).child("gifts").child(key).setValue(gift);
-                flagged = 0;
-                if (failed_insert) {
-                    insertFlagged();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                int flagged = 0;
+                String key;
+                if (insert_firebase) {
+                    flagged = 1;
+                    if (Util.isOnline()) {
+                        Log.d("if", "online");
+                        key = Util.databaseReference.child("users").child(Util.userID)
+                                .child("gifts").push().getKey();
+                        gift.setId(key);
+                        Util.databaseReference.child("users").
+                                child(Util.userID).child("gifts").child(key).setValue(gift);
+                        flagged = 0;
+                        if (failed_insert) {
+                            insertFlagged();
+                        }
+                    } else {
+                        Log.d("if", "not connected");
+                        failed_insert = true;
+                    }
                 }
-            } else {
-                Log.d("if", "not connected");
-                failed_insert = true;
+
+
+                // insert into SQL
+                SQLiteDatabase database = getReadableDatabase();
+                ContentValues values = new ContentValues();
+
+                values.put(COLUMN_GIFT, gift.getGiftName());
+                values.put(COLUMN_FIREBASE_ID, gift.getId());
+                values.put(COLUMN_SENT, gift.isSent());
+                values.put(COLUMN_TOFROM, gift.getFriendName());
+                values.put(COLUMN_TIME, gift.getTime());
+                values.put(COLUMN_GIFT_BOX, gift.getGiftBox());
+                try {
+                    values.put(COLUMN_LOCATION, toByte(gift.getLocation()));        // throws IOException
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                values.put(COLUMN_FIREBASE_FLAG, flagged);
+
+                database.insert(GIFT_TITLE, null, values);
+                database.close();
             }
-        }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
 
-
-        // insert into SQL
-        SQLiteDatabase database = getReadableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(COLUMN_GIFT, gift.getGiftName());
-        values.put(COLUMN_FIREBASE_ID, gift.getId());
-        values.put(COLUMN_SENT, gift.isSent());
-        values.put(COLUMN_TOFROM, gift.getFriendName());
-        values.put(COLUMN_TIME, gift.getTime());
-        values.put(COLUMN_GIFT_BOX, gift.getGiftBox());
         try {
-            values.put(COLUMN_LOCATION, toByte(gift.getLocation()));        // throws IOException
-        } catch (IOException e) {
+            mythread.join();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        values.put(COLUMN_FIREBASE_FLAG, flagged);
-
-        database.insert(GIFT_TITLE, null, values);
-        database.close();
     }
 
     /* Insert an animal
      * does not have firebase Id so does not return Firebase Id */
-    void insertAnimal(Animal animal, boolean insert_firebase) {
+    void insertAnimal(final Animal animal, final boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 0;
-        if (insert_firebase) {
-            flagged = 1;
-            if (Util.isOnline()) {
-                Log.d("if", "online");
-                Util.databaseReference.child("users").child(Util.userID).child("animals")
-                        .child(animal.getAnimalName()).setValue(animal);
-                flagged = 0;
-                if (failed_insert) {
-                    insertFlagged();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                int flagged = 0;
+                if (insert_firebase) {
+                    flagged = 1;
+                    if (Util.isOnline()) {
+                        Log.d("if", "online");
+                        Util.databaseReference.child("users").child(Util.userID).child("animals")
+                                .child(animal.getAnimalName()).setValue(animal);
+                        flagged = 0;
+                        if (failed_insert) {
+                            insertFlagged();
+                        }
+                    } else {
+                        Log.d("if", "not connected");
+                        failed_insert = true;
+                    }
                 }
-            } else {
-                Log.d("if", "not connected");
-                failed_insert = true;
+
+
+                // insert into SQL
+                SQLiteDatabase database = getReadableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_ANIMAL_NAME, animal.getAnimalName());
+                values.put(COLUMN_RARITY, animal.getRarity());
+                values.put(COLUMN_VISITS, animal.getNumVisits());
+                values.put(COLUMN_PERSISTENCE, animal.getPersistence());
+                values.put(COLUMN_FIREBASE_FLAG, flagged);
+                values.put(COLUMN_PRESENT, animal.getPresent());
+
+                database.insert(ANIMAL_TITLE, null, values);
+                database.close();
             }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-
-        // insert into SQL
-        SQLiteDatabase database = getReadableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ANIMAL_NAME, animal.getAnimalName());
-        values.put(COLUMN_RARITY, animal.getRarity());
-        values.put(COLUMN_VISITS, animal.getNumVisits());
-        values.put(COLUMN_PERSISTENCE, animal.getPersistence());
-        values.put(COLUMN_FIREBASE_FLAG, flagged);
-        values.put(COLUMN_PRESENT, animal.getPresent());
-
-        database.insert(ANIMAL_TITLE, null, values);
-        database.close();
     }
 
     /* insert inventory item
      * also use this if you want to change the amount of an item */
-    void insertInventory(InventoryItem item, boolean insert_firebase) {
+    void insertInventory(final InventoryItem item, final boolean insert_firebase) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        int flagged = 0;
-        if (insert_firebase) {
-            flagged = 1;
-            if (Util.isOnline()) {
-                Log.d("if", "online");
-                Util.databaseReference.child("users").
-                        child(Util.userID).child("items").child(item.getItemName()).setValue(item);
-                flagged = 0;
-                if (failed_insert) {
-                    insertFlagged();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                int flagged = 0;
+                if (insert_firebase) {
+                    flagged = 1;
+                    if (Util.isOnline()) {
+                        Log.d("if", "online");
+                        Util.databaseReference.child("users").
+                                child(Util.userID).child("items").child(item.getItemName()).setValue(item);
+                        flagged = 0;
+                        if (failed_insert) {
+                            insertFlagged();
+                        }
+                    } else {
+                        Log.d("if", "not connected");
+                        failed_insert = true;
+                    }
                 }
-            } else {
-                Log.d("if", "not connected");
-                failed_insert = true;
+
+
+                // insert into SQL
+                SQLiteDatabase database = getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_INVENTORY_NAME, item.getItemName());
+                values.put(COLUMN_AMOUNT, item.getItemAmount());
+                values.put(COLUMN_PRESENT, item.getPresent());
+                values.put(COLUMN_FIREBASE_FLAG, flagged);
+
+
+                database.insert(INVENTORY_TITLE, null, values);
+                database.close();
             }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-
-        // insert into SQL
-        SQLiteDatabase database = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_INVENTORY_NAME, item.getItemName());
-        values.put(COLUMN_AMOUNT, item.getItemAmount());
-        values.put(COLUMN_PRESENT, item.getPresent());
-        values.put(COLUMN_FIREBASE_FLAG, flagged);
-
-
-        database.insert(INVENTORY_TITLE, null, values);
-        database.close();
     }
 
     /* Insert map gift
      * must be connected to the internet
      * returns the Firebase generated ID if successfully inserted, empty string if not */
-    String insertMapGift(MapGift gift) {
+    void insertMapGift(final MapGift gift) {
         // first try to insert into Firebase
         // if user is offline, Firebase will automatically cache the data and upload it once
         //   user is back online
-        String id = "";
-        if (Util.isOnline()) {
-            Log.d("if", "online");
-            id = Util.databaseReference.child("gifts").push().getKey();
-            gift.setId(id);
-            Util.databaseReference.child("gifts").child(id).setValue(gift);
-            if (failed_insert) {
-                insertFlagged();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                String id;
+                if (Util.isOnline()) {
+                    Log.d("if", "online");
+                    id = Util.databaseReference.child("gifts").push().getKey();
+                    gift.setId(id);
+                    Util.databaseReference.child("gifts").child(id).setValue(gift);
+                    if (failed_insert) {
+                        insertFlagged();
+                    }
+                } else {
+                    Log.d("if", "not connected");
+                }
             }
-        } else {
-            Log.d("if", "not connected");
-        }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
 
-        return id;
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /* remove animal by name
      * also deletes from Firebase at the specified name */
-    void removeAnimal(String name) {
-        SQLiteDatabase database = getWritableDatabase();
-        String whereClause = COLUMN_ANIMAL_NAME + "='" + name + "'";
-        database.delete(ANIMAL_TITLE, whereClause, null);
-        database.close();
+    void removeAnimal(final String name) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getWritableDatabase();
+                String whereClause = COLUMN_ANIMAL_NAME + "='" + name + "'";
+                database.delete(ANIMAL_TITLE, whereClause, null);
+                database.close();
 
-        Util.databaseReference.child("users").child(Util.userID)
-                .child("animals").child(name).removeValue();
+                Util.databaseReference.child("users").child(Util.userID)
+                        .child("animals").child(name).removeValue();
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /* remove friend by Firebase ID
@@ -359,14 +430,26 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /* remove inventory item by name
      * also deletes from Firebase at the specified name */
-    void removeInventoryItem(String name) {
-        SQLiteDatabase database = getWritableDatabase();
-        String whereClause = COLUMN_INVENTORY_NAME + "='" + name + "'";
-        database.delete(INVENTORY_TITLE, whereClause, null);
-        database.close();
+    void removeInventoryItem(final String name) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getWritableDatabase();
+                String whereClause = COLUMN_INVENTORY_NAME + "='" + name + "'";
+                database.delete(INVENTORY_TITLE, whereClause, null);
+                database.close();
 
-        Util.databaseReference.child("users").child(Util.userID)
-                .child("items").child(name).removeValue();
+                Util.databaseReference.child("users").child(Util.userID)
+                        .child("items").child(name).removeValue();
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /* removes a mapgift from firebase (not stored in SQL anyway)
@@ -383,24 +466,36 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns ArrayList with animal objects
      * returns empty ArrayList if table is empty */
     ArrayList<Animal> fetchAllAnimals() {
-        ArrayList<Animal> animals = new ArrayList<>(0);
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.query(ANIMAL_TITLE, animals_columns,
-                null, null, null, null, null);
+        final ArrayList<Animal> animals = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                Cursor cursor = database.query(ANIMAL_TITLE, animals_columns,
+                        null, null, null, null, null);
 
-        cursor.moveToFirst(); //Move the cursor to the first row.
-        if (cursor.getCount() > 0) {
-            while (!cursor.isAfterLast()) {
-                Animal animal = cursorToAnimal(cursor);
-                animals.add(animal);
-                cursor.moveToNext();
+                cursor.moveToFirst(); //Move the cursor to the first row.
+                if (cursor.getCount() > 0) {
+                    while (!cursor.isAfterLast()) {
+                        Animal animal = new Animal();
+                        cursorToAnimal(cursor, animal);
+                        animals.add(animal);
+                        cursor.moveToNext();
+                    }
+                }
+
+                // Make sure to close the cursor
+                cursor.close();
+                database.close();
             }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        // Make sure to close the cursor
-        cursor.close();
-        database.close();
-
         return animals;
     }
 
@@ -408,21 +503,34 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns ArrayList with gift objects
      * returns empty ArrayList if table is empty */
     ArrayList<Gift> fetchAllGifts() {
-        ArrayList<Gift> gifts = new ArrayList<>(0);
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.query(GIFT_TITLE, gifts_columns,
-                null, null, null, null, null);
+        final ArrayList<Gift> gifts = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                Cursor cursor = database.query(GIFT_TITLE, gifts_columns,
+                        null, null, null, null, null);
 
-        cursor.moveToFirst(); //Move the cursor to the first row.
-        while (!cursor.isAfterLast()) {
-            Gift gift = cursorToGift(cursor);
-            gifts.add(gift);
-            cursor.moveToNext();
+                cursor.moveToFirst(); //Move the cursor to the first row.
+                while (!cursor.isAfterLast()) {
+                    Gift gift = new Gift();
+                    cursorToGift(cursor, gift);
+                    gifts.add(gift);
+                    cursor.moveToNext();
+                }
+
+                // Make sure to close the cursor
+                cursor.close();
+                database.close();
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        // Make sure to close the cursor
-        cursor.close();
-        database.close();
 
         return gifts;
     }
@@ -433,47 +541,59 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns empty ArrayList if table is empty or not connected to internet */
     ArrayList<MapGift> fetchAllMapGifts() {
         final ArrayList<MapGift> gifts = new ArrayList<>(0);
-        if (Util.isOnline()) {
-            ValueEventListener listener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        MapGift gift = new MapGift();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                if (Util.isOnline()) {
+                    ValueEventListener listener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                MapGift gift = new MapGift();
 
-                        gift.setId(String.valueOf(snapshot
-                                .child(COLUMN_FIREBASE_ID).getValue()));
-                        gift.setGiftName(String.valueOf(snapshot
-                                .child(COLUMN_GIFT).getValue()));
-                        gift.setAnimalName(String.valueOf(snapshot
-                                .child(COLUMN_ANIMAL_NAME).getValue()));
-                        gift.setMessage(String.valueOf(snapshot
-                                .child(COLUMN_MESSAGE).getValue()));
-                        gift.setUserName(String.valueOf(snapshot
-                                .child(COLUMN_FRIEND_EMAIL).getValue()));
-                        gift.setUserNickname(String.valueOf(snapshot
-                                .child(COLUMN_FRIEND_NICKNAME).getValue()));
-                        gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot
-                                .child(COLUMN_GIFT_BOX).getValue())));
-                        if (snapshot.child("timePlaced").getValue() != null) {
-                            gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot
-                                    .child("timePlaced").getValue())));
+                                gift.setId(String.valueOf(snapshot
+                                        .child(COLUMN_FIREBASE_ID).getValue()));
+                                gift.setGiftName(String.valueOf(snapshot
+                                        .child(COLUMN_GIFT).getValue()));
+                                gift.setAnimalName(String.valueOf(snapshot
+                                        .child(COLUMN_ANIMAL_NAME).getValue()));
+                                gift.setMessage(String.valueOf(snapshot
+                                        .child(COLUMN_MESSAGE).getValue()));
+                                gift.setUserName(String.valueOf(snapshot
+                                        .child(COLUMN_FRIEND_EMAIL).getValue()));
+                                gift.setUserNickname(String.valueOf(snapshot
+                                        .child(COLUMN_FRIEND_NICKNAME).getValue()));
+                                gift.setGiftBox(Integer.parseInt(String.valueOf(snapshot
+                                        .child(COLUMN_GIFT_BOX).getValue())));
+                                if (snapshot.child("timePlaced").getValue() != null) {
+                                    gift.setTimePlaced(Long.parseLong(String.valueOf(snapshot
+                                            .child("timePlaced").getValue())));
+                                }
+                                gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
+                                        child(COLUMN_LOCATION).child("latitude").getValue())),
+                                        Double.parseDouble(String.valueOf(snapshot.
+                                                child(COLUMN_LOCATION).child("longitude").getValue()))));
+
+                                gifts.add(gift);
+                            }
                         }
-                        gift.setLocation(new LatLng(Double.parseDouble(String.valueOf(snapshot.
-                                child(COLUMN_LOCATION).child("latitude").getValue())),
-                                Double.parseDouble(String.valueOf(snapshot.
-                                        child(COLUMN_LOCATION).child("longitude").getValue()))));
 
-                        gifts.add(gift);
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+
+                    Util.databaseReference.child("gifts").addListenerForSingleValueEvent(listener);
                 }
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-
-            Util.databaseReference.child("gifts").addListenerForSingleValueEvent(listener);
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         return gifts;
@@ -483,22 +603,35 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns ArrayList with inventory item objects
      * returns empty ArrayList if table is empty */
     ArrayList<InventoryItem> fetchAllInventoryItems() {
-        ArrayList<InventoryItem> items = new ArrayList<>(0);
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.query(INVENTORY_TITLE, inventory_columns,
-                null, null, null, null, null);
+        final ArrayList<InventoryItem> items = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                Cursor cursor = database.query(INVENTORY_TITLE, inventory_columns,
+                        null, null, null, null, null);
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            while (!cursor.isAfterLast()) {
-                InventoryItem item = cursorToInventoryItem(cursor);
-                items.add(item);
-                cursor.moveToNext();
+                cursor.moveToFirst();
+                if (cursor.getCount() > 0) {
+                    while (!cursor.isAfterLast()) {
+                        InventoryItem item = new InventoryItem();
+                        cursorToInventoryItem(cursor, item);
+                        items.add(item);
+                        cursor.moveToNext();
+                    }
+                }
+
+                cursor.close();
+                database.close();
             }
-        }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
 
-        cursor.close();
-        database.close();
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return items;
     }
@@ -508,21 +641,34 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns empty ArrayList if table is empty */
     ArrayList<Friend> fetchAllFriends() {
         final ArrayList<Friend> friends = new ArrayList<>(0);
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.query(FRIEND_TITLE, friends_columns,
-                null, null, null, null, null);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                Cursor cursor = database.query(FRIEND_TITLE, friends_columns,
+                        null, null, null, null, null);
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            while (!cursor.isAfterLast()) {
-                Friend friend = cursorToFriend(cursor);
-                friends.add(friend);
-                cursor.moveToNext();
+                cursor.moveToFirst();
+                if (cursor.getCount() > 0) {
+                    while (!cursor.isAfterLast()) {
+                        Friend friend = new Friend();
+                        cursorToFriend(cursor, friend);
+                        friends.add(friend);
+                        cursor.moveToNext();
+                    }
+                }
+
+                cursor.close();
+                database.close();
             }
-        }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
 
-        cursor.close();
-        database.close();
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return friends;
     }
@@ -531,96 +677,158 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * returns the animal if it exists
      * returns an empty animal object if it does not exist
      * queries SQLite, not firebase */
-    Animal fetchAnimalByName(String name) {
-        Animal animal = new Animal();
-        SQLiteDatabase database = getReadableDatabase();
-        String clause = COLUMN_ANIMAL_NAME + "='" + name + "'";
-        Cursor cursor = database.query(ANIMAL_TITLE, animals_columns, clause,
-                null, null, null, null);
+    Animal fetchAnimalByName(final String name) {
+        final ArrayList<Animal> animals = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                String clause = COLUMN_ANIMAL_NAME + "='" + name + "'";
+                Cursor cursor = database.query(ANIMAL_TITLE, animals_columns, clause,
+                        null, null, null, null);
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            animal = cursorToAnimal(cursor);
+                cursor.moveToFirst();
+                if (cursor.getCount() > 0) {
+                    Animal animal = new Animal();
+                    cursorToAnimal(cursor, animal);
+                    animals.add(animal);
+                }
+
+                cursor.close();
+                database.close();
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        cursor.close();
-        database.close();
-
-        return animal;
+        // add animal to user's database if it's new to user
+        if(animals.size() > 0) return animals.get(0);
+        else return null;
     }
 
     /* Method to return a single Gift specified by the name
      * returns the gift if it exists
      * returns an empty gift object if it does not exist
      * queries SQLite, not firebase */
-    Gift fetchGiftByName(String name) {
-        Gift gift = new Gift();
-        SQLiteDatabase database = getReadableDatabase();
-        String clause = COLUMN_GIFT + "='" + name + "'";
-        Cursor cursor = database.query(GIFT_TITLE, gifts_columns, clause,
-                null, null, null, null);
+    Gift fetchGiftByName(final String name) {
+        final ArrayList<Gift> gifts = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                String clause = COLUMN_GIFT + "='" + name + "'";
+                Cursor cursor = database.query(GIFT_TITLE, gifts_columns, clause,
+                        null, null, null, null);
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            gift = cursorToGift(cursor);
+                cursor.moveToFirst();
+                if (cursor.getCount() > 0) {
+                    Gift gift = new Gift();
+                    cursorToGift(cursor, gift);
+                    gifts.add(gift);
+                }
+
+                cursor.close();
+                database.close();
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        cursor.close();
-        database.close();
-
-        return gift;
+        if(gifts.size() > 0) return gifts.get(0);
+        else return null;
     }
 
     /* Method to return a single inventory item specified by the name
      * returns the item if it exists
      * returns an empty item if it does not exist
      * queries SQLite, not firebase */
-    InventoryItem fetchinventoryItemByName(String name) {
-        InventoryItem item = new InventoryItem();
-        SQLiteDatabase database = getReadableDatabase();
-        String clause = COLUMN_INVENTORY_NAME + "='" + name + "'";
-        Cursor cursor = database.query(INVENTORY_TITLE, inventory_columns, clause,
-                null, null, null, null);
+    InventoryItem fetchinventoryItemByName(final String name) {
+        final ArrayList<InventoryItem> items = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                String clause = COLUMN_INVENTORY_NAME + "='" + name + "'";
+                Cursor cursor = database.query(INVENTORY_TITLE, inventory_columns, clause,
+                        null, null, null, null);
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            item = cursorToInventoryItem(cursor);
-        }
-        else{
-            if(name.equals("money")) {
-                item.setItemAmount(-1);
+                cursor.moveToFirst();
+                InventoryItem item = new InventoryItem();
+                if (cursor.getCount() > 0) {
+                    cursorToInventoryItem(cursor, item);
+                    items.add(item);
+                }
+                else{
+                    if(name.equals("money")) {
+                        item.setItemAmount(-1);
+                        items.add(item);
+                    }
+                    else{
+                        item.setItemAmount(0);
+                        items.add(item);
+                    }
+                }
+
+                cursor.close();
+                database.close();
             }
-            else{
-                item.setItemAmount(0);
-            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        cursor.close();
-        database.close();
-
-        return item;
+        if(items.size() > 0) return items.get(0);
+        else return null;
     }
 
     /* Method to return a single Friend specified by the name (not nickname)
      * returns the friend if it exists
      * returns an empty friend object if it does not exist
      * queries SQLite, not firebase */
-    Friend fetchFriendByEmail(String email) {
-        Friend friend = new Friend();
-        SQLiteDatabase database = getReadableDatabase();
-        String clause = COLUMN_FRIEND_EMAIL + "='" + email + "'";
-        Cursor cursor = database.query(FRIEND_TITLE, friends_columns, clause,
-                null, null, null, null);
+    Friend fetchFriendByEmail(final String email) {
+        final ArrayList<Friend> friends = new ArrayList<>(0);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getReadableDatabase();
+                String clause = COLUMN_FRIEND_EMAIL + "='" + email + "'";
+                Cursor cursor = database.query(FRIEND_TITLE, friends_columns, clause,
+                        null, null, null, null);
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            friend = cursorToFriend(cursor);
+                cursor.moveToFirst();
+                if (cursor.getCount() > 0) {
+                    Friend friend = new Friend();
+                    cursorToFriend(cursor, friend);
+                    friends.add(friend);
+                }
+
+                cursor.close();
+                database.close();
+            }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        cursor.close();
-        database.close();
-
-        return friend;
+        if(friends.size() > 0) return friends.get(0);
+        else return null;
     }
 
     /* Method to return a single map gift specified by the name
@@ -681,78 +889,90 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /* Goes through every table in SQLite, gets the flagged data, and inserts it to firebase */
     private void insertFlagged() {
-        SQLiteDatabase database = getWritableDatabase();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                SQLiteDatabase database = getWritableDatabase();
 
-        for (int i = 0; i < columns.size(); i++) {
-            String clause = COLUMN_FIREBASE_FLAG + "='1'";
-            Cursor cursor = database.query(titles[i], columns.get(i), clause,
-                    null, null, null, null);
+                for (int i = 0; i < columns.size(); i++) {
+                    String clause = COLUMN_FIREBASE_FLAG + "='1'";
+                    Cursor cursor = database.query(titles[i], columns.get(i), clause,
+                            null, null, null, null);
 
-            cursor.moveToFirst();
-            while (cursor.getCount() > 0 && !cursor.isAfterLast()) {
-                if (i == 0) {
-                    Friend friend = cursorToFriend(cursor);
-                    String key = Util.databaseReference.child("users")
-                            .child(Util.userID).child("friends").push().getKey();
-                    Util.databaseReference.child("users").
-                            child(Util.userID).child("friends").child(key).setValue(friend);
-                    ContentValues values = new ContentValues();
-                    values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(FRIEND_TITLE, values, COLUMN_FRIEND_EMAIL +
-                            "='" + friend.getEmail() + "'", null);
-                    ContentValues id = new ContentValues();
-                    id.put(COLUMN_FIREBASE_ID, key);
-                    database.update(FRIEND_TITLE, id, COLUMN_FRIEND_EMAIL + "='"
-                            + friend.getEmail() + "'", null);
-                } else if (i == 1) {
-                    Gift gift = cursorToGift(cursor);
-                    String key = Util.databaseReference.child("users")
-                            .child(Util.userID).child("gifts").push().getKey();
-                    Util.databaseReference.child("users").
-                            child(Util.userID).child("gifts").child(key).setValue(gift);
-                    ContentValues values = new ContentValues();
-                    values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(GIFT_TITLE, values, COLUMN_GIFT + "='" +
-                            gift.getGiftName() + "'", null);
-                } else if (i == 2) {
-                    Animal animal = cursorToAnimal(cursor);
-                    Util.databaseReference.child("users").
-                            child(Util.userID).child("animals").child(animal
-                            .getAnimalName()).setValue(animal);
-                    ContentValues values = new ContentValues();
-                    values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(ANIMAL_TITLE, values, COLUMN_ANIMAL_NAME + "='" +
-                            animal.getAnimalName() + "'", null);
-                } else if (i == 3) {
-                    InventoryItem item = cursorToInventoryItem(cursor);
-                    Util.databaseReference.child("users").child(Util.userID)
-                            .child("items").child(item.getItemName()).setValue(item);
-                    ContentValues values = new ContentValues();
-                    values.put(COLUMN_FIREBASE_FLAG, 0);
-                    database.update(INVENTORY_TITLE, values, COLUMN_INVENTORY_NAME +
-                            "='" + item.getItemName() + "'", null);
+                    cursor.moveToFirst();
+                    while (cursor.getCount() > 0 && !cursor.isAfterLast()) {
+                        if (i == 0) {
+                            Friend friend = new Friend();
+                            cursorToFriend(cursor, friend);
+                            String key = Util.databaseReference.child("users")
+                                    .child(Util.userID).child("friends").push().getKey();
+                            Util.databaseReference.child("users").
+                                    child(Util.userID).child("friends").child(key).setValue(friend);
+                            ContentValues values = new ContentValues();
+                            values.put(COLUMN_FIREBASE_FLAG, 0);
+                            database.update(FRIEND_TITLE, values, COLUMN_FRIEND_EMAIL +
+                                    "='" + friend.getEmail() + "'", null);
+                            ContentValues id = new ContentValues();
+                            id.put(COLUMN_FIREBASE_ID, key);
+                            database.update(FRIEND_TITLE, id, COLUMN_FRIEND_EMAIL + "='"
+                                    + friend.getEmail() + "'", null);
+                        } else if (i == 1) {
+                            Gift gift = new Gift();
+                            cursorToGift(cursor, gift);
+                            String key = Util.databaseReference.child("users")
+                                    .child(Util.userID).child("gifts").push().getKey();
+                            Util.databaseReference.child("users").
+                                    child(Util.userID).child("gifts").child(key).setValue(gift);
+                            ContentValues values = new ContentValues();
+                            values.put(COLUMN_FIREBASE_FLAG, 0);
+                            database.update(GIFT_TITLE, values, COLUMN_GIFT + "='" +
+                                    gift.getGiftName() + "'", null);
+                        } else if (i == 2) {
+                            Animal animal = new Animal();
+                            cursorToAnimal(cursor, animal);
+                            Util.databaseReference.child("users").
+                                    child(Util.userID).child("animals").child(animal
+                                    .getAnimalName()).setValue(animal);
+                            ContentValues values = new ContentValues();
+                            values.put(COLUMN_FIREBASE_FLAG, 0);
+                            database.update(ANIMAL_TITLE, values, COLUMN_ANIMAL_NAME + "='" +
+                                    animal.getAnimalName() + "'", null);
+                        } else if (i == 3) {
+                            InventoryItem item = new InventoryItem();
+                            cursorToInventoryItem(cursor, item);
+                            Util.databaseReference.child("users").child(Util.userID)
+                                    .child("items").child(item.getItemName()).setValue(item);
+                            ContentValues values = new ContentValues();
+                            values.put(COLUMN_FIREBASE_FLAG, 0);
+                            database.update(INVENTORY_TITLE, values, COLUMN_INVENTORY_NAME +
+                                    "='" + item.getItemName() + "'", null);
+                        }
+                    }
                 }
             }
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+        try {
+            mythread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     /* Turns a cursor into a single animal object
      * cursor checking done before this method is called */
-    private Animal cursorToAnimal(Cursor cursor) {
-        Animal animal = new Animal();
+    private void cursorToAnimal(Cursor cursor, Animal animal) {
         animal.setAnimalName(cursor.getString(1));
         animal.setRarity(cursor.getInt(2));
         animal.setNumVisits(cursor.getInt(3));
         animal.setPersistence(cursor.getLong(4));
         animal.setPresent(cursor.getInt(6));
-
-        return animal;
     }
 
     /* Turns a cursor into a single gift object
      * cursor checking done before this method is called */
-    private Gift cursorToGift(Cursor cursor) {
-        Gift gift = new Gift();
+    private void cursorToGift(Cursor cursor, Gift gift) {
         gift.setId(cursor.getString(1));
         gift.setGiftName(cursor.getString(2));
         if (cursor.getInt(3) == 0) {
@@ -769,30 +989,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return gift;
     }
 
     /* Turns a cursor into a single inventory item object
      * cursor checking done before this method is called */
-    private InventoryItem cursorToInventoryItem(Cursor cursor) {
-        InventoryItem item = new InventoryItem();
+    private void cursorToInventoryItem(Cursor cursor, InventoryItem item) {
         item.setItemName(cursor.getString(1));
         item.setItemAmount(cursor.getInt(2));
         item.setPresent(cursor.getInt(3));
-
-        return item;
     }
 
     /* Turns a cursor into a single friend object
      * cursor checking done before this method is called */
-    private Friend cursorToFriend(Cursor cursor) {
-        Friend friend = new Friend();
+    private void cursorToFriend(Cursor cursor, Friend friend) {
         friend.setEmail(cursor.getString(1));
         friend.setNickname(cursor.getString(2));
         friend.setFirebaseId(cursor.getString(3));
-
-        return friend;
     }
 
     // convert a LatLng to a byte array to be stored as a BLOB
