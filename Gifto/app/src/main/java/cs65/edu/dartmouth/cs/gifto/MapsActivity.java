@@ -1,6 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +17,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -64,11 +67,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<MapGift> giftList;
     private DatabaseReference giftsData;
     private LatLng savedLatLng;
+    private Location location;
     //private MySQLiteHelper helper;
 
     SharedPreferences pref;     // stores units_int and other things
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -87,8 +90,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // see which units to use
         pref = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 
-        initLocationManager();  // get last known location
-
         mapFragment.setRetainInstance(true);
 
         // toolbar
@@ -104,6 +105,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        checkpermissions();
+    }
+
+    public void checkpermissions(){
+        if(Build.VERSION.SDK_INT < 23)
+            return;
+        if (Build.VERSION.SDK_INT > 23) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was not granted
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        initLocationManager();  // get last known location
+                        location = lm.getLastKnownLocation(provider);    // so you have default location
+                        mMap.setMyLocationEnabled(true);
+                    }
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_DENIED) {
+                    }
+                }
+            break;
+            }
+        }
     }
 
     /**
@@ -113,21 +153,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        if (Build.VERSION.SDK_INT > 23 && android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            return;
-        }
-        Location location = lm.getLastKnownLocation(provider);    // so you have default location
         LatLng firstMarker;
         if (location != null) {
             firstMarker = new LatLng(location.getLatitude(), location.getLongitude());
         } else {
             // Add a marker in Hanover if no last location found
             firstMarker = new LatLng(43.7022, -72.2896);
+        }
+
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            initLocationManager();  // get last known location
+            location = lm.getLastKnownLocation(provider);    // so you have default location
+            mMap.setMyLocationEnabled(true);
         }
 
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -170,7 +210,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 float results[] = new float[1];
                 // compare gift's location to user's location
                 // user has to be within certain distance of gift to pick it up
-                if(mMap.getMyLocation() != null) {
+                if(ContextCompat.checkSelfPermission(getBaseContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_DENIED || !mMap.isMyLocationEnabled()){
+                    Toast.makeText(getBaseContext(), "You must enable location tracking to pick up gifts", Toast.LENGTH_SHORT).show();
+                } else if(mMap.getMyLocation() != null) {
                     Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(), results);
                     if (results[0] < 50) {
                         // user is close enough to pick up gift
@@ -265,6 +309,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                     helper.insertInventory(item, true);
                                                     //helper.close();
                                                 }
+
+                                                if(giftName != null && !giftName.equals("")){
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                                                    builder.setTitle("Congratulations!")
+                                                            .setMessage("You received a " + giftName)
+                                                            .setPositiveButton("Yay!", null)
+                                                            .setIcon(Util.getImageIdFromName(giftName));
+                                                    builder.show();
+                                                }
                                             }
                                         }
                                     }
@@ -350,7 +403,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         // useful google built-in functions to determine user location and interact with map
-        mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);

@@ -29,6 +29,7 @@ public class GiftChooser extends AppCompatActivity {
     Spinner spinner_friends;
     EditText editText_message;
     TextView price_text;
+    int cost;
 
     MySQLiteHelper helper;
 
@@ -149,9 +150,9 @@ public class GiftChooser extends AppCompatActivity {
                                 item_type = 0;
                             }
                             ArrayList<String> size_strings = new ArrayList<String> (Arrays.asList("message", "small gift", "large gift"));
-                            ArrayList<Integer> cost_strings = new ArrayList<Integer> (Arrays.asList(5, 20, 50));
+                            ArrayList<Integer> cost_strings = new ArrayList<Integer> (Arrays.asList(1, 5, 15));
                             String size = size_strings.get(item_type);
-                            int cost = cost_strings.get(item_type);
+                            cost = cost_strings.get(item_type);
                             price_text.setText("Price to send " + size + ": " + cost + " coins");
                         }
 
@@ -227,6 +228,11 @@ public class GiftChooser extends AppCompatActivity {
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());
             returnIntent.putExtra("message", editText_message.getText().toString());
             returnIntent.putExtra("sendTo", (String)spinner_friends.getSelectedItem());
+            if(spinner_friends.getSelectedItemPosition() > 0){
+                InventoryItem money = helper.fetchinventoryItemByName("money");
+                money.setItemAmount(money.getItemAmount()-cost);
+                helper.insertInventory(money, true);
+            }
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         } else {
