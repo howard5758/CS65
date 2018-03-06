@@ -186,7 +186,7 @@ public class Garden extends Fragment {
             }
         });
 
-        view = setBackground(view);
+//        view = setBackground(view);
 
         return view;
 

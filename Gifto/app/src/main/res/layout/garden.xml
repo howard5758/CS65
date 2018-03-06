@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="60dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
@@ -13,8 +12,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        app:srcCompat="@drawable/bg_plain" />
+        android:layout_alignParentTop="true" />
 
     <ImageView
         android:layout_width="70dp"
@@ -109,13 +107,19 @@
         android:id="@+id/expand_left"
         android:layout_width="55dp"
         android:layout_height="match_parent"
-        android:text="@string/expand_left"
-        android:background="@android:color/transparent"/>
+        android:layout_marginTop="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:text="@string/expand_left" />
 
     <Button
         android:id="@+id/expand_right"
         android:layout_width="55dp"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="145dp"
         android:layout_height="match_parent"
         android:text="@string/expand_right"
         android:background="@android:color/transparent"/>
