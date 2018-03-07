@@ -1,5 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import java.io.Serializable;
+
 /**
  * Created by Oliver on 2/26/2018.
  *
@@ -18,7 +20,7 @@ package cs65.edu.dartmouth.cs.gifto;
  *      giftBox: the type of gift box to display on the map
  */
 
-public class MapGift {
+public class MapGift implements Serializable{
     private String id;
     private String giftName;
     private String userName;

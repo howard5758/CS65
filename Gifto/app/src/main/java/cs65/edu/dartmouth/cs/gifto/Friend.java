@@ -1,5 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import java.io.Serializable;
+
 /**
  * Created by Oliver on 2/25/2018.
  *
@@ -14,7 +16,7 @@ package cs65.edu.dartmouth.cs.gifto;
  *        friend for a specific user
  */
 
-class Friend {
+public class Friend implements Serializable{
     private String email;
     private String nickname;
     private String firebaseId;

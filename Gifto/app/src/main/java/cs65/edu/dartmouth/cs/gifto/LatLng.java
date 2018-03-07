@@ -1,5 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import java.io.Serializable;
+
 /**
  * Created by jesst_000 on 2/26/2018.
  *
@@ -11,7 +13,7 @@ package cs65.edu.dartmouth.cs.gifto;
  * this LatLng has a method which easily converts it to a google LatLng, if you need it
  */
 
-class LatLng {
+public class LatLng implements Serializable{
     double latitude;
     double longitude;
 

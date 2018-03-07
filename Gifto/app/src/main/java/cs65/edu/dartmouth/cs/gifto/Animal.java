@@ -16,7 +16,7 @@ import java.io.Serializable;
  *      present: the location the animal currently occupies in the garden. -1 if not currently there
  */
 
-class Animal implements Serializable {
+public class Animal implements Serializable {
     private String animalName;
     private int numVisits;
     private int rarity;
