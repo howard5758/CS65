@@ -66,7 +66,7 @@ public class GiftChooser extends AppCompatActivity {
         ArrayAdapter<String> adapter_friends = new ArrayAdapter<>(
                 getBaseContext(), android.R.layout.simple_spinner_item, spinnerArray_friends);
         adapter_friends.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerArray_friends.add("");
+        spinnerArray_friends.add("Let anyone pick up the gift");
         ArrayList<Friend> friends = helper.fetchAllFriends();
         for(Friend friend : friends){
             if(friend.getEmail() != null) spinnerArray_friends.add(friend.getEmail());
@@ -147,7 +147,7 @@ public class GiftChooser extends AppCompatActivity {
                                 ((BaseAdapter) spinner_gift.getAdapter()).notifyDataSetChanged();
                             } else {
                                 spinner_gift.setEnabled(true);
-                                spinnergift_array.add("");
+                                spinnergift_array.add("Message");
                                 DatabaseReference ref2 = Util.databaseReference.child("users")
                                         .child(Util.userID).child("items");
                                 ref2.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -271,10 +271,12 @@ public class GiftChooser extends AppCompatActivity {
             //
 
             if(!spinner_gift.isEnabled()) returnIntent.putExtra("giftName", "");
+            else if (spinner_gift.getSelectedItemPosition() == 0) returnIntent.putExtra("giftName", "");
             else returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
             returnIntent.putExtra("animalName", (String)spinner_animal.getSelectedItem());
             returnIntent.putExtra("message", editText_message.getText().toString());
-            returnIntent.putExtra("sendTo", (String)spinner_friends.getSelectedItem());
+            if(spinner_friends.getSelectedItemPosition() == 0) returnIntent.putExtra("sendTo", "");
+            else returnIntent.putExtra("sendTo", (String)spinner_friends.getSelectedItem());
             if(spinner_friends.getSelectedItemPosition() > 0){
                 InventoryItem money = helper.fetchinventoryItemByName("money");
                 money.setItemAmount(money.getItemAmount()-cost);
