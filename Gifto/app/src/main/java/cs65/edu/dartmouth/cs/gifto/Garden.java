@@ -186,8 +186,6 @@ public class Garden extends Fragment {
             }
         });
 
-//        view = setBackground(view);
-
         return view;
 
     }
@@ -462,8 +460,9 @@ public class Garden extends Fragment {
             if (i.getItemAmount()<0 && !i.getItemName().equals("money")){
 
                 i.setItemAmount(0);
-                helper.insertInventory(i, true);
                 helper.removeInventoryItem(i.getItemName());
+                helper.insertInventory(i, true);
+
             }
 
         }
