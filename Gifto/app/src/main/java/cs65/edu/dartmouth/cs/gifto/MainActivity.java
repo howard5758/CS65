@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     double last_roll;
     long lastUpdate;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,19 +196,6 @@ public class MainActivity extends AppCompatActivity
             Util.databaseReference.child("users")
                     .child(Util.userID).addValueEventListener(listener);
         }
-
-        // toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        //navigation view
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
     }
 
     @Override
@@ -242,14 +230,29 @@ public class MainActivity extends AppCompatActivity
                 navImage.setImageURI(Util.photo);
             } else navImage.setImageResource(R.drawable.dog);
         }
-        // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
-        // here, and pretty much copy all the map activity code into here
-        // so to keep the code organized, mapActivity has it's own navBar, and this navbar will
-        // always have item 0 selected
-        navigationView.getMenu().getItem(0).setChecked(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_icon);
+
+        if (Util.completed) {
+            // set up the toolbar now that everything is done downloading
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            //navigation view
+            navigationView.setNavigationItemSelectedListener(this);
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+
+            // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
+            // here, and pretty much copy all the map activity code into here
+            // so to keep the code organized, mapActivity has it's own navBar, and this navbar will
+            // always have item 0 selected
+            navigationView.getMenu().getItem(0).setChecked(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_icon);
+            }
         }
     }
 
@@ -333,6 +336,29 @@ public class MainActivity extends AppCompatActivity
     // helper function, since a listener can't end itself directly
     private void endListener() {
         Util.databaseReference.child("users").child(Util.userID).removeEventListener(listener);
+
+        // set up the toolbar now that everything is done downloading
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //navigation view
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
+        // here, and pretty much copy all the map activity code into here
+        // so to keep the code organized, mapActivity has it's own navBar, and this navbar will
+        // always have item 0 selected
+        navigationView.getMenu().getItem(0).setChecked(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_icon);
+        }
     }
 
     @Override
