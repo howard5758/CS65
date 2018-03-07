@@ -56,8 +56,6 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        <activity android:name=".Preferences"
-            android:screenOrientation="portrait"/>
         <activity android:name=".Collection"
             android:screenOrientation="portrait"/>
         <activity android:name=".purchase_screen"

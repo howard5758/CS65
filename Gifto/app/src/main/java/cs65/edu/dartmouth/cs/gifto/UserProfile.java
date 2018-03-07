@@ -1,6 +1,5 @@
 package cs65.edu.dartmouth.cs.gifto;
 
-import android.*;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,10 +8,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +22,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.firebase.auth.UserInfo;
@@ -36,16 +31,13 @@ import com.soundcloud.android.crop.Crop;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.Inflater;
 
 /**
  * Created by Oliver on 2/25/2018.
  *
- * This is what I made for the first week! It's probably terrible! I will fix it later!
+ * User Profile Screen
+ * Here users can change their profile picture, set their nickname,and go to the Gifto website
  */
 
 public class UserProfile extends AppCompatActivity {
@@ -54,15 +46,9 @@ public class UserProfile extends AppCompatActivity {
     static final int REQUEST_GALLERY = 2;
     private static final String URI_INSTANCE_STATE_KEY = "saved_uri";
     private static final String NAME_INSTANCE_STATE_KEY = "saved_name";
-    private static final String EMAIL_INSTANCE_STATE_KEY = "saved_email";
-    private static final String PHONE_INSTANCE_STATE_KEY = "saved_phone";
-    private static final String GENDER_INSTANCE_STATE_KEY = "saved_gender";
-    private static final String CLASS_INSTANCE_STATE_KEY = "saved_class";
-    private static final String MAJOR_INSTANCE_STATE_KEY = "saved_major";
 
     private FirebaseAuth firebaseAuth;
 
-    /* variables for picture taking */
     Uri mImageCaptureUri = null;
 
     @Override
@@ -90,9 +76,12 @@ public class UserProfile extends AppCompatActivity {
         if(Build.VERSION.SDK_INT < 23)
             return true;
 
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA}, 0);
+        if (checkSelfPermission(android.Manifest.permission
+                .WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(android.Manifest.permission
+                        .CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    android.Manifest.permission.CAMERA}, 0);
             return false;
         }
         return true;
@@ -198,11 +187,12 @@ public class UserProfile extends AppCompatActivity {
     /* Button to change profile picture
      * If permissions denied, then do not allow user to take picture
      * If permissions accepted and camera selected, then open camera
-     * If permissions accepted and allery selected, open gallery*/
+     * If permissions accepted and gallery selected, open gallery*/
     public void changePhoto(int item) {
         if (!checkPermissions()) {
             Context context = getApplicationContext();
-            Toast.makeText(context, "Permission not granted to take or store photos", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Permission not granted to take or store photos",
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -223,7 +213,8 @@ public class UserProfile extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null && item == 0) {
             ContentValues values = new ContentValues(1);
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-            mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            mImageCaptureUri = getContentResolver()
+                    .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             intent.putExtra("return-data", true);
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
@@ -232,11 +223,13 @@ public class UserProfile extends AppCompatActivity {
         else if (intent.resolveActivity(getPackageManager()) != null && item == 1) {
             ContentValues values = new ContentValues(1);
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-            mImageCaptureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            mImageCaptureUri = getContentResolver()
+                    .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_GALLERY);
+            startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"), REQUEST_GALLERY);
         }
     }
 
@@ -260,7 +253,8 @@ public class UserProfile extends AppCompatActivity {
 
             try {
                 Log.d("in try", "in try");
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageCaptureUri);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                        this.getContentResolver(), mImageCaptureUri);
                 ImageView imageView = findViewById(R.id.profile_picture);
                 imageView.setImageURI(null);
                 imageView.setImageBitmap(bitmap);
@@ -281,7 +275,6 @@ public class UserProfile extends AppCompatActivity {
         EditText editText = findViewById(R.id.Name_field);
         editText.setText(editText.getText().toString());
 
-        ImageView imageView = findViewById(R.id.profile_picture);
         UserProfileChangeRequest profileUpdates;
         if (mImageCaptureUri != null) {
             profileUpdates = new UserProfileChangeRequest.Builder()

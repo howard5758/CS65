@@ -10,6 +10,8 @@ import android.os.Bundle;
 
 /**
  * Created by kiron on 3/5/18.
+ *
+ * Simple dialog box to display when a new animal has arrived in the garden
  */
 
 public class MyDialogFragment extends DialogFragment {

@@ -4,6 +4,18 @@ package cs65.edu.dartmouth.cs.gifto;
  * Created by Oliver on 2/26/2018.
  *
  * Special type of gift specifically for display on the map, includes some user data
+ * This has to store a lot of information because it is how we communicate between users
+ *
+ *      id: The Firebase ID of the gift. This is the same across all devices
+ *      giftName: the name of the gift in the box
+ *      userName: the name of the person sending the gift
+ *      userNickname: the nickname of the person sending the gift
+ *      Message: the user's message inside the gift box
+ *      animalName: the name of the animal delivering the gift
+ *      location: the latitude and longitude of where the gift was placed
+ *      timePlaced: the time the gift was placed
+ *      sendTo: the email of the specific user to send the gift to, if any
+ *      giftBox: the type of gift box to display on the map
  */
 
 public class MapGift {
@@ -18,7 +30,7 @@ public class MapGift {
     private String sendTo;          // email address!!
     private int giftBox;
 
-    public MapGift(){
+    MapGift(){
         id = "";
         giftName = "";
         userName = "";
@@ -31,7 +43,7 @@ public class MapGift {
         giftBox = -1;
     }
 
-    public MapGift(String giftName, String userName, String userNickname, String message,
+    MapGift(String giftName, String userName, String userNickname, String message,
                    String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location,
                    long timePlaced, String sendTo, int giftBox) {
         this.giftName = giftName;
@@ -45,19 +57,19 @@ public class MapGift {
         this.giftBox = giftBox;
     }
 
-    public String getGiftName() {
+    String getGiftName() {
         return giftName;
     }
 
-    public void setGiftName(String giftName) {
+    void setGiftName(String giftName) {
         this.giftName = giftName;
     }
 
-    public String getUserName() {
+    String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -73,31 +85,31 @@ public class MapGift {
         return animalName;
     }
 
-    public void setAnimalName(String animalName) {
+    void setAnimalName(String animalName) {
         this.animalName = animalName;
     }
 
-    public cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
+    cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
         return location;
     }
 
-    public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
+    void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
     }
 
-    public long getTimePlaced() {
+    long getTimePlaced() {
         return timePlaced;
     }
 
-    public void setTimePlaced(long timePlaced) {
+    void setTimePlaced(long timePlaced) {
         this.timePlaced = timePlaced;
     }
 
-    public String getUserNickname() {
+    String getUserNickname() {
         return userNickname;
     }
 
-    public void setUserNickname(String userNickname) {
+    void setUserNickname(String userNickname) {
         this.userNickname = userNickname;
     }
 
@@ -109,7 +121,7 @@ public class MapGift {
         this.id = id;
     }
 
-    public String getSendTo() {
+    String getSendTo() {
         return sendTo;
     }
 
@@ -117,11 +129,11 @@ public class MapGift {
         this.sendTo = sendTo;
     }
 
-    public int getGiftBox() {
+    int getGiftBox() {
         return giftBox;
     }
 
-    public void setGiftBox(int giftBox) {
+    void setGiftBox(int giftBox) {
         this.giftBox = giftBox;
     }
 }
