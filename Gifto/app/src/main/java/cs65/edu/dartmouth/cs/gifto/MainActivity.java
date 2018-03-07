@@ -390,6 +390,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 lastUpdate = actualTime;
                 Util.shaking = true;
+                Garden.shake();
             }
         }
     }

@@ -41,6 +41,8 @@ public class Garden extends Fragment {
 
     public static Button button_food, button_gifts, button_animals, button_place1, button_place2, button_place3, button_place4;
 
+    public static boolean check;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -53,6 +55,10 @@ public class Garden extends Fragment {
         place3 = Globals.EMPTY;
         place4 = Globals.EMPTY;
         helper = new MySQLiteHelper(getActivity());
+
+
+
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -184,20 +190,105 @@ public class Garden extends Fragment {
         ArrayList<Animal> animals = helper.fetchAllAnimals();
         for(Animal a : animals){
             if(a.getPresent() == 1){
-                Garden.pet1.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
-                Garden.animal1_name.setText(a.getAnimalName());
+                if(Util.nightTime && Globals.ANIMAL_TO_NIGHT.containsKey(a.getAnimalName())){
+
+                    String night_name = Globals.ANIMAL_TO_NIGHT.get(a.getAnimalName());
+
+                    Garden.pet1.setImageResource(Util.getImageIdFromName(night_name));
+                    Garden.animal1_name.setText(night_name);
+
+                    a.setPresent(-1);
+                    helper.removeAnimal(a.getAnimalName());
+                    helper.insertAnimal(a, true);
+
+                    Animal night = helper.fetchAnimalByName(night_name);
+                    if(night == null){
+                        night = new Animal();
+                    }
+                    night.setAnimalName(night_name);
+                    night.setPresent(1);
+                    helper.removeAnimal(night_name);
+                    helper.insertAnimal(night, true);
+                }
+                else{
+                    Garden.pet1.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                    Garden.animal1_name.setText(a.getAnimalName());
+                }
             }
             else if(a.getPresent() == 2){
-                Garden.pet2.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
-                Garden.animal2_name.setText(a.getAnimalName());
+                if(Util.nightTime && Globals.ANIMAL_TO_NIGHT.containsKey(a.getAnimalName())){
+                    String night_name = Globals.ANIMAL_TO_NIGHT.get(a.getAnimalName());
+
+                    Garden.pet2.setImageResource(Util.getImageIdFromName(night_name));
+                    Garden.animal2_name.setText(night_name);
+
+                    a.setPresent(-1);
+                    helper.removeAnimal(a.getAnimalName());
+                    helper.insertAnimal(a, true);
+
+                    Animal night = helper.fetchAnimalByName(night_name);
+                    if(night == null){
+                        night = new Animal();
+                    }
+                    night.setAnimalName(night_name);
+                    night.setPresent(2);
+                    helper.removeAnimal(night_name);
+                    helper.insertAnimal(night, true);
+                }
+                else{
+                    Garden.pet2.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                    Garden.animal2_name.setText(a.getAnimalName());
+                }
             }
             else if(a.getPresent() == 3){
-                Garden.pet3.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
-                Garden.animal3_name.setText(a.getAnimalName());
+                if(Util.nightTime && Globals.ANIMAL_TO_NIGHT.containsKey(a.getAnimalName())){
+                    String night_name = Globals.ANIMAL_TO_NIGHT.get(a.getAnimalName());
+
+                    Garden.pet3.setImageResource(Util.getImageIdFromName(night_name));
+                    Garden.animal3_name.setText(night_name);
+
+                    a.setPresent(-1);
+                    helper.removeAnimal(a.getAnimalName());
+                    helper.insertAnimal(a, true);
+
+                    Animal night = helper.fetchAnimalByName(night_name);
+                    if(night == null){
+                        night = new Animal();
+                    }
+                    night.setAnimalName(night_name);
+                    night.setPresent(3);
+                    helper.removeAnimal(night_name);
+                    helper.insertAnimal(night, true);
+                }
+                else{
+                    Garden.pet3.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                    Garden.animal3_name.setText(a.getAnimalName());
+                }
             }
             else if(a.getPresent() == 4){
-                Garden.pet4.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
-                Garden.animal4_name.setText(a.getAnimalName());
+                if(Util.nightTime && Globals.ANIMAL_TO_NIGHT.containsKey(a.getAnimalName())){
+                    String night_name = Globals.ANIMAL_TO_NIGHT.get(a.getAnimalName());
+
+                    Garden.pet4.setImageResource(Util.getImageIdFromName(night_name));
+                    Garden.animal4_name.setText(night_name);
+
+                    a.setPresent(-1);
+                    helper.removeAnimal(a.getAnimalName());
+                    helper.insertAnimal(a, true);
+
+                    Animal night = helper.fetchAnimalByName(night_name);
+                    if(night == null){
+                        night = new Animal();
+                    }
+                    night.setAnimalName(night_name);
+                    night.setPresent(4);
+                    helper.removeAnimal(night_name);
+                    helper.insertAnimal(night, true);
+                }
+                else{
+                    Garden.pet4.setImageResource(Util.getImageIdFromName(a.getAnimalName()));
+                    Garden.animal4_name.setText(a.getAnimalName());
+                }
             }
         }
         for(InventoryItem i : items){
@@ -211,6 +302,22 @@ public class Garden extends Fragment {
                     ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
                     Random random = new Random();
                     String target = related_animals.get(random.nextInt(related_animals.size()));
+
+                    //check same animal
+                    check = false;
+                    Animal day = helper.fetchAnimalByName(target);
+                    Animal night = helper.fetchAnimalByName(Globals.ANIMAL_TO_NIGHT.get(target));
+                    if(day == null)
+                        day = new Animal();
+                    if(night == null)
+                        night = new Animal();
+                    if(day.getPresent()==-1 && night.getPresent()==-1)
+                        check = true;
+                    //
+                    // night
+                    if(Util.nightTime)
+                        target = Globals.ANIMAL_TO_NIGHT.get(target);
+
                     double prob = Globals.ANIMAL_TO_PROB.get(target);
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
@@ -220,7 +327,7 @@ public class Garden extends Fragment {
                             tempp = new Animal();
                         }
 
-                        if(tempp.getPresent()==-1){
+                        if(check){
                             tempp.setAnimalName(target);
                             tempp.setPresent(1);
                             tempp.setNumVisits(tempp.getNumVisits() + 1);
@@ -267,6 +374,22 @@ public class Garden extends Fragment {
                     ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
                     Random random = new Random();
                     String target = related_animals.get(random.nextInt(related_animals.size()));
+
+                    //check same animal
+                    check = false;
+                    Animal day = helper.fetchAnimalByName(target);
+                    Animal night = helper.fetchAnimalByName(Globals.ANIMAL_TO_NIGHT.get(target));
+                    if(day == null)
+                        day = new Animal();
+                    if(night == null)
+                        night = new Animal();
+                    if(day.getPresent()==-1 && night.getPresent()==-1)
+                        check = true;
+                    //
+                    // night
+                    if(Util.nightTime)
+                        target = Globals.ANIMAL_TO_NIGHT.get(target);
+
                     double prob = Globals.ANIMAL_TO_PROB.get(target);
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
@@ -275,7 +398,7 @@ public class Garden extends Fragment {
                         if(tempp == null){
                             tempp = new Animal();
                         }
-                        if(tempp.getPresent()==-1){
+                        if(check){
                             tempp.setAnimalName(target);
                             tempp.setPresent(2);
                             tempp.setNumVisits(tempp.getNumVisits() + 1);
@@ -324,6 +447,22 @@ public class Garden extends Fragment {
                     ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
                     Random random = new Random();
                     String target = related_animals.get(random.nextInt(related_animals.size()));
+
+                    //check same animal
+                    check = false;
+                    Animal day = helper.fetchAnimalByName(target);
+                    Animal night = helper.fetchAnimalByName(Globals.ANIMAL_TO_NIGHT.get(target));
+                    if(day == null)
+                        day = new Animal();
+                    if(night == null)
+                        night = new Animal();
+                    if(day.getPresent()==-1 && night.getPresent()==-1)
+                        check = true;
+                    //
+                    // night
+                    if(Util.nightTime)
+                        target = Globals.ANIMAL_TO_NIGHT.get(target);
+
                     double prob = Globals.ANIMAL_TO_PROB.get(target);
                     Log.d("master", String.valueOf(prob));
                     if (Math.random() <= prob) {
@@ -332,7 +471,7 @@ public class Garden extends Fragment {
                         if(tempp == null){
                             tempp = new Animal();
                         }
-                        if(tempp.getPresent()==-1){
+                        if(check){
                             tempp.setAnimalName(target);
                             tempp.setPresent(3);
                             tempp.setNumVisits(tempp.getNumVisits() + 1);
@@ -381,6 +520,22 @@ public class Garden extends Fragment {
                     ArrayList<String> related_animals = Globals.ITEM_TO_ANIMAL_LIST.get(i.getItemName());
                     Random random = new Random();
                     String target = related_animals.get(random.nextInt(related_animals.size()));
+
+                    //check same animal
+                    check = false;
+                    Animal day = helper.fetchAnimalByName(target);
+                    Animal night = helper.fetchAnimalByName(Globals.ANIMAL_TO_NIGHT.get(target));
+                    if(day == null)
+                        day = new Animal();
+                    if(night == null)
+                        night = new Animal();
+                    if(day.getPresent()==-1 && night.getPresent()==-1)
+                        check = true;
+                    //
+                    // night
+                    if(Util.nightTime)
+                        target = Globals.ANIMAL_TO_NIGHT.get(target);
+
                     Log.d("master", "hi"+target);
                     double prob = Globals.ANIMAL_TO_PROB.get(target);
                     Log.d("master", String.valueOf(prob));
@@ -390,7 +545,7 @@ public class Garden extends Fragment {
                         if(tempp == null){
                             tempp = new Animal();
                         }
-                        if(tempp.getPresent()==-1){
+                        if(check){
                             tempp.setAnimalName(target);
                             tempp.setPresent(4);
                             tempp.setNumVisits(tempp.getNumVisits() + 1);
@@ -445,6 +600,85 @@ public class Garden extends Fragment {
 
             }
 
+        }
+    }
+
+    public static void shake(){
+        ArrayList<Animal> all_animals = helper.fetchAllAnimals();
+        Log.d("master", String.valueOf(all_animals.size()));
+        for(Animal a : all_animals){
+            if(a.getPresent() == 1 && Globals.NIGHT_TO_ANIMAL.containsKey(a.getAnimalName())){
+
+                Garden.pet1.setImageResource(Util.getImageIdFromName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName())));
+                Garden.animal1_name.setText(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+
+                a.setPresent(-1);
+                helper.removeAnimal(a.getAnimalName());
+                helper.insertAnimal(a, true);
+
+                Animal day = helper.fetchAnimalByName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                if(day == null){
+                    day = new Animal();
+                }
+                day.setAnimalName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                day.setPresent(1);
+                helper.removeAnimal(day.getAnimalName());
+                helper.insertAnimal(day, true);
+            }
+            else if(a.getPresent() == 2 && Globals.NIGHT_TO_ANIMAL.containsKey(a.getAnimalName())){
+
+                Garden.pet2.setImageResource(Util.getImageIdFromName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName())));
+                Garden.animal2_name.setText(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+
+                a.setPresent(-1);
+                helper.removeAnimal(a.getAnimalName());
+                helper.insertAnimal(a, true);
+
+                Animal day = helper.fetchAnimalByName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                if(day == null){
+                    day = new Animal();
+                }
+                day.setAnimalName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                day.setPresent(2);
+                helper.removeAnimal(day.getAnimalName());
+                helper.insertAnimal(day, true);
+            }
+            else if(a.getPresent() == 3 && Globals.NIGHT_TO_ANIMAL.containsKey(a.getAnimalName())){
+
+                Garden.pet3.setImageResource(Util.getImageIdFromName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName())));
+                Garden.animal3_name.setText(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+
+                a.setPresent(-1);
+                helper.removeAnimal(a.getAnimalName());
+                helper.insertAnimal(a, true);
+
+                Animal day = helper.fetchAnimalByName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                if(day == null){
+                    day = new Animal();
+                }
+                day.setAnimalName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                day.setPresent(3);
+                helper.removeAnimal(day.getAnimalName());
+                helper.insertAnimal(day, true);
+            }
+            else if(a.getPresent() == 4 && Globals.NIGHT_TO_ANIMAL.containsKey(a.getAnimalName())){
+
+                Garden.pet4.setImageResource(Util.getImageIdFromName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName())));
+                Garden.animal4_name.setText(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+
+                a.setPresent(-1);
+                helper.removeAnimal(a.getAnimalName());
+                helper.insertAnimal(a, true);
+
+                Animal day = helper.fetchAnimalByName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                if(day == null){
+                    day = new Animal();
+                }
+                day.setAnimalName(Globals.NIGHT_TO_ANIMAL.get(a.getAnimalName()));
+                day.setPresent(4);
+                helper.removeAnimal(day.getAnimalName());
+                helper.insertAnimal(day, true);
+            }
         }
     }
 }
