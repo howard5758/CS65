@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity
                     endListener();
                     Util.completed = true;
                     Garden.check_animals();
+                    Log.d("master", "light" + String.valueOf(Util.nightTime));
                 }
 
                 @Override
