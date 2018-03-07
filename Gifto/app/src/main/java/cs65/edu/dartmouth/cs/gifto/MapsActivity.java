@@ -292,6 +292,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             // if the user has never bought/received this item before,
                                             // add a new InventoryItem to their database
                                             if(item.getItemName().equals("")) item = new InventoryItem(giftName, 0);
+                                            item.setPresent(-1);
                                             // keep track of how many of this item the user has
                                             helper.removeInventoryItem(item.getItemName());
                                             item.setItemAmount(item.getItemAmount() + 1);
