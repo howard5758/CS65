@@ -1,8 +1,10 @@
 package cs65.edu.dartmouth.cs.gifto;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,9 +25,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -335,7 +339,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         // useful google built-in functions to determine user location and interact with map
-        mMap.setMyLocationEnabled(true);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
@@ -616,7 +624,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //noinspection SimplifiableIfStatement
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_friend) {
-            DialogFragment newFragment = MainActivity.MyAlertDialogFragment.newInstance();
+            DialogFragment newFragment = MapsActivity.MyAlertDialogFragment.newInstance();
             newFragment.show(getFragmentManager(), "dialog");
         }
         if (id == R.id.action_settings) {
@@ -651,6 +659,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // get info that was saved before screen rotation
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    public void doPositiveClick(String email, String nickname) {
+        Friend friend = new Friend();
+        friend.setEmail(email);
+        friend.setNickname(nickname);
+
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.insertFriend(friend, true);
+    }
+
+    public void doNegativeClick() {
+    }
+
+    public static class MyAlertDialogFragment extends DialogFragment {
+        public static MapsActivity.MyAlertDialogFragment newInstance() {
+            MapsActivity.MyAlertDialogFragment frag = new MapsActivity.MyAlertDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("title", "Add a Friend");
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @SuppressLint("InflateParams")
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final String title = getArguments().getString("title");
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View view = inflater.inflate(R.layout.friend_dialog, null);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder((getActivity()));
+            final EditText emaile = view.findViewById(R.id.dialog_email);
+            final EditText nicknamee = view.findViewById(R.id.dialog_nickname);
+            return alert.setView(view).setTitle(title)
+                    .setPositiveButton("Okay",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    String email = emaile.getText().toString();
+                                    String nickname = nicknamee.getText().toString();
+                                    ((MapsActivity) getActivity()).doPositiveClick(email, nickname);
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((MapsActivity) getActivity()).doNegativeClick();
+                                }
+                            }).create();
+        }
     }
 }
 
