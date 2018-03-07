@@ -293,6 +293,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             // add a new InventoryItem to their database
                                             if(item == null) item = new InventoryItem(giftName, 0);
                                             // keep track of how many of this item the user has
+                                            helper.removeInventoryItem(item.getItemName());
+                                            item.setItemAmount(item.getItemAmount() + 1);
                                             helper.insertInventory(item, true);
                                     }
                                     // only show this alert if there was an item inside the gift
