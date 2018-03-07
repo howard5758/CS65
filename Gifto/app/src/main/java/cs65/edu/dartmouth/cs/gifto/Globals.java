@@ -17,6 +17,7 @@ public class Globals {
     // list of animals, animal size and items, gifts, and gift size and money hashmap
     public static final Map<String, Integer> ANIMAL_TO_TYPE = new HashMap<String, Integer>();
     public static final Map<String, String> ANIMAL_TO_NIGHT = new HashMap<String, String>();
+    public static final Map<String, String> NIGHT_TO_ANIMAL = new HashMap<String, String>();
     public static final Map<String, Integer> ITEM_TO_TYPE = new HashMap<String, Integer>();
     public static final Map<String, Integer> ITEM_TO_PRICE = new HashMap<String, Integer>();
     public static final Map<String, Integer> BOX_TO_TYPE = new HashMap<String, Integer>();
@@ -48,7 +49,7 @@ public class Globals {
         ANIMAL_TO_TYPE.put("monkey on tree", 1);
         ANIMAL_TO_TYPE.put("owl", 0);
         ANIMAL_TO_TYPE.put("sleeping owl", 0);
-        ANIMAL_TO_TYPE.put("Sleeping American Shorthair", 1);
+        ANIMAL_TO_TYPE.put("sleeping American Shorthair", 1);
         ANIMAL_TO_TYPE.put("American Shorthair", 1);
         ANIMAL_TO_TYPE.put("sleeping Siamese Cat", 1);
         ANIMAL_TO_TYPE.put("Siamese Cat", 1);
@@ -74,7 +75,7 @@ public class Globals {
         ANIMAL_TO_NIGHT.put("monkey on tree with banana", "monkey on tree with banana");
         ANIMAL_TO_NIGHT.put("monkey on tree", "monkey on tree");
         ANIMAL_TO_NIGHT.put("sleeping owl", "owl");
-        ANIMAL_TO_NIGHT.put("American Shorthair", "Sleeping American Shorthair");
+        ANIMAL_TO_NIGHT.put("American Shorthair", "sleeping American Shorthair");
         ANIMAL_TO_NIGHT.put("Siamese Cat", "sleeping Siamese Cat");
         ANIMAL_TO_NIGHT.put("pink squirrel", "sleeping pink squirrel");
         ANIMAL_TO_NIGHT.put("squirrel", "sleeping squirrel");
@@ -84,8 +85,22 @@ public class Globals {
         ANIMAL_TO_NIGHT.put("Corgi back", "sleeping Corgi");
         ANIMAL_TO_NIGHT.put("Corgi", "sleeping Corgi");
         ANIMAL_TO_NIGHT.put("Corgi side", "sleeping Corgi");
-        
-        
+
+        NIGHT_TO_ANIMAL.put("sleeping alligator", "alligator");
+        NIGHT_TO_ANIMAL.put("bat", "sleeping bat");
+        NIGHT_TO_ANIMAL.put("sleeping cat", "cat");
+        NIGHT_TO_ANIMAL.put("sleeping kangaroo", "kangaroo");
+        NIGHT_TO_ANIMAL.put("sleeping monkey", "monkey");
+        NIGHT_TO_ANIMAL.put("monkey on tree with banana", "monkey on tree with banana");
+        NIGHT_TO_ANIMAL.put("monkey on tree", "monkey on tree");
+        NIGHT_TO_ANIMAL.put("owl", "sleeping owl");
+        NIGHT_TO_ANIMAL.put("sleeping American Shorthair", "American Shorthair");
+        NIGHT_TO_ANIMAL.put("sleeping Siamese Cat", "Siamese Cat");
+        NIGHT_TO_ANIMAL.put("sleeping pink squirrel", "pink squirrel");
+        NIGHT_TO_ANIMAL.put("sleeping squirrel", "squirrel");
+        NIGHT_TO_ANIMAL.put("sleeping unicorn", "unicorn");
+        NIGHT_TO_ANIMAL.put("sleeping Corgi", "Corgi");
+
         /** items: 0: food, place1 in garden, can't be given as gift
          * 1: small, place2, place3, or place4 in garden, carried by medium and large animals
          * 2: large, place2, place3 in garden, carried by large animals
