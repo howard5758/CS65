@@ -297,6 +297,7 @@ public class GiftChooser extends AppCompatActivity {
             if(spinner_friends.getSelectedItemPosition() > 0){
                 InventoryItem money = helper.fetchinventoryItemByName("money");
                 money.setItemAmount(money.getItemAmount()-cost);
+                helper.removeInventoryItem("money");
                 helper.insertInventory(money, true);
             }
             setResult(Activity.RESULT_OK, returnIntent);

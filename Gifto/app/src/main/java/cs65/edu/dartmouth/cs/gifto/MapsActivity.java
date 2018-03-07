@@ -234,7 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         // display message and who sent it in the alert
                         String nickname;
                         String message;
-                        String username = Util.userID;
+                        String username;
                         // figure out which gift the user has selected,
                         // by comparing the marker's location to the gifts' locations
                         for(MapGift gift_i: giftList){
@@ -246,6 +246,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     nickname = gift_i.getUserName();
                                 }
                                 message = gift_i.getMessage();
+                                username = gift_i.getUserName();
                                 // remember which gift the user clicked on.
                                 // this will allow the alert dialog button click listener to know this information
                                 // without having to loop through the gift list again
@@ -387,7 +388,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             helper.insertInventory(item, true);
                         }
                     }
-                    builder.setMessage(value.getUserName() + ": " + value.getMessage())
+                    String user = value.getUserNickname();
+                    if(user == null || user.equals("")) user = value.getUserName();
+                    builder.setMessage(user + ": " + value.getMessage())
                             .setPositiveButton("OK!", null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
