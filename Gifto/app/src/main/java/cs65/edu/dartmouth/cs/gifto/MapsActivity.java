@@ -278,7 +278,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             public void onClick(DialogInterface dialogInterface, int i) {
                                     // get information to be stored in the gift history
                                     String giftName = gift.getGiftName();
-                                    String friendName = gift.getUserNickname();
+                                    String friendName = gift.getUserName();
                                     long time = gift.getTimePlaced();
                                     Gift gift_new = new Gift(giftName, true, friendName, time, gift.getLocation());
                                     gift_new.setGiftBox(gift.getGiftBox());
@@ -412,7 +412,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     // update firebase, letting it know gift was received
                     // and put this gift in the user's gift history
                     helper.removeMapGift(value.getId());
-                    Gift gift = new Gift(value.getGiftName(), true, value.getSendTo(), value.getTimePlaced(), value.getLocation());
+                    Gift gift = new Gift(value.getGiftName(), true, value.getUserName(), value.getTimePlaced(), value.getLocation());
                     gift.setGiftBox(value.getGiftBox());
                     helper.insertGift(gift, true);
                 }
