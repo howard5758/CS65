@@ -12,91 +12,105 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:id="@+id/scrollview"
+        android:layout_above="@+id/button_send">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Choose animal:"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:paddingTop="24dp"
+                android:textAlignment="center"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_animal"
-                android:padding="@dimen/fab_margin"></Spinner>
+                android:padding="@dimen/fab_margin"
+                android:textAlignment="center"></Spinner>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Choose Gift Type:"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textAlignment="center"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_gift"
-                android:padding="@dimen/fab_margin"></Spinner>
+                android:padding="@dimen/fab_margin"
+                android:textAlignment="center"></Spinner>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="(Optional) Premium Delivery Service: Send a gift to a specific person?"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textAlignment="center"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_price"/>
+                android:id="@+id/text_price"
+                android:textAlignment="center"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_friends"
-                android:padding="@dimen/fab_margin"></Spinner>
+                android:padding="@dimen/fab_margin"
+                android:textAlignment="center"></Spinner>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Leave a message with your gift:"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textAlignment="center"/>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText_message"
                 android:hint="Hi! I hope you enjoy this gift!"
-                android:focusedByDefault="false" />
+                android:focusedByDefault="false"
+                android:textAlignment="center"
+                android:onClick="onClick_edit"/>
 
         </LinearLayout>
 
     </ScrollView>
 
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Send Gift!"
-        android:id="@+id/button_send"
-        android:onClick="onClick"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="#CE93D8"
-        android:layout_above="@+id/button_cancel"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send Gift!"
+            android:id="@+id/button_send"
+            android:onClick="onClick"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:background="#CE93D8"
+            android:layout_above="@+id/button_cancel" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Never Mind"
-        android:id="@+id/button_cancel"
-        android:onClick="onClick"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="#BA68C8"
-        android:layout_alignParentBottom="true"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Never Mind"
+            android:id="@+id/button_cancel"
+            android:onClick="onClick"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:background="#BA68C8"
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 
