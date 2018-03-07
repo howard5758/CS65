@@ -210,9 +210,9 @@ public class Globals {
         ANIMAL_TO_PROB.put("giggling unicorn", .15);
         ANIMAL_TO_PROB.put("unicorn", .15);
         ANIMAL_TO_PROB.put("Corgi back", .45);
-        ANIMAL_TO_PROB.put("Corgi", .45);
-        ANIMAL_TO_PROB.put("sleeping Corgi", .45);
-        ANIMAL_TO_PROB.put("Corgi side", .45);
+        ANIMAL_TO_PROB.put("Corgi", .1);
+        ANIMAL_TO_PROB.put("sleeping Corgi", .1);
+        ANIMAL_TO_PROB.put("Corgi side", .1);
 
         // gift each animal brings after certain times of visits
         ANIMAL_TO_GIFT.put("alligator", "blue toy fish");
