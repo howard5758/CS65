@@ -55,6 +55,10 @@ import com.google.firebase.database.ValueEventListener;
  *      4. Download all the data from Firebase (threaded) so the phone is synced
  *      5. After downloading and loading pictures, make the garden visible
  *      6. Make the toolbar visible
+ *
+ * Initially we used the gravity sensor figure out how the screen was rotated so we could look
+ *   around the garden, but we decided this was a bad user experience. In remembrance of all the
+ *   work that went into it, the code remains but commented out. RIP.
  */
 
 public class MainActivity extends AppCompatActivity
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         assert mSensorManager != null;
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+//        mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         mAccel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         // fragment manager
@@ -385,36 +389,38 @@ public class MainActivity extends AppCompatActivity
             Util.nightTime = light < 5;
         }
 
-        else if (sensor.getType() == Sensor.TYPE_GRAVITY) {
-            double gX = sensorEvent.values[0];
-            double gY = sensorEvent.values[1];
-            double gZ = sensorEvent.values[2];
-            double roll = Math.atan2(gZ, gZ) * 180 / Math.PI;
-            gSum = Math.sqrt((gX*gX) + (gY*gY) + (gZ*gZ));
-
-            if (gSum != 0) {
-                gX /= gSum;
-                gY /= gSum;
-                gZ /= gSum;
-            }
-
-            if (gZ != 0) {
-                roll = Math.atan2(gX, gZ) * 180 / Math.PI;
-            }
-
-            dgX = (roll - last_roll);
-
-            // if device orientation is close to vertical then don't log it because weird values
-            if (gY > 0.99) dgX = 0;
-
-            // if rotation was too intensive – more than 180 degrees – skip it
-            if (dgX > 180) dgX = 0;
-            if (dgX < -180) dgX = 0;
-
-            Util.angle += dgX;
-
-            last_roll = roll;
-        }
+        /* we ended up not using this, but I (oliver) worked really hard figuring out the math so
+         * I didn't want to lose my baby :( */
+//        else if (sensor.getType() == Sensor.TYPE_GRAVITY) {
+//            double gX = sensorEvent.values[0];
+//            double gY = sensorEvent.values[1];
+//            double gZ = sensorEvent.values[2];
+//            double roll = Math.atan2(gZ, gZ) * 180 / Math.PI;
+//            gSum = Math.sqrt((gX*gX) + (gY*gY) + (gZ*gZ));
+//
+//            if (gSum != 0) {
+//                gX /= gSum;
+//                gY /= gSum;
+//                gZ /= gSum;
+//            }
+//
+//            if (gZ != 0) {
+//                roll = Math.atan2(gX, gZ) * 180 / Math.PI;
+//            }
+//
+//            dgX = (roll - last_roll);
+//
+//            // if device orientation is close to vertical then don't log it because weird values
+//            if (gY > 0.99) dgX = 0;
+//
+//            // if rotation was too intensive – more than 180 degrees – skip it
+//            if (dgX > 180) dgX = 0;
+//            if (dgX < -180) dgX = 0;
+//
+//            Util.angle += dgX;
+//
+//            last_roll = roll;
+//        }
 
         else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             // check if the phone was shaken
