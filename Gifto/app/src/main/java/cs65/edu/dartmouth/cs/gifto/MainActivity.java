@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity
         }
         // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
         // here, and pretty much copy all the map activity code into here
-        // so to keep the code organized, mapActicity has it's own navBar, and this navbar will
+        // so to keep the code organized, mapActivity has it's own navBar, and this navbar will
         // always have item 0 selected
         navigationView.getMenu().getItem(0).setChecked(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -293,6 +293,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, UserProfile.class));
             return true;
         } else if (id == R.id.action_logout) {
+            Util.photo = null;
             Util.firebaseAuth.signOut();
             Util.showActivity(this, LoginActivity.class);
         }
