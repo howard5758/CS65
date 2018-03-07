@@ -26,6 +26,15 @@ import java.util.ArrayList;
  *   to make sure that all the phones are sinced as quickly as possible with items on the map.
  *   For information specific to the user, the methods in this file are fast and secure enough.
  *
+ * There are four SQLite tables: Friends, Animals, Gifts, and Inventory items. See the related
+ *   classes for more information
+ *
+ * In Firebase, there are two main categories. The first is for users. Only taht specific user
+ *   has access to their information. There are four branches off of each user corresponding
+ *   to each table in SQLite. The second category is for gifts on the map. Everyone has access to
+ *   this,and it stores the information of a MapGift (see class). Since you have to be connected
+ *   to the internet to use the map, there is no point in having an SQLite table for mapGifts
+ *
  * General flow:
  * When inserting, the method will first try to insert to Firebase. If this is unsuccessful, the
  *   information is flagged. The information is then inserted into SQLite. Upon the first successful
