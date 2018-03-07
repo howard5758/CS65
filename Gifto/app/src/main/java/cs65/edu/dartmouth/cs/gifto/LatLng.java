@@ -15,6 +15,8 @@ class LatLng {
     double latitude;
     double longitude;
 
+    LatLng(){}
+
     LatLng(double lat, double lng){
         latitude = lat;
         longitude = lng;
