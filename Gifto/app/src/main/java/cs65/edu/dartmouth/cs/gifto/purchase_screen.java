@@ -32,14 +32,15 @@ public class purchase_screen extends AppCompatActivity {
         helper = new MySQLiteHelper(this);
         description = findViewById(R.id.description);
         price = findViewById(R.id.price);
-
         final String object = getIntent().getStringExtra("name");
         String type = getIntent().getStringExtra("type");
         image = findViewById(R.id.item_picture);
 
-
+        // some ui stuff based on different type of input
         switch (type) {
+
             case "gifts":
+
                 image.setImageResource(Util.getImageIdFromName(object));
                 if(object.equals(" ")){
                     String text = "Received NOTHING!!!";
@@ -51,13 +52,17 @@ public class purchase_screen extends AppCompatActivity {
                 }
                 buy.setVisibility(View.GONE);
                 break;
+
             case "goodies":
+
                 String text = "Would you like an interesting "+object+"?";
                 description.setText(text);
                 text = Globals.ITEM_TO_PRICE.get(object) + " coins each!";
                 price.setText(text);
                 break;
+
             case "pets":
+
                 Animal pet = helper.fetchAnimalByName(object);
                 buy.setVisibility(View.GONE);
                 String text1 = object + " has visited you " +
@@ -77,23 +82,22 @@ public class purchase_screen extends AppCompatActivity {
 
         image.setImageResource(Util.getImageIdFromName(object));
 
-
-
+        // this is only visible in shop's purchase_screen
         buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                // buy stuff
                 InventoryItem money = helper.fetchinventoryItemByName("money");
+                // remaining money more than price
                 if (money.getItemAmount() >= Globals.ITEM_TO_PRICE.get(object)) {
 
                     InventoryItem temp = helper.fetchinventoryItemByName(object);
                     int prev = temp.getItemAmount();
-                    Log.d("master", String.valueOf(prev));
                     temp.setItemName(object);
                     temp.setItemAmount(prev + 1);
                     helper.removeInventoryItem(object);
                     helper.insertInventory(temp, true);
-
                     prev = money.getItemAmount();
                     money.setItemAmount(prev - Globals.ITEM_TO_PRICE.get(object));
                     helper.removeInventoryItem("money");
@@ -107,10 +111,10 @@ public class purchase_screen extends AppCompatActivity {
                         fetchinventoryItemByName("money").getItemAmount())+" coins";
                 Collection.money.setText(text);
 
-
                 finish();
             }
         });
+        // cancel
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

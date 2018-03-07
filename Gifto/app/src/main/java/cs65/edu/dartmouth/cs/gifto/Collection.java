@@ -29,9 +29,7 @@ public class Collection extends ListActivity {
     item_adapter item_adapter;
     pet_adapter pet_adapter;
     gift_adapter gift_adapter;
-
     Boolean goodies, gifts, pets, selection;
-
     public ArrayList<String> goodiesCollection, shopCollection;
     public ArrayList<Animal> petCollection;
     public ArrayList<Gift> giftCollection;
@@ -47,6 +45,7 @@ public class Collection extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collection);
 
+        // initialize everything
         helper = new MySQLiteHelper(this);
         petCollection = new ArrayList<>();
         goodiesCollection = new ArrayList<>();
@@ -54,11 +53,9 @@ public class Collection extends ListActivity {
         selection_list = new ArrayList<>();
         shopCollection.addAll(Globals.ITEM_TO_TYPE.keySet());
         giftCollection = new ArrayList<>();
-
         selection_list.addAll(Globals.ITEM_TO_TYPE.keySet());
-        //listInit();
 
-
+        // get intent type
         goodies = getIntent().getBooleanExtra("goodies", false);
         gifts = getIntent().getBooleanExtra("gifts", false);
         pets = getIntent().getBooleanExtra("pets", false);
@@ -66,16 +63,19 @@ public class Collection extends ListActivity {
 
         title = (TextView) findViewById(R.id.list_title);
         money = (TextView) findViewById(R.id.money);
+
         if (goodies) {
+            // shop collection
             InventoryItem moneyy = helper.fetchinventoryItemByName("money");
             if (moneyy.getItemAmount() == -1){
+
                 moneyy.setItemName("money");
                 moneyy.setItemAmount(300);
                 helper.insertInventory(moneyy, true);
             }
             title.setText("SHOP");
-
             money.setText("You have "+ String.valueOf(helper.fetchinventoryItemByName("money").getItemAmount())+" coins");
+            // make sure the item is purchasable (some are exclusive to animal gift!)
             for(String i: shopCollection){
                 if(Globals.ITEM_TO_PRICE.containsKey(i)){
                     goodiesCollection.add(i);
@@ -84,15 +84,14 @@ public class Collection extends ListActivity {
             item_adapter = new item_adapter(this, R.layout.list_collection, goodiesCollection);
             setListAdapter(item_adapter);
 
-
+        // not much for gift, just show history
         } else if (gifts) {
 
             title.setText("GIFTS");
             giftCollection = helper.fetchAllGifts();
             gift_adapter = new gift_adapter(this, R.layout.list_collection, giftCollection);
             setListAdapter(gift_adapter);
-
-
+        // pet history
         } else if (pets){
 
             title.setText("PETS");
@@ -100,14 +99,14 @@ public class Collection extends ListActivity {
             pet_adapter = new pet_adapter(this, R.layout.list_collection, petCollection);
             setListAdapter(pet_adapter);
 
-
-
+        // select an item to place
         } else if(selection){
+
             title.setText("Choose an item to place!");
             loc_type = getIntent().getIntExtra("loc_type", 0);
 
+            // make sure the items can be place on the location
             Iterator<String> iter = selection_list.iterator();
-
             while(iter.hasNext()) {
                 String i = iter.next();
                 if(loc_type == 1 && Globals.ITEM_TO_TYPE.get(i) != 0){
@@ -131,15 +130,18 @@ public class Collection extends ListActivity {
             item_adapter = new item_adapter(this, R.layout.list_collection, selection_list);
             setListAdapter(item_adapter);
         }
-
     }
 
+    // go to purchase_screen activity by clicking, or place an item
     @Override
     public void onListItemClick(ListView parent, View v, int position, long id) {
         super.onListItemClick(parent, v, position, id);
 
+        // place the item
         if(selection){
+
             InventoryItem temp = helper.fetchinventoryItemByName(selection_list.get(position));
+            // cant put same item in garden
             if(temp.getPresent() != -1){
                 Toast.makeText(getBaseContext(), "Can't put same item in garden!", Toast.LENGTH_SHORT).show();
                 finish();
@@ -148,16 +150,19 @@ public class Collection extends ListActivity {
                 int prev = temp.getItemAmount();
                 temp.setItemAmount(prev - 1);
 
-
                 if (loc_type == 1) {
+                    // replace original item
                     if (!Garden.item1_name.getText().equals("")) {
+
                         InventoryItem prev_item = helper.fetchinventoryItemByName((String) Garden.item1_name.getText());
                         prev_item.setPresent(-1);
                         //prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                         helper.removeInventoryItem(prev_item.getItemName());
                         helper.insertInventory(prev_item, true);
                     }
+                    // original animal left after changing the item
                     if (!Garden.animal1_name.getText().equals("")) {
+
                         Animal prev_animal = helper.fetchAnimalByName((String) Garden.animal1_name.getText());
                         prev_animal.setPresent(-1);
                         helper.removeAnimal(prev_animal.getAnimalName());
@@ -168,15 +173,21 @@ public class Collection extends ListActivity {
                     Garden.loc1.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
                     Garden.item1_name.setText(selection_list.get(position));
                     temp.setPresent(1);
+
+                // same stuff
                 } else if (loc_type == 2) {
+
                     if (!Garden.item2_name.getText().equals("")) {
+
                         InventoryItem prev_item = helper.fetchinventoryItemByName((String) Garden.item2_name.getText());
                         prev_item.setPresent(-1);
                         prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                         helper.removeInventoryItem(prev_item.getItemName());
                         helper.insertInventory(prev_item, true);
                     }
+
                     if (!Garden.animal2_name.getText().equals("")) {
+
                         Animal prev_animal = helper.fetchAnimalByName((String) Garden.animal2_name.getText());
                         prev_animal.setPresent(-1);
                         helper.removeAnimal(prev_animal.getAnimalName());
@@ -187,15 +198,20 @@ public class Collection extends ListActivity {
                     Garden.loc2.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
                     Garden.item2_name.setText(selection_list.get(position));
                     temp.setPresent(2);
+                // same stuff
                 } else if (loc_type == 3) {
+
                     if (!Garden.item3_name.getText().equals("")) {
+
                         InventoryItem prev_item = helper.fetchinventoryItemByName((String) Garden.item3_name.getText());
                         prev_item.setPresent(-1);
                         prev_item.setItemAmount(prev_item.getItemAmount() + 1);
                         helper.removeInventoryItem(prev_item.getItemName());
                         helper.insertInventory(prev_item, true);
                     }
+
                     if (!Garden.animal3_name.getText().equals("")) {
+
                         Animal prev_animal = helper.fetchAnimalByName((String) Garden.animal3_name.getText());
                         prev_animal.setPresent(-1);
                         helper.removeAnimal(prev_animal.getAnimalName());
@@ -206,7 +222,10 @@ public class Collection extends ListActivity {
                     Garden.loc3.setImageResource(Util.getImageIdFromName(selection_list.get(position)));
                     Garden.item3_name.setText(selection_list.get(position));
                     temp.setPresent(3);
+
+                // same stuff
                 } else if (loc_type == 4) {
+
                     if (!Garden.item4_name.getText().equals("")) {
                         InventoryItem prev_item = helper.fetchinventoryItemByName((String) Garden.item4_name.getText());
                         prev_item.setPresent(-1);
@@ -214,7 +233,9 @@ public class Collection extends ListActivity {
                         helper.removeInventoryItem(prev_item.getItemName());
                         helper.insertInventory(prev_item, true);
                     }
+
                     if (!Garden.animal4_name.getText().equals("")) {
+
                         Animal prev_animal = helper.fetchAnimalByName((String) Garden.animal4_name.getText());
                         prev_animal.setPresent(-1);
                         helper.removeAnimal(prev_animal.getAnimalName());
@@ -231,12 +252,14 @@ public class Collection extends ListActivity {
                 finish();
             }
         }
+        // rather simple for the other parts
         else {
+
+            // go to purchase_screen
             Intent intent = new Intent(this, purchase_screen.class);
             if (goodies) {
                 intent.putExtra("name", goodiesCollection.get(position));
                 intent.putExtra("type", "goodies");
-
             } else if (pets) {
                 intent.putExtra("name", petCollection.get(position).getAnimalName());
                 intent.putExtra("type", "pets");
@@ -249,6 +272,10 @@ public class Collection extends ListActivity {
             startActivity(intent);
         }
     }
+
+    ///////////////////////////////////////////////////////////////
+    // a few list adapters
+    //////////////////////////////////////////////////////////////
 
     public class item_adapter extends ArrayAdapter<String>{
 
@@ -265,7 +292,6 @@ public class Collection extends ListActivity {
                 view = LayoutInflater.from(getContext()).inflate(R.layout.list_collection, parent, false);
             }
 
-
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
 
@@ -275,11 +301,8 @@ public class Collection extends ListActivity {
             } else {
                 namee.setText(getItem(position));
             }
-
             return view;
         }
-
-
     }
 
 
@@ -325,24 +348,17 @@ public class Collection extends ListActivity {
                 view = LayoutInflater.from(getContext()).inflate(R.layout.list_collection, parent, false);
             }
 
-
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
-            Log.d("master", getItem(position).getAnimalName());
             image.setImageResource(Util.getImageIdFromName(getItem(position).getAnimalName()));
 
             if(getItem(position).getPresent() == -1){
-                namee.setText(getItem(position).getAnimalName() + "   Not Present.");
+                namee.setText(getItem(position).getAnimalName() + "   GONE!");
             }
             else {
-                namee.setText(getItem(position).getAnimalName() + "   At " + String.valueOf(getItem(position).getPresent()));
+                namee.setText(getItem(position).getAnimalName() + "   HERE!");
             }
-
             return view;
         }
-
-
     }
-
-
 }
