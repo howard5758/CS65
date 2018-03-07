@@ -8,17 +8,15 @@ import java.io.Serializable;
  * Class to store information on a single animal
  * Preferably this would be passed to MySQLiteHelper in order to make the entries
  *
- * 2 possibilities for storing data:
- *      1: store animals one by one as they are seen and keep track of all animal data, seen and
- *          unseen, as a static variable somewhere, probably a list or struct, that also keeps track
- *          of if the animals have been seen
- *      2: store all animals in the SQLite database right off the bat, and the only data that is
- *          changed is the column saying if te cat has been seen or not
- *
- * haven't decided which I'm going to use; will discuss
+ * An Animal is anything that can come to the garden
+ *      animalName: the identifier of the animal (cat, dog, monkey, etc)
+ *      numVisits: the number of times the animal has visited
+ *      rarity: the likelihood that an animal will show up at any given point in the garden
+ *      persistence: how long the animal will stay once it has showed up
+ *      present: the location the animal currently occupies in the garden. -1 if not currently there
  */
 
-public class Animal implements Serializable {
+class Animal implements Serializable {
     private String animalName;
     private int numVisits;
     private int rarity;
@@ -33,51 +31,43 @@ public class Animal implements Serializable {
         present = -1;
     }
 
-    Animal(String animalName, int numVisits, int rarity, long persistence, int present) {
-        this.animalName = animalName;
-        this.numVisits = numVisits;
-        this.rarity = rarity;
-        this.persistence = persistence;
-        this.present = present;
-    }
-
-    public String getAnimalName() {
+    String getAnimalName() {
         return animalName;
     }
 
-    public void setAnimalName(String animalName) {
+    void setAnimalName(String animalName) {
         this.animalName = animalName;
     }
 
-    public int getNumVisits() {
+    int getNumVisits() {
         return numVisits;
     }
 
-    public void setNumVisits(int numVisits) {
+    void setNumVisits(int numVisits) {
         this.numVisits = numVisits;
     }
 
-    public int getRarity() {
+    int getRarity() {
         return rarity;
     }
 
-    public void setRarity(int rarity) {
+    void setRarity(int rarity) {
         this.rarity = rarity;
     }
 
-    public long getPersistence() {
+    long getPersistence() {
         return persistence;
     }
 
-    public void setPersistence(long persistence) {
+    void setPersistence(long persistence) {
         this.persistence = persistence;
     }
 
-    public int getPresent() {
+    int getPresent() {
         return present;
     }
 
-    public void setPresent(int present) {
+    void setPresent(int present) {
         this.present = present;
     }
 }

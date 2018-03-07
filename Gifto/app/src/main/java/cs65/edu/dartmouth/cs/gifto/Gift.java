@@ -1,14 +1,23 @@
 package cs65.edu.dartmouth.cs.gifto;
 
-import com.google.android.gms.maps.model.LatLng;
-
 /**
  * Created by Oliver on 2/25/2018.
  *
  * Class to store gift information
  * Preferably would be passed into MySQLiteHelper
  *
- * Could potentially assign another variable storing drawing information? Same with other classes
+ * A Gift is anything that you pick up from the map or anything that an animal brings you. Usually,
+ *   a Gift can be placed in the Garden to attract more animals
+ *      id: the Firebase ID of a specific gift. Used to make finding the gift easier
+ *      giftName: the unique name of the gift
+ *      sent: whether the gift was sent to someone or received from someone, for display later. If
+ *        it was from an animal, then sent is false as the gift was received from that animal
+ *      friendName: the name of the friend (or animal) who gave you the gift, or your name if you
+ *        sent the gift
+ *      time: the time in milliseconds the gift was placed or picked up
+ *      location: the Latitude and Longitude of where the gift was placed
+ *      giftBox: the type of gift box that the particular gift should be wrapped in
+ *
  */
 
 public class Gift {
@@ -38,27 +47,27 @@ public class Gift {
         this.location = location;
     }
 
-    public String getGiftName() {
+    String getGiftName() {
         return giftName;
     }
 
-    public void setGiftName(String giftName) {
+    void setGiftName(String giftName) {
         this.giftName = giftName;
     }
 
-    public boolean isSent() {
+    boolean isSent() {
         return sent;
     }
 
-    public void setSent(boolean sent) {
+    void setSent(boolean sent) {
         this.sent = sent;
     }
 
-    public String getFriendName() {
+    String getFriendName() {
         return friendName;
     }
 
-    public void setFriendName(String friendName) {
+    void setFriendName(String friendName) {
         this.friendName = friendName;
     }
 
@@ -70,11 +79,11 @@ public class Gift {
         this.time = time;
     }
 
-    public cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
+    cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
         return location;
     }
 
-    public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
+    void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
     }
 
@@ -86,11 +95,11 @@ public class Gift {
         this.id = id;
     }
 
-    public int getGiftBox() {
+    int getGiftBox() {
         return giftBox;
     }
 
-    public void setGiftBox(int giftBox) {
+    void setGiftBox(int giftBox) {
         this.giftBox = giftBox;
     }
 }

@@ -11,37 +11,16 @@ package cs65.edu.dartmouth.cs.gifto;
  * this LatLng has a method which easily converts it to a google LatLng, if you need it
  */
 
-public class LatLng {
-    public double latitude;
-    public double longitude;
-
-
-    LatLng(){
-
-    }
+class LatLng {
+    double latitude;
+    double longitude;
 
     LatLng(double lat, double lng){
         latitude = lat;
         longitude = lng;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public com.google.android.gms.maps.model.LatLng toGoogleLatLng(){
+    com.google.android.gms.maps.model.LatLng toGoogleLatLng(){
         return new com.google.android.gms.maps.model.LatLng(latitude, longitude);
     }
 }
