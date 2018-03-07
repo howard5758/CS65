@@ -281,7 +281,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     String friendName = gift.getUserNickname();
                                     long time = gift.getTimePlaced();
                                     Gift gift_new = new Gift(giftName, true, friendName, time, gift.getLocation());
-                                    gift.setGiftBox(gift.getGiftBox());
+                                    gift_new.setGiftBox(gift.getGiftBox());
                                     // update the gift history (both in sql and firebase)
                                     helper.insertGift(gift_new, true);
                                     // don't let this gift get picked up again
@@ -452,7 +452,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // so convert it
                 int giftbox = 0;
                 for(int i=0; i<Globals.INT_TO_BOX.size(); i++) {
-                    if(Globals.INT_TO_BOX.get(i) == giftbox_name) {
+                    if(Globals.INT_TO_BOX.get(i).equals(giftbox_name)) {
                         giftbox = i;
                         break;
                     }
@@ -471,6 +471,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(Globals.ITEM_TO_TYPE.get(giftName) != null) {
                     InventoryItem item = helper.fetchinventoryItemByName(giftName);
                     item.setItemAmount(item.getItemAmount() - 1);
+                    helper.removeInventoryItem(item.getItemName());
                     helper.insertInventory(item, true);
                 }
             } // user does not want to send a gift anymore
