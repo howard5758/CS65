@@ -6,9 +6,14 @@ import java.io.Serializable;
  * Created by Oliver on 2/25/2018.
  *
  * Another simple class to keep track of an inventory item
+ *
+ * an InventoryItem is anything that you currently own. This includes gifts, food, and money
+ *      itemName: the unique name of the item
+ *      itemAmount: how much of an item you own
+ *      present: the position of the item in the garden. -1 if item is not currently in the garden
  */
 
-public class InventoryItem implements Serializable {
+class InventoryItem implements Serializable {
     private String itemName;
     private int itemAmount;
     private int present; // location
@@ -24,23 +29,23 @@ public class InventoryItem implements Serializable {
         this.itemAmount = itemAmount;
     }
 
-    public int getItemAmount() {
+    int getItemAmount() {
         return itemAmount;
     }
 
-    public void setItemAmount(int itemAmount) {
+    void setItemAmount(int itemAmount) {
         this.itemAmount = itemAmount;
     }
 
-    public String getItemName() { return itemName; }
+    String getItemName() { return itemName; }
 
-    public void setItemName(String itemName) { this.itemName = itemName; }
+    void setItemName(String itemName) { this.itemName = itemName; }
 
-    public int getPresent() {
+    int getPresent() {
         return present;
     }
 
-    public void setPresent(int present) {
+    void setPresent(int present) {
         this.present = present;
     }
 }

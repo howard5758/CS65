@@ -19,6 +19,9 @@ import java.util.Arrays;
  * This class is used for storing all the Firebase data as well as handling specific Firebase tasks
  * The top four variables are assigned in onCreate of MainActivity and should always be used
  *   in lieu of local variables
+ *
+ * This class also handles a few things related to sensors, since the information from them
+ *   needs to be used global but they are not constants like in the Globals file
  */
 
 class Util {
@@ -34,6 +37,7 @@ class Util {
     static double angle = 0;
     static boolean shaking;
 
+    /* Dialog to show when a using is logging in or signing up */
     static void showDialog(Context context, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
@@ -43,6 +47,7 @@ class Util {
         dialog.show();
     }
 
+    /* Start an activity from the log in screen */
     static void showActivity(Context context, Class c) {
         Intent intent = new Intent(context, c);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
