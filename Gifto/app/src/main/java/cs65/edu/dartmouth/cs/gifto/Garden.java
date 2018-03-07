@@ -39,6 +39,8 @@ public class Garden extends Fragment {
     public static MySQLiteHelper helper;
     public static TextView item1_name, item2_name, item3_name, item4_name, animal1_name, animal2_name, animal3_name, animal4_name;
 
+    public static Button button_food, button_gifts, button_animals, button_place1, button_place2, button_place3, button_place4;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -50,8 +52,6 @@ public class Garden extends Fragment {
         place3 = Globals.EMPTY;
         place4 = Globals.EMPTY;
         helper = new MySQLiteHelper(getActivity());
-
-
     }
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -75,17 +75,14 @@ public class Garden extends Fragment {
         animal3_name = (TextView)view.findViewById(R.id.animal3_name);
         animal4_name = (TextView)view.findViewById(R.id.animal4_name);
 
-        Button button_food = view.findViewById(R.id.button_food);
-        Button button_gifts = view.findViewById(R.id.button_gift_collections);
-        Button button_animals = view.findViewById(R.id.button_pet_collections);
+        button_food = view.findViewById(R.id.button_food);
+        button_gifts = view.findViewById(R.id.button_gift_collections);
+        button_animals = view.findViewById(R.id.button_pet_collections);
 
-        Button button_place1 = view.findViewById(R.id.button_place1);
-        Button button_place2 = view.findViewById(R.id.button_place2);
-        Button button_place3 = view.findViewById(R.id.button_place3);
-        Button button_place4 = view.findViewById(R.id.button_place4);
-        Button button_expand_left = view.findViewById(R.id.expand_left);
-        Button button_expand_right = view.findViewById(R.id.expand_right);
-
+        button_place1 = view.findViewById(R.id.button_place1);
+        button_place2 = view.findViewById(R.id.button_place2);
+        button_place3 = view.findViewById(R.id.button_place3);
+        button_place4 = view.findViewById(R.id.button_place4);
 
 
         // Food button
@@ -118,25 +115,6 @@ public class Garden extends Fragment {
             }
         });
 
-        // Expand on the left side button, if no left side of garden, hint the users they can expand
-        // their garden
-        button_expand_left.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "Currently no left side",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Expand on the right side button, if no right side of garden, hint the users they can expand
-        // their garden
-        button_expand_right.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "Currently no right side",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
 
         button_place1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,14 +170,15 @@ public class Garden extends Fragment {
 
     }
 
-    public View setBackground(View view){
-        if (background == Globals.DEFAULT_BACKGROUND){
-            ImageView bg = (ImageView) view.findViewById(R.id.bg);
-            bg.setImageResource(R.drawable.bg_plain);
-        }
-
-        return view;
-    }
+//    public View setBackground(View view){
+//        if (background == Globals.DEFAULT_BACKGROUND){
+//            ImageView bg = (ImageView) view.findViewById(R.id.bg);
+//            bg.setImageResource(R.drawable.bg_plain);
+////            bg.setImageResource(R.drawable.load_page);
+//        }
+//
+//        return view;
+//    }
 
     public static void check_animals(){
         ArrayList<InventoryItem> items = helper.fetchAllInventoryItems();

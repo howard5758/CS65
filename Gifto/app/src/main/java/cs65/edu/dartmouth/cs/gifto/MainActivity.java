@@ -26,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         @SuppressLint("CutPasteId") DrawerLayout layout = findViewById(R.id.drawer_layout);
-        layout.setBackgroundResource(R.drawable.bg_plain);
+        layout.setBackgroundResource(R.drawable.load_page);
 
         // sensors
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -178,6 +179,11 @@ public class MainActivity extends AppCompatActivity
                     endListener();
                     Util.completed = true;
                     Garden.check_animals();
+                    @SuppressLint("CutPasteId") DrawerLayout layout = findViewById(R.id.drawer_layout);
+                    layout.setBackgroundResource(R.drawable.bg_plain);
+                    Garden.button_food.setVisibility(View.VISIBLE);
+                    Garden.button_gifts.setVisibility(View.VISIBLE);
+                    Garden.button_animals.setVisibility(View.VISIBLE);
                 }
 
                 @Override

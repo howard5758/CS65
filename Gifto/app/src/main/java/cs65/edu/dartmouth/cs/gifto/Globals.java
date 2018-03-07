@@ -16,6 +16,7 @@ public class Globals {
 
     // list of animals, animal size and items, gifts, and gift size and money hashmap
     public static final Map<String, Integer> ANIMAL_TO_TYPE = new HashMap<String, Integer>();
+    public static final Map<String, String> ANIMAL_TO_NIGHT = new HashMap<String, String>();
     public static final Map<String, Integer> ITEM_TO_TYPE = new HashMap<String, Integer>();
     public static final Map<String, Integer> ITEM_TO_PRICE = new HashMap<String, Integer>();
     public static final Map<String, Integer> BOX_TO_TYPE = new HashMap<String, Integer>();
@@ -28,6 +29,8 @@ public class Globals {
             new HashMap<String, ArrayList<String>>();
     public static final ArrayList<String> INT_TO_BOX = new ArrayList<String> (Arrays.asList("", "blue bag", "green bag", "pink bag", "red bag", "black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope”, “black mole bag", "blue mole bag", "green mole bag", "purple mole bag", "tiffany box", "dog food bag", "lucky bag", "envelope"));
 
+    
+    
     static {
         /** animals: 0: small, can only carry messages
          * 1: medium, can carry messages and small items
@@ -37,24 +40,20 @@ public class Globals {
         ANIMAL_TO_TYPE.put("alligator", 2);
         ANIMAL_TO_TYPE.put("sleeping bat", 0);
         ANIMAL_TO_TYPE.put("bat", 0);
-        ANIMAL_TO_TYPE.put("cat head", 1);
         ANIMAL_TO_TYPE.put("sleeping cat", 1);
         ANIMAL_TO_TYPE.put("cat", 1);
         ANIMAL_TO_TYPE.put("kangaroo", 2);
         ANIMAL_TO_TYPE.put("sleeping kangaroo", 2);
         ANIMAL_TO_TYPE.put("monkey", 1);
-        ANIMAL_TO_TYPE.put("monkey head", 1);
         ANIMAL_TO_TYPE.put("sleeping monkey", 1);
         ANIMAL_TO_TYPE.put("monkey on tree with banana", 1);
         ANIMAL_TO_TYPE.put("monkey on tree", 1);
         ANIMAL_TO_TYPE.put("owl", 0);
         ANIMAL_TO_TYPE.put("sleeping owl", 0);
-        ANIMAL_TO_TYPE.put("American Shorthair head", 1);
         ANIMAL_TO_TYPE.put("Sleeping American Shorthair", 1);
         ANIMAL_TO_TYPE.put("American Shorthair", 1);
         ANIMAL_TO_TYPE.put("sleeping Siamese Cat", 1);
         ANIMAL_TO_TYPE.put("Siamese Cat", 1);
-        ANIMAL_TO_TYPE.put("Siamese Cat head", 1);
         ANIMAL_TO_TYPE.put("sleeping pink squirrel", 0);
         ANIMAL_TO_TYPE.put("pink squirrel", 0);
         ANIMAL_TO_TYPE.put("sleeping squirrel", 0);
@@ -67,8 +66,28 @@ public class Globals {
         ANIMAL_TO_TYPE.put("Corgi", 1);
         ANIMAL_TO_TYPE.put("sleeping Corgi", 1);
         ANIMAL_TO_TYPE.put("Corgi side", 1);
-        ANIMAL_TO_TYPE.put("Corgi head", 1);
 
+        // night image of each animal
+        ANIMAL_TO_NIGHT.put("alligator", "sleeping alligator");
+        ANIMAL_TO_NIGHT.put("sleeping bat", "bat");
+        ANIMAL_TO_NIGHT.put("cat", "sleeping cat");
+        ANIMAL_TO_NIGHT.put("kangaroo", "sleeping kangaroo");
+        ANIMAL_TO_NIGHT.put("monkey", "sleeping monkey");
+        ANIMAL_TO_NIGHT.put("monkey on tree with banana", "monkey on tree with banana");
+        ANIMAL_TO_NIGHT.put("monkey on tree", "monkey on tree");
+        ANIMAL_TO_NIGHT.put("sleeping owl", "owl");
+        ANIMAL_TO_NIGHT.put("American Shorthair", "Sleeping American Shorthair");
+        ANIMAL_TO_NIGHT.put("Siamese Cat", "sleeping Siamese Cat");
+        ANIMAL_TO_NIGHT.put("pink squirrel", "sleeping pink squirrel");
+        ANIMAL_TO_NIGHT.put("squirrel", "sleeping squirrel");
+        ANIMAL_TO_NIGHT.put("unicorn with grass", "sleeping unicorn");
+        ANIMAL_TO_NIGHT.put("giggling unicorn", "sleeping unicorn");
+        ANIMAL_TO_NIGHT.put("unicorn", "sleeping unicorn");
+        ANIMAL_TO_NIGHT.put("Corgi back", "sleeping Corgi");
+        ANIMAL_TO_NIGHT.put("Corgi", "sleeping Corgi");
+        ANIMAL_TO_NIGHT.put("Corgi side", "sleeping Corgi");
+        
+        
         /** items: 0: food, place1 in garden, can't be given as gift
          * 1: small, place2, place3, or place4 in garden, carried by medium and large animals
          * 2: large, place2, place3 in garden, carried by large animals
@@ -155,24 +174,20 @@ public class Globals {
         ANIMAL_TO_PROB.put("alligator", .2);
         ANIMAL_TO_PROB.put("sleeping bat", .25);
         ANIMAL_TO_PROB.put("bat", .25);
-        ANIMAL_TO_PROB.put("cat head", .3);
         ANIMAL_TO_PROB.put("sleeping cat", .3);
         ANIMAL_TO_PROB.put("cat", .3);
         ANIMAL_TO_PROB.put("kangaroo", .1);
         ANIMAL_TO_PROB.put("sleeping kangaroo", .1);
         ANIMAL_TO_PROB.put("monkey", .3);
-        ANIMAL_TO_PROB.put("monkey head", .3);
         ANIMAL_TO_PROB.put("sleeping monkey", .3);
         ANIMAL_TO_PROB.put("monkey on tree with banana", .5);
         ANIMAL_TO_PROB.put("monkey on tree", .3);
         ANIMAL_TO_PROB.put("owl", .2);
         ANIMAL_TO_PROB.put("sleeping owl", .2);
-        ANIMAL_TO_PROB.put("American Shorthair head", .3);
         ANIMAL_TO_PROB.put("sleeping American Shorthair", .3);
         ANIMAL_TO_PROB.put("American Shorthair", .3);
         ANIMAL_TO_PROB.put("sleeping Siamese Cat", .25);
         ANIMAL_TO_PROB.put("Siamese Cat", .25);
-        ANIMAL_TO_PROB.put("Siamese Cat head", .25);
         ANIMAL_TO_PROB.put("sleeping pink squirrel", .2);
         ANIMAL_TO_PROB.put("pink squirrel", .2);
         ANIMAL_TO_PROB.put("sleeping squirrel", .2);
@@ -185,7 +200,6 @@ public class Globals {
         ANIMAL_TO_PROB.put("Corgi", .5);
         ANIMAL_TO_PROB.put("sleeping Corgi", .3);
         ANIMAL_TO_PROB.put("Corgi side", .2);
-        ANIMAL_TO_PROB.put("Corgi head", .2);
 
         // gift each animal brings after certain times of visits
         ANIMAL_TO_GIFT.put("alligator", "blue toy fish");
@@ -243,24 +257,20 @@ public class Globals {
         ANIMAL_TO_BOX_LIST.put("alligator",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag")));
         ANIMAL_TO_BOX_LIST.put("sleeping bat",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
         ANIMAL_TO_BOX_LIST.put("bat",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
-        ANIMAL_TO_BOX_LIST.put("cat head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("kangaroo",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag", "watermelon bag","lucky bag","black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
         ANIMAL_TO_BOX_LIST.put("sleeping kangaroo",new ArrayList<String> (Arrays.asList("blue bag", "green bag", "pink bag", "red bag", "watermelon bag","lucky bag","black mole bag", "blue mole bag", "green mole bag", "purple mole bag")));
         ANIMAL_TO_BOX_LIST.put("monkey",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
-        ANIMAL_TO_BOX_LIST.put("monkey head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping monkey",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("monkey on tree with banana",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("monkey on tree",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("owl",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping owl",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
-        ANIMAL_TO_BOX_LIST.put("American Shorthair head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping American Shorthair",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("American Shorthair",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping Siamese Cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("Siamese Cat",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
-        ANIMAL_TO_BOX_LIST.put("Siamese Cat head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box","tiffany box", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping pink squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
         ANIMAL_TO_BOX_LIST.put("pink squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
         ANIMAL_TO_BOX_LIST.put("sleeping squirrel",new ArrayList<String> (Arrays.asList("tiffany box", "dog food bag", "lucky bag", "envelope")));
@@ -273,7 +283,7 @@ public class Globals {
         ANIMAL_TO_BOX_LIST.put("Corgi",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
         ANIMAL_TO_BOX_LIST.put("sleeping Corgi",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
         ANIMAL_TO_BOX_LIST.put("Corgi side",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
-        ANIMAL_TO_BOX_LIST.put("Corgi head",new ArrayList<String> (Arrays.asList("watermelon bag", "blue box", "green box", "purple box", "red box", "yellow box", "dog food bag", "lucky bag")));
+
     }
 
 }
