@@ -23,7 +23,7 @@ public class Animal implements Serializable {
     private long persistence;
     private int present;
 
-    Animal(){
+    public Animal(){
         animalName = "";
         numVisits = 0;
         rarity = -1;
@@ -31,43 +31,43 @@ public class Animal implements Serializable {
         present = -1;
     }
 
-    String getAnimalName() {
+    public String getAnimalName() {
         return animalName;
     }
 
-    void setAnimalName(String animalName) {
+    public void setAnimalName(String animalName) {
         this.animalName = animalName;
     }
 
-    int getNumVisits() {
+    public int getNumVisits() {
         return numVisits;
     }
 
-    void setNumVisits(int numVisits) {
+    public void setNumVisits(int numVisits) {
         this.numVisits = numVisits;
     }
 
-    int getRarity() {
+    public int getRarity() {
         return rarity;
     }
 
-    void setRarity(int rarity) {
+    public void setRarity(int rarity) {
         this.rarity = rarity;
     }
 
-    long getPersistence() {
+    public long getPersistence() {
         return persistence;
     }
 
-    void setPersistence(long persistence) {
+    public void setPersistence(long persistence) {
         this.persistence = persistence;
     }
 
-    int getPresent() {
+    public int getPresent() {
         return present;
     }
 
-    void setPresent(int present) {
+    public void setPresent(int present) {
         this.present = present;
     }
 }

@@ -13,39 +13,39 @@ import java.io.Serializable;
  *      present: the position of the item in the garden. -1 if item is not currently in the garden
  */
 
-class InventoryItem implements Serializable {
+public class InventoryItem implements Serializable {
     private String itemName;
     private int itemAmount;
     private int present; // location
 
-    InventoryItem(){
+    public InventoryItem(){
         itemName = "";
         itemAmount = 0;
         present = -1;
     }
 
-    InventoryItem(String itemName, int itemAmount) {
+    public InventoryItem(String itemName, int itemAmount) {
         this.itemName = itemName;
         this.itemAmount = itemAmount;
     }
 
-    int getItemAmount() {
+    public int getItemAmount() {
         return itemAmount;
     }
 
-    void setItemAmount(int itemAmount) {
+    public void setItemAmount(int itemAmount) {
         this.itemAmount = itemAmount;
     }
 
-    String getItemName() { return itemName; }
+    public String getItemName() { return itemName; }
 
-    void setItemName(String itemName) { this.itemName = itemName; }
+    public void setItemName(String itemName) { this.itemName = itemName; }
 
-    int getPresent() {
+    public int getPresent() {
         return present;
     }
 
-    void setPresent(int present) {
+    public void setPresent(int present) {
         this.present = present;
     }
 }

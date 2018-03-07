@@ -31,7 +31,7 @@ public class Gift implements Serializable{
     private cs65.edu.dartmouth.cs.gifto.LatLng location;
     private int giftBox;
 
-    Gift(){
+    public Gift(){
         id = "";
         giftName = "";
         sent = false;
@@ -41,7 +41,7 @@ public class Gift implements Serializable{
         giftBox = -1;
     }
 
-    Gift(String giftName, boolean sent, String friendName, long time, cs65.edu.dartmouth.cs.gifto.LatLng location) {
+    public Gift(String giftName, boolean sent, String friendName, long time, cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.giftName = giftName;
         this.sent = sent;
         this.friendName = friendName;
@@ -49,27 +49,27 @@ public class Gift implements Serializable{
         this.location = location;
     }
 
-    String getGiftName() {
+    public String getGiftName() {
         return giftName;
     }
 
-    void setGiftName(String giftName) {
+    public void setGiftName(String giftName) {
         this.giftName = giftName;
     }
 
-    boolean isSent() {
+    public boolean isSent() {
         return sent;
     }
 
-    void setSent(boolean sent) {
+    public void setSent(boolean sent) {
         this.sent = sent;
     }
 
-    String getFriendName() {
+    public String getFriendName() {
         return friendName;
     }
 
-    void setFriendName(String friendName) {
+    public void setFriendName(String friendName) {
         this.friendName = friendName;
     }
 
@@ -81,11 +81,11 @@ public class Gift implements Serializable{
         this.time = time;
     }
 
-    cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
+    public cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
         return location;
     }
 
-    void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
+    public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
     }
 
@@ -97,11 +97,11 @@ public class Gift implements Serializable{
         this.id = id;
     }
 
-    int getGiftBox() {
+    public int getGiftBox() {
         return giftBox;
     }
 
-    void setGiftBox(int giftBox) {
+    public void setGiftBox(int giftBox) {
         this.giftBox = giftBox;
     }
 }

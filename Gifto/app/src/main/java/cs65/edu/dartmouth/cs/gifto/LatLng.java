@@ -17,14 +17,30 @@ public class LatLng implements Serializable{
     double latitude;
     double longitude;
 
-    LatLng(){}
+    public LatLng(){}
 
-    LatLng(double lat, double lng){
+    public LatLng(double lat, double lng){
         latitude = lat;
         longitude = lng;
     }
 
-    com.google.android.gms.maps.model.LatLng toGoogleLatLng(){
+    public void setLatitude(double lat) {
+        this.latitude = lat;
+    }
+
+    public double getLatitude() {
+        return this.latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLongitude() {
+        return this.longitude;
+    }
+
+    public com.google.android.gms.maps.model.LatLng toGoogleLatLng(){
         return new com.google.android.gms.maps.model.LatLng(latitude, longitude);
     }
 }

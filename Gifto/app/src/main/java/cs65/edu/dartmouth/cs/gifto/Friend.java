@@ -22,33 +22,33 @@ public class Friend implements Serializable{
     private String firebaseId;
 
     // if you want to just make an empty friend
-    Friend(){
+    public Friend(){
         email = "";
         nickname = "";
         firebaseId = "";
     }
 
-    String getNickname() {
+    public String getNickname() {
         return nickname;
     }
 
-    void setNickname(String nickname) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    void setEmail(String name) {
+    public void setEmail(String name) {
         this.email = name;
     }
 
-    String getFirebaseId() {
+    public String getFirebaseId() {
         return firebaseId;
     }
 
-    void setFirebaseId(String firebaseId) {
+    public void setFirebaseId(String firebaseId) {
         this.firebaseId = firebaseId;
     }
 }

@@ -32,7 +32,7 @@ public class MapGift implements Serializable{
     private String sendTo;          // email address!!
     private int giftBox;
 
-    MapGift(){
+    public MapGift(){
         id = "";
         giftName = "";
         userName = "";
@@ -45,7 +45,7 @@ public class MapGift implements Serializable{
         giftBox = -1;
     }
 
-    MapGift(String giftName, String userName, String userNickname, String message,
+    public MapGift(String giftName, String userName, String userNickname, String message,
                    String animalName, cs65.edu.dartmouth.cs.gifto.LatLng location,
                    long timePlaced, String sendTo, int giftBox) {
         this.giftName = giftName;
@@ -59,19 +59,19 @@ public class MapGift implements Serializable{
         this.giftBox = giftBox;
     }
 
-    String getGiftName() {
+    public String getGiftName() {
         return giftName;
     }
 
-    void setGiftName(String giftName) {
+    public void setGiftName(String giftName) {
         this.giftName = giftName;
     }
 
-    String getUserName() {
+    public String getUserName() {
         return userName;
     }
 
-    void setUserName(String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -87,31 +87,31 @@ public class MapGift implements Serializable{
         return animalName;
     }
 
-    void setAnimalName(String animalName) {
+    public void setAnimalName(String animalName) {
         this.animalName = animalName;
     }
 
-    cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
+    public cs65.edu.dartmouth.cs.gifto.LatLng getLocation() {
         return location;
     }
 
-    void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
+    public void setLocation(cs65.edu.dartmouth.cs.gifto.LatLng location) {
         this.location = location;
     }
 
-    long getTimePlaced() {
+    public long getTimePlaced() {
         return timePlaced;
     }
 
-    void setTimePlaced(long timePlaced) {
+    public void setTimePlaced(long timePlaced) {
         this.timePlaced = timePlaced;
     }
 
-    String getUserNickname() {
+    public String getUserNickname() {
         return userNickname;
     }
 
-    void setUserNickname(String userNickname) {
+    public void setUserNickname(String userNickname) {
         this.userNickname = userNickname;
     }
 
@@ -123,7 +123,7 @@ public class MapGift implements Serializable{
         this.id = id;
     }
 
-    String getSendTo() {
+    public String getSendTo() {
         return sendTo;
     }
 
@@ -131,11 +131,11 @@ public class MapGift implements Serializable{
         this.sendTo = sendTo;
     }
 
-    int getGiftBox() {
+    public int getGiftBox() {
         return giftBox;
     }
 
-    void setGiftBox(int giftBox) {
+    public void setGiftBox(int giftBox) {
         this.giftBox = giftBox;
     }
 }
