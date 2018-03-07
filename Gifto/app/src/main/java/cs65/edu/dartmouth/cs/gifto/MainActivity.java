@@ -16,7 +16,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -27,7 +26,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +38,24 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+/**
+ * Created by Oliver on 2/19/2018.
+ *
+ * This activity calls the login activity if the user has not been logged in, the loading screen
+ *   if there are a lot of pictures that need to be downloaded, and the garden activity to get
+ *   into the game.
+ *
+ * Outline:
+ *      1. Set up the sensors and starts the sensor service, whose data is stored
+ *        in Util
+ *      2. Set up the fragment manager
+ *      3. See if there is a user currently logged in
+ *          if no user logged in, then go to log in screen, otherwise go to loading screen
+ *      4. Download all the data from Firebase (threaded) so the phone is synced
+ *      5. After downloading and loading pictures, make the garden visible
+ *      6. Make the toolbar visible
+ */
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
@@ -181,7 +197,7 @@ public class MainActivity extends AppCompatActivity
                     endListener();
                     Util.completed = true;
                     Garden.check_animals();
-                    @SuppressLint("CutPasteId") DrawerLayout layout = findViewById(R.id.drawer_layout);
+                    DrawerLayout layout = findViewById(R.id.drawer_layout);
                     layout.setBackgroundResource(R.drawable.bg_plain);
                     Garden.button_food.setVisibility(View.VISIBLE);
                     Garden.button_gifts.setVisibility(View.VISIBLE);
@@ -244,8 +260,8 @@ public class MainActivity extends AppCompatActivity
             drawer.addDrawerListener(toggle);
             toggle.syncState();
 
-            // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
-            // here, and pretty much copy all the map activity code into here
+            // map has separate navBar (I can't use the same navbar unless I initialize the
+            // mapFragment here, and pretty much copy all the map activity code into here
             // so to keep the code organized, mapActivity has it's own navBar, and this navbar will
             // always have item 0 selected
             navigationView.getMenu().getItem(0).setChecked(true);
@@ -309,7 +325,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment newFragment;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        // TODO: the commented out line below fixed the bug where it occassionally crashed on startup
+        // TODO:the commented out line below fixed the bug where it occassionally crashed on startup
         // but this seems like a hack, so I'm looking into a proper solution
         //transaction.commitAllowingStateLoss();
         int id = item.getItemId();
