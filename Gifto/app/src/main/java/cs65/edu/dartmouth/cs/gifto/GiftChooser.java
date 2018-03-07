@@ -287,4 +287,9 @@ public class GiftChooser extends AppCompatActivity {
             finish();
         }
     }
+
+    public void onClick_edit(View view){
+        EditText editText = findViewById(R.id.editText_message);
+        editText.requestFocus();
+    }
 }
