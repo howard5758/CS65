@@ -165,9 +165,9 @@ class Util {
                 return (R.drawable.lucky_bag);
             case "magic egg":
                 return (R.drawable.magic_egg);
-            case "blue mitten":
+            case "giant blue mitten":
                 return (R.drawable.mitten_blue);
-            case "yellow mitten":
+            case "giant yellow mitten":
                 return (R.drawable.mitten_yellow);
             case "black mole bag":
                 return (R.drawable.mole_black);
