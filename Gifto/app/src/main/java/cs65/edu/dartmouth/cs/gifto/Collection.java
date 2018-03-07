@@ -350,14 +350,13 @@ public class Collection extends ListActivity {
 
             TextView namee = (TextView) view.findViewById(R.id.first_line);
             ImageView image = (ImageView) view.findViewById(R.id.small_image);
-            Log.d("master", getItem(position).getAnimalName());
             image.setImageResource(Util.getImageIdFromName(getItem(position).getAnimalName()));
 
             if(getItem(position).getPresent() == -1){
-                namee.setText(getItem(position).getAnimalName() + "   Not Present.");
+                namee.setText(getItem(position).getAnimalName() + "   GONE!");
             }
             else {
-                namee.setText(getItem(position).getAnimalName() + "   In Garden!");
+                namee.setText(getItem(position).getAnimalName() + "   HERE!");
             }
             return view;
         }
