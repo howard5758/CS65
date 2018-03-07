@@ -69,8 +69,10 @@ public class purchase_screen extends AppCompatActivity {
                         String.valueOf(pet.getNumVisits()) + " times. ";
                 description.setText(text1);
                 if(pet.getNumVisits() >= Globals.ANIMAL_TO_PROB.get(pet.getAnimalName()) * 10) {
-                    String text2 = object + " sent you a " + Globals.ANIMAL_TO_GIFT.get(object);
-                    price.setText(text2);
+                    if (Globals.ANIMAL_TO_GIFT.get(object) != null) {
+                        String text2 = object + " sent you a " + Globals.ANIMAL_TO_GIFT.get(object);
+                        price.setText(text2);
+                    }
                 }
                 else{
                     String text3 = object + " has not sent you anything T_T";
