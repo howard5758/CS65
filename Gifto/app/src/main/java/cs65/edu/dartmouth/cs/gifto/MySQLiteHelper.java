@@ -859,8 +859,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     /* Turns a cursor into a single inventory item object
-     * Usually you will pass in an empty inventory item and it will populate it. This makes it thread safe
-     * cursor checking done before this method is called */
+     * Usually you will pass in an empty inventory item and it will populate it. This makes it
+     * thread safe cursor checking done before this method is called */
     private void cursorToInventoryItem(Cursor cursor, InventoryItem item) {
         item.setItemName(cursor.getString(1));
         item.setItemAmount(cursor.getInt(2));

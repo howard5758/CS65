@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment newFragment;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        // TODO: the line below fixes a bug when running app from computer
+        /** the line below fixes a bug when running app from computer */
         // dialog fragments can't be called from a locked phone.
         // if your phone is locked on startup (as it may be if you're de-bugging),
         // the dialog fragments when an animal arrives will crash the app
