@@ -43,7 +43,7 @@ public class purchase_screen extends AppCompatActivity {
 
                 image.setImageResource(Util.getImageIdFromName(object));
                 if(object.equals("")){
-                    String text = "Received a message";
+                    String text = "Received a message!";
                     description.setText(text);
                 }
                 else{
