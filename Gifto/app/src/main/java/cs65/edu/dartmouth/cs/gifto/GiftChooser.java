@@ -90,7 +90,7 @@ public class GiftChooser extends AppCompatActivity {
                     }
                 }
 
-                // if there are no animals, then don't let them send a gift
+                // if there are no animals, then don't let user send a gift
                 if(spinnerArray.size() == 0) {
                     Intent returnIntent = new Intent();
                     Toast.makeText(getBaseContext(),
@@ -107,11 +107,14 @@ public class GiftChooser extends AppCompatActivity {
                     spinner_animal.setAdapter(adapter);
 
                     // which items the user can send in the gift
+                    // (bigger animals can send bigger gifts)
                     final List<String> spinnergift_array =  new ArrayList<>();
-                    spinnergift_array.add("");
+                    spinnergift_array.add("Message");
                     int animal_type;
+                    // deal with potential changes to database/constants
                     if(Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(0)) == null) animal_type = 0;
                     else animal_type = Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(0));
+                    // populate the gift spinner using the currently selected animal (first animal in spinner)
                     for(String gift_type : Globals.ITEM_TO_TYPE.keySet()){
                         if(Globals.ITEM_TO_TYPE.get(gift_type) <= animal_type){
                             spinnergift_array.add(gift_type);
@@ -125,6 +128,8 @@ public class GiftChooser extends AppCompatActivity {
                     spinner_gift.setAdapter(adapter_gift);
                     spinner_gift.setEnabled(true);
 
+                    // if user selects different animal, the set of gifts this animal can send
+                    // may be different. So update the spinner
                     spinner_animal.setOnItemSelectedListener(
                             new AdapterView.OnItemSelectedListener() {
                         @Override
@@ -132,9 +137,11 @@ public class GiftChooser extends AppCompatActivity {
                                                    View selectedItemView, int position, long id) {
                             spinnergift_array.clear();
                             final int animal_type;
+                            // in case something is out of date or something
                             if(Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(position)) == null) {
                                 animal_type = 0;
                             }
+                            // figure out how large the animal is
                             else {
                                 animal_type=Globals.ANIMAL_TO_TYPE.get(spinnerArray.get(position));
                             }
@@ -147,7 +154,9 @@ public class GiftChooser extends AppCompatActivity {
                                 ((BaseAdapter) spinner_gift.getAdapter()).notifyDataSetChanged();
                             } else {
                                 spinner_gift.setEnabled(true);
+                                // can always send message
                                 spinnergift_array.add("Message");
+                                // which actual items can you send?
                                 DatabaseReference ref2 = Util.databaseReference.child("users")
                                         .child(Util.userID).child("items");
                                 ref2.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -190,6 +199,10 @@ public class GiftChooser extends AppCompatActivity {
 
                     });
 
+                    // User gets penalized for sending gift to specific person
+                    // (because we want people to use the map, and have lots of gifts to choose from)
+                    // this penalty is bigger for larger gifts.
+                    // so inform the user what the penalty will be each time they select an item
                     spinner_gift.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView,
@@ -226,9 +239,13 @@ public class GiftChooser extends AppCompatActivity {
             }
         });
 
+        // prevent android from automatically focusing on the edit text
+        // because otherwise it will scroll right past the animal and item options,
+        // thus the user may not see them
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
+    // user has decided to send or cancel gift
     public void onClick(View view) {
         Intent returnIntent = new Intent();
 
@@ -268,8 +285,8 @@ public class GiftChooser extends AppCompatActivity {
             helper.removeAnimal(onMission.getAnimalName());
             onMission.setPresent(-1);
             helper.insertAnimal(onMission, true);
-            //
 
+            // tell the map activity what the user has selected here
             if(!spinner_gift.isEnabled()) returnIntent.putExtra("giftName", "");
             else if (spinner_gift.getSelectedItemPosition() == 0) returnIntent.putExtra("giftName", "");
             else returnIntent.putExtra("giftName", (String)spinner_gift.getSelectedItem());
@@ -290,6 +307,7 @@ public class GiftChooser extends AppCompatActivity {
         }
     }
 
+    // focus on edit text only if the user has selected it
     public void onClick_edit(View view){
         EditText editText = findViewById(R.id.editText_message);
         editText.requestFocus();
