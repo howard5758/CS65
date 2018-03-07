@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepclasseswithmembers class cs65.edu.dartmouth.cs.gifto.** {*; }
+-keepclasseswithmembers class cs65.edu.dartmouth.cs.gifto.** { *; }
