@@ -1,5 +1,7 @@
 package cs65.edu.dartmouth.cs.gifto;
 
+import java.io.Serializable;
+
 /**
  * Created by Oliver on 2/25/2018.
  *
@@ -20,7 +22,7 @@ package cs65.edu.dartmouth.cs.gifto;
  *
  */
 
-public class Gift {
+public class Gift implements Serializable{
     private String id;
     private String giftName;
     private boolean sent;
