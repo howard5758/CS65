@@ -3,6 +3,7 @@ package cs65.edu.dartmouth.cs.gifto;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,10 +25,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -195,6 +198,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                TextView messageView = dialog.findViewById(android.R.id.message);
+                messageView.setGravity(Gravity.CENTER_HORIZONTAL);
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) dialog.getButton(AlertDialog.BUTTON_POSITIVE).getLayoutParams();
+                lp.weight = 1;
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setLayoutParams(lp);
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setLayoutParams(lp);
+                View leftspacer = ((LinearLayout)dialog.getButton(AlertDialog.BUTTON_POSITIVE).getParent()).getChildAt(1);
+                leftspacer.setVisibility(View.GONE);
+
             }
         });
 
@@ -280,6 +292,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
+                        TextView messageView = dialog.findViewById(android.R.id.message);
+                        messageView.setGravity(Gravity.CENTER_HORIZONTAL);
+                        TextView titleView = dialog.findViewById(android.R.id.title);
+                        if(titleView != null) titleView.setGravity(Gravity.CENTER_HORIZONTAL);
+                        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) dialog.getButton(AlertDialog.BUTTON_POSITIVE).getLayoutParams();
+                        lp.weight = 1;
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setLayoutParams(lp);
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setLayoutParams(lp);
+                        View leftspacer = ((LinearLayout)dialog.getButton(AlertDialog.BUTTON_POSITIVE).getParent()).getChildAt(1);
+                        leftspacer.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(getApplicationContext(), "You are too far away to pick up this gift", Toast.LENGTH_SHORT).show();
                     }
@@ -291,15 +313,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // useful google built-in functions to determine user location and interact with map
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setScrollGesturesEnabled(true);
-        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                return false;
-            }
-        });
 
         // zoom in on user's current location
         mMap.moveCamera(CameraUpdateFactory.newLatLng(firstMarker));
@@ -334,6 +350,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .setPositiveButton("OK!", null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                    TextView messageView = dialog.findViewById(android.R.id.message);
+                    messageView.setGravity(Gravity.CENTER_HORIZONTAL);
+                    TextView titleView = dialog.findViewById(android.R.id.title);
+                    if(titleView != null) titleView.setGravity(Gravity.CENTER_HORIZONTAL);
+                    LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) dialog.getButton(AlertDialog.BUTTON_POSITIVE).getLayoutParams();
+                    lp.weight = 1;
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setLayoutParams(lp);
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setLayoutParams(lp);
+                    View leftspacer = ((LinearLayout)dialog.getButton(AlertDialog.BUTTON_POSITIVE).getParent()).getChildAt(1);
+                    leftspacer.setVisibility(View.GONE);
+
                     helper.removeMapGift(value.getId());
                     Gift gift = new Gift(value.getGiftName(), true, value.getSendTo(), value.getTimePlaced(), value.getLocation());
                     gift.setGiftBox(value.getGiftBox());
@@ -422,25 +449,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onResume() {
         super.onResume();
 
-        // display user's nickname and profile pic in navbar
+        // populate the navigation drawer with user information
         NavigationView navigationView = findViewById(R.id.nav_view);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
+            View headerView = navigationView.getHeaderView(0);
             for (UserInfo profile : user.getProviderData()) {
-                View headerView = navigationView.getHeaderView(0);
                 if (profile.getDisplayName() != null && !profile.getDisplayName().equals("")) {
                     TextView tv = headerView.findViewById(R.id.nav_header_text);
                     tv.setText(profile.getDisplayName());
+                } else {
+                    TextView tv = headerView.findViewById(R.id.nav_header_text);
+                    tv.setText(profile.getEmail());
                 }
                 if (profile.getPhotoUrl() != null) {
                     ImageView navImage = headerView.findViewById(R.id.nav_image);
                     navImage.setImageURI(profile.getPhotoUrl());
                 }
             }
+            ImageView navImage = headerView.findViewById(R.id.nav_image);
+            if (Util.photo != null) {
+                navImage.setImageURI(Util.photo);
+            } else navImage.setImageResource(R.drawable.dog);
         }
-        // map must be the item selected if you are in this navbar
-        // see "MainActivity" comments for more details
+        // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
+        // here, and pretty much copy all the map activity code into here
+        // so to keep the code organized, mapActicity has it's own navBar, and this navbar will
+        // always have item 0 selected
         navigationView.getMenu().getItem(1).setChecked(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_icon);
+        }
     }
 
     public void onAttachedToWindow(){
@@ -522,6 +562,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_add_friend) {
+            DialogFragment newFragment = MainActivity.MyAlertDialogFragment.newInstance();
+            newFragment.show(getFragmentManager(), "dialog");
+        }
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, UserProfile.class));
             return true;

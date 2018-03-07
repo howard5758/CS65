@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context="cs65.edu.dartmouth.cs.gifto.GiftChooser">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -19,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Choose animal:"
-                android:padding="@dimen/fab_margin"/>
+                android:textStyle="bold"/>
 
             <Spinner
                 android:layout_width="match_parent"
@@ -31,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Choose Gift Type:"
-                android:padding="@dimen/fab_margin"/>
+                android:textStyle="bold"/>
 
             <Spinner
                 android:layout_width="match_parent"
@@ -43,13 +47,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="(Optional) Premium Delivery Service: Send a gift to a specific person?"
-                android:padding="@dimen/fab_margin"/>
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_price"
-                android:padding="@dimen/fab_margin"/>
+                android:id="@+id/text_price"/>
 
             <Spinner
                 android:layout_width="match_parent"
@@ -60,31 +63,44 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Leave a message with your gift:"/>
+                android:text="Leave a message with your gift:"
+                android:textStyle="bold"/>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText_message"
-                android:hint="Hi! I hope you enjoy this gift!"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Send Gift!"
-                android:id="@+id/button_send"
-                android:onClick="onClick"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Never Mind"
-                android:id="@+id/button_cancel"
-                android:onClick="onClick"/>
+                android:hint="Hi! I hope you enjoy this gift!"
+                android:focusedByDefault="false" />
 
         </LinearLayout>
 
     </ScrollView>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Gift!"
+        android:id="@+id/button_send"
+        android:onClick="onClick"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="#CE93D8"
+        android:layout_above="@+id/button_cancel"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Never Mind"
+        android:id="@+id/button_cancel"
+        android:onClick="onClick"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="#BA68C8"
+        android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

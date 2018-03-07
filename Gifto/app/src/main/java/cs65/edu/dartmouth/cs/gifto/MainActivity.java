@@ -13,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         @SuppressLint("CutPasteId") DrawerLayout layout = findViewById(R.id.drawer_layout);
-        layout.setBackgroundResource(R.drawable.load_page);
+        layout.setBackgroundResource(R.drawable.bg_plain);
 
         // sensors
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -236,16 +237,20 @@ public class MainActivity extends AppCompatActivity
                     navImage.setImageURI(profile.getPhotoUrl());
                 }
             }
+            ImageView navImage = headerView.findViewById(R.id.nav_image);
             if (Util.photo != null) {
-                ImageView navImage = headerView.findViewById(R.id.nav_image);
                 navImage.setImageURI(Util.photo);
-            }
+            } else navImage.setImageResource(R.drawable.dog);
         }
         // map has separate navBar (I can't use the same navbar unless I initialize the mapFragment
         // here, and pretty much copy all the map activity code into here
         // so to keep the code organized, mapActicity has it's own navBar, and this navbar will
         // always have item 0 selected
         navigationView.getMenu().getItem(0).setChecked(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_icon);
+        }
     }
 
     public void onStop() {
