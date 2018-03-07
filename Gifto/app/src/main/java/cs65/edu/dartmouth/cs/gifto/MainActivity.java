@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         @SuppressLint("CutPasteId") DrawerLayout layout = findViewById(R.id.drawer_layout);
-        layout.setBackgroundResource(R.drawable.bg_plain);
+        layout.setBackgroundResource(R.drawable.load_page);
 
         // sensors
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
