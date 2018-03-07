@@ -182,15 +182,19 @@ public class MainActivity extends AppCompatActivity
                         else if (userSnapshot.getKey().equals("items")) {
 
                             for (DataSnapshot itemData : userSnapshot.getChildren()) {
-                                InventoryItem item = new InventoryItem();
-                                item.setItemName((String) itemData.child("itemName").getValue());
-                                item.setItemAmount(Integer.parseInt(String.
-                                        valueOf(itemData.child("itemAmount").getValue())));
-                                if(String.valueOf(itemData.child("present").getValue()) != null)
-                                    item.setPresent(Integer.parseInt(String.valueOf(
-                                            itemData.child("present").getValue())));
-                                else item.setPresent(-1);
-                                datasource.insertInventory(item, false);
+                                if (itemData.child("itemName") != null &&
+                                        itemData.child("itemAmount").getValue() != null &&
+                                        itemData.child("present") != null) {
+                                    InventoryItem item = new InventoryItem();
+                                    item.setItemName((String) itemData.child("itemName").getValue());
+                                    item.setItemAmount(Integer.parseInt(String.
+                                            valueOf(itemData.child("itemAmount").getValue())));
+                                    if (String.valueOf(itemData.child("present").getValue()) != null)
+                                        item.setPresent(Integer.parseInt(String.valueOf(
+                                                itemData.child("present").getValue())));
+                                    else item.setPresent(-1);
+                                    datasource.insertInventory(item, false);
+                                }
 
                             }
 

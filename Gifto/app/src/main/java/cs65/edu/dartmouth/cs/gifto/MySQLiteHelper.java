@@ -786,26 +786,30 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         else if (i == 2) {
                             Animal animal = new Animal();
                             cursorToAnimal(cursor, animal);
-                            Util.databaseReference.child("users").
-                                    child(Util.userID).child("animals").child(animal
-                                    .getAnimalName()).setValue(animal);
-                            ContentValues values = new ContentValues();
-                            values.put(COLUMN_FIREBASE_FLAG, 0);
-                            database.update(ANIMAL_TITLE, values, COLUMN_ANIMAL_NAME +
-                                    "='" + animal.getAnimalName() + "'", null);
+                            if (animal.getAnimalName()!=null && !animal.getAnimalName().equals("")){
+                                Util.databaseReference.child("users").
+                                        child(Util.userID).child("animals").child(animal
+                                        .getAnimalName()).setValue(animal);
+                                ContentValues values = new ContentValues();
+                                values.put(COLUMN_FIREBASE_FLAG, 0);
+                                database.update(ANIMAL_TITLE, values, COLUMN_ANIMAL_NAME
+                                        + "='" + animal.getAnimalName() + "'", null);
+                            }
                         }
 
                         // inventory items that haven't been inserted
                         else if (i == 3) {
                             InventoryItem item = new InventoryItem();
                             cursorToInventoryItem(cursor, item);
-                            Util.databaseReference.child("users").child(Util.userID)
-                                    .child("items").child(item.getItemName()).setValue(item);
-                            ContentValues values = new ContentValues();
-                            values.put(COLUMN_FIREBASE_FLAG, 0);
-                            database.update(INVENTORY_TITLE, values,
-                                    COLUMN_INVENTORY_NAME + "='" + item.getItemName() +
-                                            "'", null);
+                            if (item.getItemName() != null && !item.getItemName().equals("")) {
+                                Util.databaseReference.child("users").child(Util.userID)
+                                        .child("items").child(item.getItemName()).setValue(item);
+                                ContentValues values = new ContentValues();
+                                values.put(COLUMN_FIREBASE_FLAG, 0);
+                                database.update(INVENTORY_TITLE, values,
+                                        COLUMN_INVENTORY_NAME + "='" +
+                                                item.getItemName() + "'", null);
+                            }
                         }
                     }
                 }
